@@ -8,6 +8,7 @@ testCompile 'junit:junit:4.12' //声明本地测试的依赖
 ```
 ## Glide、Fresco
 #### 图片加载可能跟网络请求一样，基本是所有 App 开发必备的功能，选择一款成熟稳定的图片加载库重要性不言而喻，目前主流的图片加载有 Picasso、Glide、Fresco
+
 Glide 是 Google 员工基于 Picasso 基础上进行开发的，所以自然各方面比 Picasso 更有优势，而且支持 Gif，所以推荐大家优先选择 Glide 库，官方地址：
 
 > https://github.com/bumptech/glide
