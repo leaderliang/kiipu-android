@@ -1,19 +1,43 @@
 package com.mycreat.kiipu.activity;
 
-import android.databinding.DataBindingUtil;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import com.mycreat.kiipu.R;
-import com.mycreat.kiipu.databinding.ActivityMainBinding;
-import com.mycreat.kiipu.model.User;
+import com.mycreat.kiipu.core.BaseActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        User user = new User("YanQiao", "Liang");
-        binding.setUser(user);
+//        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+//        User user = new User("YanQiao", "Liang");
+//        binding.setUser(user);
     }
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    public void initViews() {
+
+    }
+
+    @Override
+    public void initListener() {
+
+    }
+
+    @Override
+    public void initData() {
+
+    }
+
+    @Override
+    public void onViewClick(View v) {
+
+    }
+
 }
