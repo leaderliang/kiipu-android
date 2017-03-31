@@ -1,5 +1,6 @@
 package com.mycreat.kiipu.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -20,6 +22,14 @@ import android.view.MenuItem;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.RecycleAdapter;
 import com.mycreat.kiipu.core.BaseActivity;
+import com.mycreat.kiipu.model.Bookmark;
+import com.mycreat.kiipu.retrofit.RetrofitClient;
+import com.mycreat.kiipu.retrofit.RetrofitService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import java.util.List;
 
 
 public class NavigationDrawerActivity extends BaseActivity
@@ -32,6 +42,10 @@ public class NavigationDrawerActivity extends BaseActivity
     private NavigationView navigationView;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
+    private GridLayoutManager mGirdLayoutManager;
+    private String itemId = "";
+    private List<Bookmark> mBookmarkList;
+    private RecycleAdapter adapter;
 
     @Override
     public int getLayoutId() {
@@ -58,11 +72,18 @@ public class NavigationDrawerActivity extends BaseActivity
         // 设置固定大小
         mRecyclerView.setHasFixedSize(true);
         // 创建线性布局
-        mLayoutManager = new LinearLayoutManager(this);
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        RecycleAdapter adapter = new RecycleAdapter(this);
-        mRecyclerView.setAdapter(adapter);
+//        mLayoutManager = new LinearLayoutManager(this);
+//        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // 创建 GridLayout 布局
+//        StaggeredGridLayoutManager staggeredGridLayoutManager=new StaggeredGridLayoutManager(2,OrientationHelper.VERTICAL);
+//        recyclerView_one.setLayoutManager(staggeredGridLayoutManager);
+
+        mGirdLayoutManager=new GridLayoutManager(this,2);
+        mRecyclerView.setLayoutManager(mGirdLayoutManager);
+
+
     }
 
     @Override
@@ -74,6 +95,28 @@ public class NavigationDrawerActivity extends BaseActivity
     @Override
     public void initData() {
 
+        RetrofitService mRetrofitService = RetrofitClient.getInstance().create(RetrofitService.class);
+        Call<List<Bookmark>> call =  mRetrofitService.getBookmarkList(10,itemId);
+        call.enqueue(new Callback<List<Bookmark>>() {
+            @Override
+            public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
+                mBookmarkList = response.body();
+                adapter = new RecycleAdapter(NavigationDrawerActivity.this,mBookmarkList);
+                mRecyclerView.setAdapter(adapter);
+//                adapter.notifyDataSetChanged();
+
+                Snackbar.make(fab, "response success", Snackbar.LENGTH_LONG)
+                        .setDuration(1000)
+                        .show();
+            }
+
+            @Override
+            public void onFailure(Call<List<Bookmark>> call, Throwable t) {
+                Snackbar.make(fab, "response fail", Snackbar.LENGTH_LONG)
+                        .setDuration(1000)
+                        .show();
+            }
+        });
     }
 
     @Override
@@ -106,7 +149,7 @@ public class NavigationDrawerActivity extends BaseActivity
                             }
                         })
                         .setActionTextColor(Color.parseColor("#0097A7"))
-                        .setDuration(1000)
+                        .setDuration(4000)
                         .show();
                 break;
         }

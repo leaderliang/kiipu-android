@@ -6,36 +6,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-
         tools:context="com.mycreat.kiipu.activity.NavigationDrawerActivity">
 
+    <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
     <android.support.design.widget.AppBarLayout
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:theme="@style/AppTheme.AppBarOverlay"
+    >
 
+
+        <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:layout_scrollFlags="scroll|enterAlways" 配置 scrollFlags，就可以在RecyclerView滚动事件发生的时候被触发
+        -->
         <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:layout_scrollFlags="scroll|enterAlways"
+
         />
 
 
     </android.support.design.widget.AppBarLayout>
 
-<LinearLayout android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              app:layout_behavior="@string/appbar_scrolling_view_behavior"
-              android:orientation="vertical"
->
-
-
-    <ImageView android:layout_width="match_parent" android:layout_height="35dp"
-               android:background="@color/accent_material_light"
-    />
 
     <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -44,13 +39,17 @@
             android:scrollbars="vertical"
             android:orientation="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-
+            android:background="@android:color/darker_gray"
     />
 
-</LinearLayout>
-
     <include layout="@layout/content_navigation_drawer"/>
+
     <!-- FloatingActionButton 需在 CoordinatorLayout 布局里才可以和从下面弹出的 'toast' 联动-->
+    <!--
+    FloatingActionButton 中的
+    app:layout_anchor:意思是FAB浮动按钮显示在哪个布局区域。且设置当前锚点的位置
+    app:layout_anchorGravity:意思FAB浮动按钮在这个布局区域的具体位置。两个属性共同作用才是的FAB 浮动按钮也能折叠消失，出现。
+    -->
     <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
@@ -58,5 +57,6 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
             app:srcCompat="@android:drawable/ic_dialog_email"/>
+
 
 </android.support.design.widget.CoordinatorLayout>
