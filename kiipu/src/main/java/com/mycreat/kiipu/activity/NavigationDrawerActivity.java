@@ -8,15 +8,12 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.*;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.mycreat.kiipu.R;
@@ -80,9 +77,17 @@ public class NavigationDrawerActivity extends BaseActivity
 //        StaggeredGridLayoutManager staggeredGridLayoutManager=new StaggeredGridLayoutManager(2,OrientationHelper.VERTICAL);
 //        recyclerView_one.setLayoutManager(staggeredGridLayoutManager);
 
-        mGirdLayoutManager=new GridLayoutManager(this,2);
-        mRecyclerView.setLayoutManager(mGirdLayoutManager);
+        // 两列
+        int spanCount = 2;
 
+//        mGirdLayoutManager=new GridLayoutManager(this,spanCount);
+//        mRecyclerView.setLayoutManager(mGirdLayoutManager);
+
+
+        // StaggeredGridLayoutManager管理RecyclerView的布局   http://blog.csdn.net/zhangphil/article/details/47604581
+        RecyclerView.LayoutManager mLayoutManager = new StaggeredGridLayoutManager(
+                spanCount, StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
     }
 
