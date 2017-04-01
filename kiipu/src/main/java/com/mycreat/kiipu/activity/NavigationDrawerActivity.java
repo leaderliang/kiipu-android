@@ -1,21 +1,22 @@
 package com.mycreat.kiipu.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.*;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.*;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.RecycleAdapter;
 import com.mycreat.kiipu.core.BaseActivity;
@@ -26,13 +27,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class NavigationDrawerActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private FloatingActionButton fab;
+    private final int SPAN_COUNT = 2;
+    /**
+     * 0    pull
+     * 1    load more
+     * */
+    private int REFRESH_TYPE = 0;
+    private FloatingActionButton mFloatingActionButton;
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -40,9 +48,10 @@ public class NavigationDrawerActivity extends BaseActivity
     private LinearLayoutManager mLayoutManager;
     private GridLayoutManager mGirdLayoutManager;
     private String itemId = "";
-    private List<Bookmark> mBookmarkList;
+    private List<Bookmark> mBookmarkList = new ArrayList<>();
     private RecycleAdapter adapter;
-
+    protected ProgressBar mProgress;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
 
     @Override
@@ -59,68 +68,80 @@ public class NavigationDrawerActivity extends BaseActivity
     public void initViews() {
         // main layout
         drawer = initViewById(R.id.drawer_layout);
-
         // left menu
         navigationView = initViewById(R.id.nav_view);
 
         toolbar = initViewById(R.id.toolbar);
-        fab = initViewById(R.id.fab);
+        mFloatingActionButton = initViewById(R.id.floating_action_bt);
         mRecyclerView = initViewById(R.id.recyclerView);
+        mProgress = initViewById(R.id.pb_view);
+        mSwipeRefreshLayout = initViewById(R.id.refresh_view);
 
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         // 设置固定大小
         mRecyclerView.setHasFixedSize(true);
+        adapter = new RecycleAdapter(NavigationDrawerActivity.this,mBookmarkList);
+        mRecyclerView.setAdapter(adapter);
 
         // 创建线性布局
 //        mLayoutManager = new LinearLayoutManager(this);
 //        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 //        mRecyclerView.setLayoutManager(mLayoutManager);
-
         // 创建 GridLayout 布局
 //        StaggeredGridLayoutManager staggeredGridLayoutManager=new StaggeredGridLayoutManager(2,OrientationHelper.VERTICAL);
 //        recyclerView_one.setLayoutManager(staggeredGridLayoutManager);
-
-        // 两列
-        int spanCount = 2;
-
+        // other style
 //        mGirdLayoutManager=new GridLayoutManager(this,spanCount);
 //        mRecyclerView.setLayoutManager(mGirdLayoutManager);
 
         // StaggeredGridLayoutManager管理RecyclerView的布局   http://blog.csdn.net/zhangphil/article/details/47604581
         RecyclerView.LayoutManager mLayoutManager = new StaggeredGridLayoutManager(
-                spanCount, StaggeredGridLayoutManager.VERTICAL);
+                SPAN_COUNT, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
 
     }
 
     public void initListener() {
-        setOnClick(fab);
+        setOnClick(mFloatingActionButton);
         setOnClick(navigationView);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                REFRESH_TYPE = 0; // PULL
+                initData();
+            }
+        });
     }
 
     public void initData() {
-        showProgressDialog(this);
+//        showProgressDialog(this);
+
         RetrofitService mRetrofitService = RetrofitClient.getInstance().create(RetrofitService.class);
         Call<List<Bookmark>> call =  mRetrofitService.getBookmarkList(10,itemId);
         call.enqueue(new Callback<List<Bookmark>>() {
             @Override
             public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
                 mBookmarkList = response.body();
-                adapter = new RecycleAdapter(NavigationDrawerActivity.this,mBookmarkList);
-                mRecyclerView.setAdapter(adapter);
-//                adapter.notifyDataSetChanged();
+                if(REFRESH_TYPE == 0){
+                    adapter.addItem(mBookmarkList);
+                }else if(REFRESH_TYPE == 1){ // load more
+                    adapter.addMoreItem(mBookmarkList);
+                }
 
-//                Snackbar.make(fab, "response success", Snackbar.LENGTH_LONG).setDuration(3000).show();
+                mProgress.setVisibility(View.GONE);
+                mSwipeRefreshLayout.setRefreshing(false);
+//                Snackbar.make(mFloatingActionButton, "response success", Snackbar.LENGTH_LONG).setDuration(3000).show();
             }
 
             @Override
             public void onFailure(Call<List<Bookmark>> call, Throwable t) {
-                Snackbar.make(fab, "response fail", Snackbar.LENGTH_LONG)
+                mProgress.setVisibility(View.GONE);
+                Snackbar.make(mFloatingActionButton, "response fail", Snackbar.LENGTH_LONG)
                         .setDuration(4000)
                         .show();
             }
@@ -130,7 +151,7 @@ public class NavigationDrawerActivity extends BaseActivity
     @Override
     public void onViewClick(View v) {
         switch (v.getId()){
-            case R.id.fab:
+            case R.id.floating_action_bt:
                 Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", new View.OnClickListener() {
                             @Override

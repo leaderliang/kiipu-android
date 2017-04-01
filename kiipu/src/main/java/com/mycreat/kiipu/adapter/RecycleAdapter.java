@@ -27,8 +27,23 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 
     private final Context context;
     private List<Bookmark> mBookmarkList  = new ArrayList<>();
+    private List<Bookmark> mRefreshList  = new ArrayList<>();
     private LayoutInflater mInflater;
     private BookmarksInfo mBookmarkInfo;
+
+
+    public void addItem(List<Bookmark> list) {
+        mBookmarkList.clear();
+        mBookmarkList.addAll(list);
+        notifyDataSetChanged();
+    }
+
+    public void addMoreItem(List<Bookmark> list) {
+        mRefreshList.clear();
+        mRefreshList.addAll(list);
+        mBookmarkList.addAll(mRefreshList);
+        notifyDataSetChanged();
+    }
 
     public RecycleAdapter(Context context, List<Bookmark> list) {
         this.context = context;

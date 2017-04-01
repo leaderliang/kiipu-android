@@ -96,18 +96,18 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         AppManager.getAppManager().finishActivity(this);
     }
 
-    public void showProgressDialog(Context context) {
-        if (mProgress == null || !(mProgress.getVisibility() == View.VISIBLE)) {
-            linearLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.view_loding_progress,null);
-            mProgress = (ProgressBar) linearLayout.findViewById(R.id.pb_view);
-            mProgress.setVisibility(View.VISIBLE);
-        }
-    }
-
-    public void disProgressDialog(Context context) {
-        if (mProgress != null && mProgress.getVisibility() == View.VISIBLE) {
-            linearLayout.setVisibility(View.GONE);
-        }
-    }
+//    public void showProgressDialog(Context context) {
+//        if (mProgress == null || !(mProgress.getVisibility() == View.VISIBLE)) {
+//            linearLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.view_loding_progress,null);
+//            mProgress = (ProgressBar) linearLayout.findViewById(R.id.pb_view);
+//            mProgress.setVisibility(View.VISIBLE);
+//        }
+//    }
+//
+//    public void disProgressDialog(Context context) {
+//        if (mProgress != null && mProgress.getVisibility() == View.VISIBLE) {
+//            linearLayout.setVisibility(View.GONE);
+//        }
+//    }
 
 }

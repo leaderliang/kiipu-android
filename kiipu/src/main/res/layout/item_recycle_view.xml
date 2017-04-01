@@ -12,10 +12,12 @@
         card_view:cardElevation="5dp"
         android:clickable="true"
 >
+
     <!--
-    card_view:cardUseCompatPadding="true"  // 阴影Padding 让CardView在不同系统中使用相同的padding值
-    card_view:cardPreventCornerOverlap="true" // 圆角覆盖  默认 true
-    card_view:cardCornerRadius="30dp"   //圆角 角度
+        card_view:cardUseCompatPadding="true"  // 阴影Padding 让CardView在不同系统中使用相同的padding值
+        card_view:cardPreventCornerOverlap="true" // 圆角覆盖  默认 true
+        card_view:cardCornerRadius="30dp"   //圆角 角度
+        card_view:cardElevation="5dp    // 阴影的大小，值越大间距越大
     -->
 
     <LinearLayout

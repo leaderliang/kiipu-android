@@ -31,7 +31,16 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
+<RelativeLayout android:layout_width="match_parent"
+                android:layout_height="match_parent"
+              app:layout_behavior="@string/appbar_scrolling_view_behavior"
+>
+<android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+>
     <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
@@ -40,6 +49,9 @@
             android:orientation="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
     />
+</android.support.v4.widget.SwipeRefreshLayout>
+    <include layout="@layout/view_loding_progress"/>
+</RelativeLayout>
 
 
     <include layout="@layout/content_navigation_drawer"/>
@@ -51,7 +63,7 @@
     app:layout_anchorGravity:意思FAB浮动按钮在这个布局区域的具体位置。两个属性共同作用才是的FAB 浮动按钮也能折叠消失，出现。
     -->
     <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
+            android:id="@+id/floating_action_bt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
