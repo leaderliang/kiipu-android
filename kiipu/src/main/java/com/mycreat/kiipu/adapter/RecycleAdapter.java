@@ -13,6 +13,7 @@ import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,16 +52,23 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                 .placeholder(R.mipmap.ic_launcher) // 占位图
                 .error(R.drawable.error) // 加载失败占位图
                 .diskCacheStrategy(DiskCacheStrategy.NONE)// 禁用掉Glide的缓存功能,默认是打开的
-                .centerCrop()
+                .centerCrop() // 取图片的中间区域
+//                .fitCenter()
                 .into(holder.iv_item_header);
         Glide.with(context)
-                .load(mBookmarkInfo.getImg())
+                .load(mBookmarkInfo.getIcon())
                 .placeholder(R.mipmap.ic_launcher)
                 .error(R.drawable.error)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(holder.iv_icon);
         holder.tv_right.setText(mBookmarkInfo.getTitle());
-        holder.tv_url.setText("www.zhihu.com");
+        java.net.URL  url = null;
+        try {
+            url = new java.net.URL(mBookmarkInfo.getUrl());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        holder.tv_url.setText(url.getHost());
     }
 
 

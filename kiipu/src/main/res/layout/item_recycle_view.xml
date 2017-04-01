@@ -5,9 +5,18 @@
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        card_view:cardUseCompatPadding="true"
+        card_view:cardPreventCornerOverlap="true"
         card_view:cardBackgroundColor="@android:color/white"
-        card_view:cardCornerRadius="10dp"
-        card_view:cardElevation="5dp">
+        card_view:cardCornerRadius="6dp"
+        card_view:cardElevation="5dp"
+        android:clickable="true"
+>
+    <!--
+    card_view:cardUseCompatPadding="true"  // 阴影Padding 让CardView在不同系统中使用相同的padding值
+    card_view:cardPreventCornerOverlap="true" // 圆角覆盖  默认 true
+    card_view:cardCornerRadius="30dp"   //圆角 角度
+    -->
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -19,7 +28,6 @@
                 android:id="@+id/iv_item_header"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:layout_marginTop="8dp"
         />
         <RelativeLayout
                 android:layout_width="match_parent"

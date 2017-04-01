@@ -1,12 +1,22 @@
 package com.mycreat.kiipu.core;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import com.mycreat.kiipu.R;
 
 /**
  * Created by leaderliang on 2017/3/30.
@@ -18,14 +28,19 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private SparseArray<Object> mViews;
 
     protected Activity mContext;
+    protected ProgressBar mProgress;
+    private LinearLayout linearLayout;
+    private View contentView;
+    private LinearLayout mLinearContent;
+    private int layoutId;
 
     public abstract int getLayoutId();
 
-    public abstract void initViews();
+    public void initViews(){}
 
-    public abstract void initListener();
+    public void initListener(){}
 
-    public abstract void initData();
+    public void initData(){}
 
     public abstract void onViewClick(View v);
 
@@ -57,9 +72,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         return view;
     }
 
-    public <T extends View> void setOnClick(T view) {
+    protected <T extends View> void setOnClick(T view) {
         view.setOnClickListener(this);
     }
+
 
     protected void setToolBar(Toolbar toolbar, String title) {
         toolbar.setTitle(title);
@@ -79,4 +95,19 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         super.onDestroy();
         AppManager.getAppManager().finishActivity(this);
     }
+
+    public void showProgressDialog(Context context) {
+        if (mProgress == null || !(mProgress.getVisibility() == View.VISIBLE)) {
+            linearLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.view_loding_progress,null);
+            mProgress = (ProgressBar) linearLayout.findViewById(R.id.pb_view);
+            mProgress.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void disProgressDialog(Context context) {
+        if (mProgress != null && mProgress.getVisibility() == View.VISIBLE) {
+            linearLayout.setVisibility(View.GONE);
+        }
+    }
+
 }

@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         tools:openDrawer="start">
-
+    <!-- 侧滑菜单效果的控件 -->
     <include
             layout="@layout/app_bar_navigation_drawer"
             android:layout_width="match_parent"

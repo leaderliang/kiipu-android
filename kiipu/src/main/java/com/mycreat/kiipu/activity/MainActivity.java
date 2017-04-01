@@ -18,6 +18,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public int getLayoutId() {
         return R.layout.layout_toolbar;
+ //        return R.layout.view_loding_progress;
     }
 
     @Override

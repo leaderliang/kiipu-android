@@ -32,7 +32,6 @@ import java.util.List;
 public class NavigationDrawerActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
     private FloatingActionButton fab;
     private Toolbar toolbar;
     private DrawerLayout drawer;
@@ -44,21 +43,28 @@ public class NavigationDrawerActivity extends BaseActivity
     private List<Bookmark> mBookmarkList;
     private RecycleAdapter adapter;
 
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
     @Override
     public int getLayoutId() {
         return R.layout.activity_navigation_drawer;
     }
 
-    @Override
     public void initViews() {
-        toolbar = initViewById(R.id.toolbar);
-
-        fab = initViewById(R.id.fab);
         // main layout
         drawer = initViewById(R.id.drawer_layout);
+
         // left menu
         navigationView = initViewById(R.id.nav_view);
 
+        toolbar = initViewById(R.id.toolbar);
+        fab = initViewById(R.id.fab);
         mRecyclerView = initViewById(R.id.recyclerView);
 
         setSupportActionBar(toolbar);
@@ -66,8 +72,10 @@ public class NavigationDrawerActivity extends BaseActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
         // 设置固定大小
         mRecyclerView.setHasFixedSize(true);
+
         // 创建线性布局
 //        mLayoutManager = new LinearLayoutManager(this);
 //        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -83,7 +91,6 @@ public class NavigationDrawerActivity extends BaseActivity
 //        mGirdLayoutManager=new GridLayoutManager(this,spanCount);
 //        mRecyclerView.setLayoutManager(mGirdLayoutManager);
 
-
         // StaggeredGridLayoutManager管理RecyclerView的布局   http://blog.csdn.net/zhangphil/article/details/47604581
         RecyclerView.LayoutManager mLayoutManager = new StaggeredGridLayoutManager(
                 spanCount, StaggeredGridLayoutManager.VERTICAL);
@@ -91,15 +98,13 @@ public class NavigationDrawerActivity extends BaseActivity
 
     }
 
-    @Override
     public void initListener() {
-        fab.setOnClickListener(this);
-        navigationView.setNavigationItemSelectedListener(this);
+        setOnClick(fab);
+        setOnClick(navigationView);
     }
 
-    @Override
     public void initData() {
-
+        showProgressDialog(this);
         RetrofitService mRetrofitService = RetrofitClient.getInstance().create(RetrofitService.class);
         Call<List<Bookmark>> call =  mRetrofitService.getBookmarkList(10,itemId);
         call.enqueue(new Callback<List<Bookmark>>() {
@@ -110,15 +115,13 @@ public class NavigationDrawerActivity extends BaseActivity
                 mRecyclerView.setAdapter(adapter);
 //                adapter.notifyDataSetChanged();
 
-                Snackbar.make(fab, "response success", Snackbar.LENGTH_LONG)
-                        .setDuration(1000)
-                        .show();
+//                Snackbar.make(fab, "response success", Snackbar.LENGTH_LONG).setDuration(3000).show();
             }
 
             @Override
             public void onFailure(Call<List<Bookmark>> call, Throwable t) {
                 Snackbar.make(fab, "response fail", Snackbar.LENGTH_LONG)
-                        .setDuration(1000)
+                        .setDuration(4000)
                         .show();
             }
         });
@@ -158,13 +161,6 @@ public class NavigationDrawerActivity extends BaseActivity
                         .show();
                 break;
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
