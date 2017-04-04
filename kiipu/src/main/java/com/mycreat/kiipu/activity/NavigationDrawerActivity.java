@@ -1,9 +1,13 @@
 package com.mycreat.kiipu.activity;
 
+import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -13,6 +17,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.*;
+import android.transition.*;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,8 +50,9 @@ public class NavigationDrawerActivity extends BaseActivity
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLayoutManager;
-    private GridLayoutManager mGirdLayoutManager;
+    private RecyclerView.LayoutManager  mLayoutManager;
+//    private LinearLayoutManager  mLinearLayoutManager;
+//    private GridLayoutManager mGirdLayoutManager;
     private String itemId = "";
     private List<Bookmark> mBookmarkList = new ArrayList<>();
     private RecycleAdapter adapter;
@@ -88,32 +94,51 @@ public class NavigationDrawerActivity extends BaseActivity
         mRecyclerView.setAdapter(adapter);
 
         // 创建线性布局
-//        mLayoutManager = new LinearLayoutManager(this);
-//        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//        mRecyclerView.setLayoutManager(mLayoutManager);
+//        mLinearLayoutManager = new LinearLayoutManager(this);
+//        mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        mRecyclerView.setLayoutManager(mLinearLayoutManager);
         // 创建 GridLayout 布局
 //        StaggeredGridLayoutManager staggeredGridLayoutManager=new StaggeredGridLayoutManager(2,OrientationHelper.VERTICAL);
 //        recyclerView_one.setLayoutManager(staggeredGridLayoutManager);
-        // other style
+        // GirdLayoutManage other style
 //        mGirdLayoutManager=new GridLayoutManager(this,spanCount);
 //        mRecyclerView.setLayoutManager(mGirdLayoutManager);
 
         // StaggeredGridLayoutManager管理RecyclerView的布局   http://blog.csdn.net/zhangphil/article/details/47604581
-        RecyclerView.LayoutManager mLayoutManager = new StaggeredGridLayoutManager(
+        mLayoutManager = new StaggeredGridLayoutManager(
                 SPAN_COUNT, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
 
 
     }
 
     public void initListener() {
         setOnClick(mFloatingActionButton);
-        setOnClick(navigationView);
+        // 左侧菜单显示隐藏事件监听，左侧菜单点击选中 selector
+        navigationView.setNavigationItemSelectedListener(this);
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 REFRESH_TYPE = 0; // PULL
                 initData();
+            }
+        });
+
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+//                if(newState == RecyclerView.SCROLL_STATE_IDLE  && recyclerView.){
+
+//                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+//                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
             }
         });
     }
@@ -141,6 +166,7 @@ public class NavigationDrawerActivity extends BaseActivity
             @Override
             public void onFailure(Call<List<Bookmark>> call, Throwable t) {
                 mProgress.setVisibility(View.GONE);
+                mSwipeRefreshLayout.setRefreshing(false);
                 Snackbar.make(mFloatingActionButton, "response fail", Snackbar.LENGTH_LONG)
                         .setDuration(4000)
                         .show();
@@ -224,7 +250,13 @@ public class NavigationDrawerActivity extends BaseActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-            startActivity(new Intent(this,MainActivity.class));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setExitTransition(new Explode());
+                startActivity(new Intent(this,MainActivity.class),
+                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            }else{
+                startActivity(new Intent(this,MainActivity.class));
+            }
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {

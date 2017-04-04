@@ -26,11 +26,30 @@
             android:orientation="vertical"
             android:background="@android:color/white"
     >
-        <ImageView
-                android:id="@+id/iv_item_header"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-        />
+        <RelativeLayout android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+        >
+
+
+            <ImageView
+                    android:id="@+id/iv_item_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+            />
+            <ImageView android:layout_width="match_parent" android:layout_height="wrap_content"
+                       android:background="@drawable/item_header_dark_bg"
+                       android:layout_alignParentTop="true"
+            />
+            <ImageView
+                    android:id="@+id/img_more_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/item_more_info_icon"
+                    android:layout_alignParentRight="true"
+            />
+
+        </RelativeLayout>
         <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,7 +65,7 @@
 
             <TextView
 
-                    android:id="@+id/tv_title_right"
+                    android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="大赛框架发送单卡囧到经发局空皇甫看阿訇扥老空皇甫看阿訇扥老"

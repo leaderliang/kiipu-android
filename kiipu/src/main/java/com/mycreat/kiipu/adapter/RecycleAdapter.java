@@ -1,17 +1,18 @@
 package com.mycreat.kiipu.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
+import com.mycreat.kiipu.utils.Constants;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.List;
  * email: leaderliang.dev@gmail.com
  * TODO
  */
-public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
+public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemViewHolder> {
 
 
     private final Context context;
@@ -53,14 +54,14 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.item_recycle_view, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
+        ItemViewHolder viewHolder = new ItemViewHolder(view);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ItemViewHolder ItemViewHolder, int position) {
         mBookmarkInfo = mBookmarkList.get(position).getInfo();
         Glide.with(context)
                 .load(mBookmarkInfo.getImg())
@@ -69,21 +70,29 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                 .diskCacheStrategy(DiskCacheStrategy.NONE)// 禁用掉Glide的缓存功能,默认是打开的
                 .centerCrop() // 取图片的中间区域
 //                .fitCenter()
-                .into(holder.iv_item_header);
+                .into(ItemViewHolder.iv_item_header);
         Glide.with(context)
                 .load(mBookmarkInfo.getIcon())
                 .placeholder(R.mipmap.ic_launcher)
                 .error(R.drawable.error)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(holder.iv_icon);
-        holder.tv_right.setText(mBookmarkInfo.getTitle());
+                .into(ItemViewHolder.iv_icon);
+        ItemViewHolder.img_more_info.setTag(position);
+        ItemViewHolder.img_more_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (int) v.getTag();
+                showListPopupWindow(v);
+            }
+        });
+        ItemViewHolder.tv_title.setText(mBookmarkInfo.getTitle());
         java.net.URL  url = null;
         try {
             url = new java.net.URL(mBookmarkInfo.getUrl());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        holder.tv_url.setText(url.getHost());
+        ItemViewHolder.tv_url.setText(url.getHost());
     }
 
 
@@ -92,18 +101,54 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         return mBookmarkList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView iv_item_header,iv_icon;
-        TextView tv_right,tv_url;
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+        ImageView iv_item_header,iv_icon,img_more_info;
+        TextView tv_title,tv_url;
 
-        public ViewHolder(View view) {
+        public ItemViewHolder(View view) {
             super(view);
             iv_item_header = (ImageView) view.findViewById(R.id.iv_item_header);
             iv_icon = (ImageView) view.findViewById(R.id.iv_icon);
-            tv_right = (TextView) view.findViewById(R.id.tv_title_right);
+            tv_title = (TextView) view.findViewById(R.id.tv_title);
             tv_url = (TextView) view.findViewById(R.id.tv_url);
+            img_more_info = (ImageView) view.findViewById(R.id.img_more_info);
 
         }
+    }
+
+    public void showListPopupWindow(View view) {
+        final ListPopupWindow listPopupWindow = new ListPopupWindow(context);
+
+        // ListView适配器
+        listPopupWindow.setAdapter(
+                new ArrayAdapter<>(context, android.R.layout.simple_list_item_2, Constants.ITEMS));
+
+        // 选择item的监听事件
+        listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+                Toast.makeText(context,  Constants.ITEMS[pos], Toast.LENGTH_SHORT).show();
+                 listPopupWindow.dismiss();
+            }
+        });
+
+        // 对话框的宽高
+        listPopupWindow.setWidth(500);
+        listPopupWindow.setHeight(600);
+
+        // ListPopupWindow 相对的View
+        listPopupWindow.setAnchorView(view);
+
+        // ListPopupWindow 相对按钮横向 和纵向 的距离
+        listPopupWindow.setHorizontalOffset(50);
+        listPopupWindow.setVerticalOffset(1);
+
+        //  Set whether this window should be modal when shown.
+        // If a popup window is modal, it will receive all touch and key input. If the user touches outside the popup window's content area the popup window will be dismissed.
+        // modal boolean: true if the popup window should be modal, false otherwise.
+        listPopupWindow.setModal(false);
+
+        listPopupWindow.show();
     }
 
 }
