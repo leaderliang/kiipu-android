@@ -8,12 +8,9 @@
         tools:context=".activity.RecycleViewActivity">
 
 
-    <com.mycreat.kiipu.view.header.GoogleCircleHookRefreshHeaderView
+    <include
             android:id="@id/swipe_refresh_header"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:gravity="center"
-            />
+            layout="@layout/layout_google_hook_header" />
 
     <android.support.v7.widget.RecyclerView
             android:id="@id/swipe_target"
@@ -21,13 +18,9 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"/>
 
-    <com.mycreat.kiipu.view.footer.GoogleCircleHookLoadMoreFooterView
+    <include
             android:id="@id/swipe_load_more_footer"
-            android:layout_width="match_parent"
-            android:gravity="center"
-            android:layout_height="100dp" />
-
-
+            layout="@layout/layout_google_hook_footer" />
 
 
 
