@@ -121,7 +121,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
 
         // ListView适配器
         listPopupWindow.setAdapter(
-                new ArrayAdapter<>(context, android.R.layout.simple_list_item_2, Constants.ITEMS));
+                new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, Constants.ITEMS));
 
         // 选择item的监听事件
         listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {

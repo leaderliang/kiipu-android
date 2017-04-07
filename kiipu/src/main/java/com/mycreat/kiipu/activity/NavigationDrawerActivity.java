@@ -1,13 +1,11 @@
 package com.mycreat.kiipu.activity;
 
-import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -17,14 +15,16 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.*;
-import android.transition.*;
+import android.transition.Explode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.RecycleAdapter;
 import com.mycreat.kiipu.core.BaseActivity;
+import com.mycreat.kiipu.core.EndlessRecyclerOnScrollListener;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.retrofit.RetrofitClient;
 import com.mycreat.kiipu.retrofit.RetrofitService;
@@ -51,8 +51,8 @@ public class NavigationDrawerActivity extends BaseActivity
     private NavigationView navigationView;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager  mLayoutManager;
-//    private LinearLayoutManager  mLinearLayoutManager;
-//    private GridLayoutManager mGirdLayoutManager;
+    private LinearLayoutManager  mLinearLayoutManager;
+    private GridLayoutManager mGirdLayoutManager;
     private String itemId = "";
     private List<Bookmark> mBookmarkList = new ArrayList<>();
     private RecycleAdapter adapter;
@@ -94,21 +94,27 @@ public class NavigationDrawerActivity extends BaseActivity
         mRecyclerView.setAdapter(adapter);
 
         // 创建线性布局
-//        mLinearLayoutManager = new LinearLayoutManager(this);
-//        mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//        mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        // 创建 GridLayout 布局
-//        StaggeredGridLayoutManager staggeredGridLayoutManager=new StaggeredGridLayoutManager(2,OrientationHelper.VERTICAL);
-//        recyclerView_one.setLayoutManager(staggeredGridLayoutManager);
-        // GirdLayoutManage other style
-//        mGirdLayoutManager=new GridLayoutManager(this,spanCount);
-//        mRecyclerView.setLayoutManager(mGirdLayoutManager);
+        //mLinearLayoutManager = new LinearLayoutManager(this);
+        //mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        //mRecyclerView.setLayoutManager(mLinearLayoutManager);
 
-        // StaggeredGridLayoutManager管理RecyclerView的布局   http://blog.csdn.net/zhangphil/article/details/47604581
-        mLayoutManager = new StaggeredGridLayoutManager(
-                SPAN_COUNT, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(mLayoutManager);
 
+        /**
+         * spanCount，每列或者每行的item个数，设置为1，就是列表样式  该构造函数默认是竖直方向的网格样式,每列或者每行的item个数，设置为1，就是列表样式
+         * 网格样式的方向，水平（OrientationHelper.HORIZONTAL）或者竖直（OrientationHelper.VERTICAL）
+         * reverseLayout，是否逆向，true：布局逆向展示，false：布局正向显示
+         * GirdLayoutManage other style
+         * */
+        mGirdLayoutManager = new GridLayoutManager(this,SPAN_COUNT,GridLayoutManager.VERTICAL,false);
+        mRecyclerView.setLayoutManager(mGirdLayoutManager);
+
+        // 创建 瀑布流
+        //StaggeredGridLayoutManager staggeredGridLayoutManager=new StaggeredGridLayoutManager(SPAN_COUNT,OrientationHelper.VERTICAL);
+        //mRecyclerView.setLayoutManager(staggeredGridLayoutManager);
+
+        // StaggeredGridLayoutManager 管理 RecyclerView的布局  瀑布流   http://blog.csdn.net/zhangphil/article/details/47604581
+        //StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(SPAN_COUNT, StaggeredGridLayoutManager.VERTICAL);
+        //mRecyclerView.setLayoutManager(mLayoutManager);
 
 
     }
@@ -251,11 +257,12 @@ public class NavigationDrawerActivity extends BaseActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().setExitTransition(new Explode());
-                startActivity(new Intent(this,MainActivity.class),
-                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+                startActivity(new Intent(this,RecycleViewActivity.class));
+//                getWindow().setExitTransition(new Explode());
+//                startActivity(new Intent(this,RecycleViewActivity.class),
+//                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
             }else{
-                startActivity(new Intent(this,MainActivity.class));
+                startActivity(new Intent(this,RecycleViewActivity.class));
             }
         } else if (id == R.id.nav_gallery) {
 
@@ -268,7 +275,6 @@ public class NavigationDrawerActivity extends BaseActivity
         } else if (id == R.id.nav_send) {
 
         }
-
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
