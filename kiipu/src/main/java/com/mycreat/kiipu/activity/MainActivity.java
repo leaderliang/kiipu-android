@@ -21,15 +21,12 @@ public class MainActivity extends BaseActivity {
  //        return R.layout.view_loding_progress;
     }
 
+
     @Override
     public void initViews() {
 
     }
 
-    @Override
-    public void initListener() {
-
-    }
 
     @Override
     public void initData() {
@@ -40,5 +37,6 @@ public class MainActivity extends BaseActivity {
     public void onViewClick(View v) {
 
     }
+
 
 }

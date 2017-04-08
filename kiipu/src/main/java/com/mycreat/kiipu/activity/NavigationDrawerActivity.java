@@ -11,23 +11,24 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.*;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
+import com.aspsine.swipetoloadlayout.OnRefreshListener;
+import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.RecycleAdapter;
 import com.mycreat.kiipu.core.BaseActivity;
-import com.mycreat.kiipu.core.EndlessRecyclerOnScrollListener;
 import com.mycreat.kiipu.model.Bookmark;
-import com.mycreat.kiipu.retrofit.RetrofitClient;
-import com.mycreat.kiipu.retrofit.RetrofitService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,33 +38,34 @@ import java.util.List;
 
 
 public class NavigationDrawerActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnRefreshListener, OnLoadMoreListener {
 
     private final int SPAN_COUNT = 2;
     /**
      * 0    pull
      * 1    load more
-     * */
+     */
     private int REFRESH_TYPE = 0;
     private FloatingActionButton mFloatingActionButton;
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private NavigationView navigationView;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager  mLayoutManager;
-    private LinearLayoutManager  mLinearLayoutManager;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private LinearLayoutManager mLinearLayoutManager;
     private GridLayoutManager mGirdLayoutManager;
     private String itemId = "";
     private List<Bookmark> mBookmarkList = new ArrayList<>();
-    private RecycleAdapter adapter;
-    protected ProgressBar mProgress;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
 
+    private RecycleAdapter adapter;
+
+    protected ProgressBar mProgress;
+
+    private SwipeToLoadLayout swipeToLoadLayout;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -78,21 +80,23 @@ public class NavigationDrawerActivity extends BaseActivity
         navigationView = initViewById(R.id.nav_view);
 
         toolbar = initViewById(R.id.toolbar);
+
         mFloatingActionButton = initViewById(R.id.floating_action_bt);
-        mRecyclerView = initViewById(R.id.recyclerView);
+
         mProgress = initViewById(R.id.pb_view);
-        mSwipeRefreshLayout = initViewById(R.id.refresh_view);
+
+        swipeToLoadLayout = initViewById(R.id.swipeToLoadLayout);
+
+        recyclerView = initViewById(R.id.swipe_target);
 
         setSupportActionBar(toolbar);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        // 设置固定大小
-        mRecyclerView.setHasFixedSize(true);
-        adapter = new RecycleAdapter(NavigationDrawerActivity.this,mBookmarkList);
-        mRecyclerView.setAdapter(adapter);
-
+        //如果可以确定每个item的高度是固定的，设置这个选项可以提高性能
+        recyclerView.setHasFixedSize(true);
         // 创建线性布局
         //mLinearLayoutManager = new LinearLayoutManager(this);
         //mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -105,8 +109,8 @@ public class NavigationDrawerActivity extends BaseActivity
          * reverseLayout，是否逆向，true：布局逆向展示，false：布局正向显示
          * GirdLayoutManage other style
          * */
-        mGirdLayoutManager = new GridLayoutManager(this,SPAN_COUNT,GridLayoutManager.VERTICAL,false);
-        mRecyclerView.setLayoutManager(mGirdLayoutManager);
+        mGirdLayoutManager = new GridLayoutManager(this, SPAN_COUNT, GridLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(mGirdLayoutManager);
 
         // 创建 瀑布流
         //StaggeredGridLayoutManager staggeredGridLayoutManager=new StaggeredGridLayoutManager(SPAN_COUNT,OrientationHelper.VERTICAL);
@@ -116,73 +120,36 @@ public class NavigationDrawerActivity extends BaseActivity
         //StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(SPAN_COUNT, StaggeredGridLayoutManager.VERTICAL);
         //mRecyclerView.setLayoutManager(mLayoutManager);
 
+        adapter = new RecycleAdapter(NavigationDrawerActivity.this, mBookmarkList);
+        recyclerView.setAdapter(adapter);
 
     }
 
     public void initListener() {
+
         setOnClick(mFloatingActionButton);
         // 左侧菜单显示隐藏事件监听，左侧菜单点击选中 selector
         navigationView.setNavigationItemSelectedListener(this);
+        swipeToLoadLayout.setOnRefreshListener(this);
+        swipeToLoadLayout.setOnLoadMoreListener(this);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                REFRESH_TYPE = 0; // PULL
-                initData();
-            }
-        });
-
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-//                if(newState == RecyclerView.SCROLL_STATE_IDLE  && recyclerView.){
-
-//                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-//                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
-            }
-        });
+//        swipeToLoadLayout.setOnRefreshListener(new OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                    REFRESH_TYPE = 0; // PULL
+//                    initData();
+//            }
+//            });
     }
 
     public void initData() {
-//        showProgressDialog(this);
-
-        RetrofitService mRetrofitService = RetrofitClient.getInstance().create(RetrofitService.class);
-        Call<List<Bookmark>> call =  mRetrofitService.getBookmarkList(10,itemId);
-        call.enqueue(new Callback<List<Bookmark>>() {
-            @Override
-            public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
-                mBookmarkList = response.body();
-                if(REFRESH_TYPE == 0){
-                    adapter.addItem(mBookmarkList);
-                }else if(REFRESH_TYPE == 1){ // load more
-                    adapter.addMoreItem(mBookmarkList);
-                }
-
-                mProgress.setVisibility(View.GONE);
-                mSwipeRefreshLayout.setRefreshing(false);
-//                Snackbar.make(mFloatingActionButton, "response success", Snackbar.LENGTH_LONG).setDuration(3000).show();
-            }
-
-            @Override
-            public void onFailure(Call<List<Bookmark>> call, Throwable t) {
-                mProgress.setVisibility(View.GONE);
-                mSwipeRefreshLayout.setRefreshing(false);
-                Snackbar.make(mFloatingActionButton, "response fail", Snackbar.LENGTH_LONG)
-                        .setDuration(4000)
-                        .show();
-            }
-        });
+        //showProgressDialog(this);
+        getBookmarkList();
     }
 
     @Override
     public void onViewClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.floating_action_bt:
                 Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", new View.OnClickListener() {
@@ -190,10 +157,10 @@ public class NavigationDrawerActivity extends BaseActivity
                             public void onClick(View v) {
                                 // Perform anything for the action selected
                                 AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                                builder.setTitle ("Hello Dialog")
+                                builder.setTitle("Hello Dialog")
 //                                      .setIcon(R.drawable.ic_menu_camera)
                                         .setCancelable(false)
-                                        .setMessage ("Is this material design?")
+                                        .setMessage("Is this material design?")
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -257,12 +224,11 @@ public class NavigationDrawerActivity extends BaseActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                startActivity(new Intent(this,RecycleViewActivity.class));
-//                getWindow().setExitTransition(new Explode());
-//                startActivity(new Intent(this,RecycleViewActivity.class),
-//                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
-            }else{
-                startActivity(new Intent(this,RecycleViewActivity.class));
+                getWindow().setExitTransition(new Explode());
+                startActivity(new Intent(this, RecycleViewActivity.class),
+                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            } else {
+                startActivity(new Intent(this, RecycleViewActivity.class));
             }
         } else if (id == R.id.nav_gallery) {
 
@@ -277,5 +243,48 @@ public class NavigationDrawerActivity extends BaseActivity
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onRefresh() {
+        REFRESH_TYPE = 0; // PULL
+        getBookmarkList();
+    }
+
+    @Override
+    public void onLoadMore() {
+        REFRESH_TYPE = 1; // LOAD MORE
+        getBookmarkList();
+    }
+
+
+    private void getBookmarkList() {
+        itemId = REFRESH_TYPE == 0 ? "" : adapter.getLastItemId();
+
+        Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(10, itemId);
+        call.enqueue(new Callback<List<Bookmark>>() {
+            @Override
+            public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
+                mBookmarkList = response.body();
+                if (REFRESH_TYPE == 0) {
+                    adapter.addItem(mBookmarkList);
+                } else if (REFRESH_TYPE == 1) {
+                    adapter.addMoreItem(mBookmarkList);
+                }
+                mProgress.setVisibility(View.GONE);
+                swipeToLoadLayout.setRefreshing(false);
+                swipeToLoadLayout.setLoadingMore(false);
+//                Snackbar.make(mFloatingActionButton, "response success", Snackbar.LENGTH_LONG).setDuration(3000).show();
+            }
+
+            @Override
+            public void onFailure(Call<List<Bookmark>> call, Throwable t) {
+                mProgress.setVisibility(View.GONE);
+                swipeToLoadLayout.setRefreshing(false);
+                Snackbar.make(mFloatingActionButton, "response fail", Snackbar.LENGTH_LONG)
+                        .setDuration(4000)
+                        .show();
+            }
+        });
     }
 }

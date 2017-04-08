@@ -6,6 +6,8 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
+import com.mycreat.kiipu.retrofit.RetrofitClient;
+import com.mycreat.kiipu.retrofit.RetrofitService;
 
 import java.util.ArrayList;
 
@@ -24,8 +26,9 @@ public class KiipuApplication extends Application {
     public static int SCREEN_HEIGHT = -1;
     public static float DIMEN_RATE = -1.0F;
     public static int DIMEN_DPI = -1;
+    public static RetrofitService mRetrofitService;
 
-    public static synchronized KiipuApplication getInsance() {
+    public static synchronized KiipuApplication getInstance() {
         return instance;
     }
 
@@ -36,6 +39,7 @@ public class KiipuApplication extends Application {
         instance = this;
         appContext = this;
         getScreenSize();
+        mRetrofitService = RetrofitClient.getInstance().create(RetrofitService.class);
 
     }
 

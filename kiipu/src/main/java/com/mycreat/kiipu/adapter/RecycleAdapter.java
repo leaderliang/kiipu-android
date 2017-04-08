@@ -46,6 +46,10 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
         notifyDataSetChanged();
     }
 
+    public String getLastItemId(){
+        return mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).getId() : "";
+    }
+
     public RecycleAdapter(Context context, List<Bookmark> list) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);

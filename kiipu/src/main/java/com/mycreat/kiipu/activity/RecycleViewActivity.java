@@ -14,41 +14,87 @@ import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
 import com.aspsine.swipetoloadlayout.OnRefreshListener;
 import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.mycreat.kiipu.R;
+import com.mycreat.kiipu.core.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecycleViewActivity extends AppCompatActivity implements OnRefreshListener, OnLoadMoreListener {
+public class RecycleViewActivity extends BaseActivity implements OnRefreshListener,OnLoadMoreListener  {
 
     private List list = new ArrayList();
     private SwipeToLoadLayout swipeToLoadLayout;
     private RecyclerView recyclerView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recycle_view);
-        for (int i = 0;i<10;i++){
-            list.add("test");
-        }
+    public int getLayoutId() {
+        return R.layout.layout_recycle_view;
+    }
 
+
+    @Override
+    public void onViewClick(View v) {
+
+    }
+
+    @Override
+    public void initViews() {
+        super.initViews();
         swipeToLoadLayout = (SwipeToLoadLayout) findViewById(R.id.swipeToLoadLayout);
         recyclerView = (RecyclerView) findViewById(R.id.swipe_target);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerViewAdapter mRecyclerViewAdapter = new RecyclerViewAdapter(list);
-        recyclerView.setAdapter(mRecyclerViewAdapter);
+
         swipeToLoadLayout.setOnRefreshListener(this);
         swipeToLoadLayout.setOnLoadMoreListener(this);
-        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE ){
-                    if (!ViewCompat.canScrollVertically(recyclerView, 1)){
-                        swipeToLoadLayout.setLoadingMore(true);
-                    }
-                }
-            }
-        });
+    }
+
+    @Override
+    public void initData() {
+        super.initData();
+        for (int i = 0;i<10;i++){
+            list.add("test");
+        }
+        RecyclerViewAdapter mRecyclerViewAdapter = new RecyclerViewAdapter(list);
+        recyclerView.setAdapter(mRecyclerViewAdapter);
+    }
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(getLayoutId());
+
+        initViews();
+//        swipeToLoadLayout.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                swipeToLoadLayout.setRefreshing(true);
+//
+//            }
+//        });
+        initData();
+//        initListener();
+
+
+
+//        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                // 当不滚动时候
+//                if (newState == RecyclerView.SCROLL_STATE_IDLE ){
+//                    // 负数表示检测上滑，正数表示下滑；返回 true 表示能在指定的方向滑动，false 反之
+//                    if (!ViewCompat.canScrollVertically(recyclerView, 1)){
+//                        swipeToLoadLayout.setLoadingMore(true);
+//                        swipeToLoadLayout.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                swipeToLoadLayout.setLoadingMore(false);
+//                            }
+//                        }, 1000);
+//                    }
+//                }
+//            }
+//        });
 
 
 

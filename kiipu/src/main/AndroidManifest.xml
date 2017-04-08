@@ -24,8 +24,8 @@
                 android:name=".activity.MainActivity"
                 android:label="mainActivity"
                 android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".activity.RecycleViewActivity">
-        </activity>
+        <activity android:name=".activity.RecycleViewActivity"/>
+
     </application>
 
 </manifest>
