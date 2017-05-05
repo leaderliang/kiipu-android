@@ -36,3 +36,16 @@ card_view:contentPaddingStart |	卡片内容于边距的间隔起始
 card_view:contentPaddingEnd	 | 卡片内容于边距的间隔终止
 card_view:cardUseCompatPadding |	设置内边距，V21+的版本和之前的版本仍旧具有一样的计算方式
 card_view:cardPreventConrerOverlap |	在V20和之前的版本中添加内边距，这个属性为了防止内容和边角的重叠
+
+## Glide 使用
+
+#### diskCacheStrategy(DiskCacheStrategy strategy).设置缓存策略。
+> DiskCacheStrategy.SOURCE：缓存原始数据；
+
+> DiskCacheStrategy.RESULT：缓存变换(如缩放、裁剪等)后的资源数据；
+
+> DiskCacheStrategy.NONE：什么都不缓存；
+
+> DiskCacheStrategy.ALL：缓存SOURC和RESULT；
+
+> 默认采用DiskCacheStrategy.RESULT策略，对于download only操作要使用DiskCacheStrategy.SOURCE。
