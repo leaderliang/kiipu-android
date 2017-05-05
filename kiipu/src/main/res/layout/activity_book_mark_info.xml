@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/ll_root"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal"
+              android:background="@android:color/black"
+              tools:context="com.mycreat.kiipu.activity.BookMarkInfoActivity">
+
+    <com.mycreat.kiipu.view.DetailScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+        <com.mycreat.kiipu.view.SVRootLinearLayout
+                android:id="@+id/ll_sv_root"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@android:color/transparent">
+
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/view_height"
+                    android:background="@android:color/transparent"/>
+            <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
+
+            <LinearLayout
+                    android:id="@+id/ll_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@android:color/white">
+
+
+                <LinearLayout
+                        android:id="@+id/ll_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                    <TextView
+                            android:id="@+id/title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/white"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="10dp"
+                            android:text="关闭"
+                            android:textSize="18sp"/>
+
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/white"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="right"
+                            android:paddingRight="10dp"
+                            android:text="收藏"
+                            android:textSize="18sp"/>
+
+                </LinearLayout>
+
+                <ImageView
+                        android:id="@+id/imageview_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"/>
+
+                <LinearLayout android:id="@+id/ll_bottom"
+                              android:layout_width="match_parent"
+                              android:layout_height="match_parent"
+                              android:background="@android:color/white"
+                              android:orientation="vertical"
+                              android:visibility="gone">
+                    >
+
+                    <ImageView android:layout_width="match_parent"
+                               android:layout_height="wrap_content"
+                               android:background="@mipmap/ic_launcher"
+                    />
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="1000dp"
+                            android:textSize="16sp"
+                            android:text="我是描述"
+                            android:textColor="@android:color/black"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="10dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.mycreat.kiipu.view.SVRootLinearLayout>
+    </com.mycreat.kiipu.view.DetailScrollView>
+
+
+</LinearLayout>
+

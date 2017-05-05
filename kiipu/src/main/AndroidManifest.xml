@@ -12,7 +12,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
-                android:name=".activity.NavigationDrawerActivity"
+                android:name=".activity.BookMarkActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -25,7 +25,8 @@
                 android:label="mainActivity"
                 android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.RecycleViewActivity"/>
-
+        <activity android:name=".activity.BookMarkInfoActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -58,7 +58,7 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
     compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-    // recyclerView
+    // recyclerView (https://github.com/Aspsine/SwipeToLoadLayout/wiki/Quick-Setup https://github.com/lsjwzh/MaterialLoadingProgressBar)
     compile 'com.github.Aspsine:SwipeToLoadLayout:1.0.4'
     compile 'com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE'
 

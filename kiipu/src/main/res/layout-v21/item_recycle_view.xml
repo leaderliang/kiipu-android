@@ -11,6 +11,7 @@
         card_view:cardCornerRadius="6dp"
         card_view:cardElevation="@dimen/recycle_card_Elevation"
         android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
 >
 
     <!--
@@ -44,6 +45,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/item_more_info_icon"
                     android:layout_alignParentRight="true"
+                    android:foreground="?android:attr/selectableItemBackground"
             />
 
         </RelativeLayout>

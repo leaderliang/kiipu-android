@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
 import com.aspsine.swipetoloadlayout.OnRefreshListener;
 import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
@@ -37,31 +38,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class NavigationDrawerActivity extends BaseActivity
+public class BookMarkActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnRefreshListener, OnLoadMoreListener {
 
     private final int SPAN_COUNT = 2;
     /**
-     * 0    pull
-     * 1    load more
+     * 0 pull; 1 load more
      */
     private int REFRESH_TYPE = 0;
+
     private FloatingActionButton mFloatingActionButton;
+
     private Toolbar toolbar;
+
     private DrawerLayout drawer;
+
     private NavigationView navigationView;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private LinearLayoutManager mLinearLayoutManager;
-    private GridLayoutManager mGirdLayoutManager;
+
     private String itemId = "";
+
     private List<Bookmark> mBookmarkList = new ArrayList<>();
 
     private RecycleAdapter adapter;
 
-    protected ProgressBar mProgress;
+    private ProgressBar mProgress;
 
     private SwipeToLoadLayout swipeToLoadLayout;
+
     private RecyclerView recyclerView;
+
+    private int viewMarginTop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +104,7 @@ public class NavigationDrawerActivity extends BaseActivity
         //如果可以确定每个item的高度是固定的，设置这个选项可以提高性能
         recyclerView.setHasFixedSize(true);
         // 创建线性布局
-        //mLinearLayoutManager = new LinearLayoutManager(this);
+        //LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
         //mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         //mRecyclerView.setLayoutManager(mLinearLayoutManager);
 
@@ -109,7 +115,7 @@ public class NavigationDrawerActivity extends BaseActivity
          * reverseLayout，是否逆向，true：布局逆向展示，false：布局正向显示
          * GirdLayoutManage other style
          * */
-        mGirdLayoutManager = new GridLayoutManager(this, SPAN_COUNT, GridLayoutManager.VERTICAL, false);
+        GridLayoutManager mGirdLayoutManager = new GridLayoutManager(this, SPAN_COUNT, GridLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(mGirdLayoutManager);
 
         // 创建 瀑布流
@@ -117,10 +123,11 @@ public class NavigationDrawerActivity extends BaseActivity
         //mRecyclerView.setLayoutManager(staggeredGridLayoutManager);
 
         // StaggeredGridLayoutManager 管理 RecyclerView的布局  瀑布流   http://blog.csdn.net/zhangphil/article/details/47604581
+        //RecyclerView.LayoutManager mLayoutManager;
         //StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(SPAN_COUNT, StaggeredGridLayoutManager.VERTICAL);
         //mRecyclerView.setLayoutManager(mLayoutManager);
 
-        adapter = new RecycleAdapter(NavigationDrawerActivity.this, mBookmarkList);
+        adapter = new RecycleAdapter(BookMarkActivity.this, mBookmarkList);
         recyclerView.setAdapter(adapter);
 
     }
@@ -132,7 +139,7 @@ public class NavigationDrawerActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
         swipeToLoadLayout.setOnRefreshListener(this);
         swipeToLoadLayout.setOnLoadMoreListener(this);
-
+        adapter.setOnRecyclerItemClick(new RecycleViewItemClick());
 //        swipeToLoadLayout.setOnRefreshListener(new OnRefreshListener() {
 //            @Override
 //            public void onRefresh() {
@@ -286,5 +293,14 @@ public class NavigationDrawerActivity extends BaseActivity
                         .show();
             }
         });
+    }
+
+
+    private class RecycleViewItemClick implements RecycleAdapter.RecyclerViewItemOnClick {
+        @Override
+        public void onItemOnclick(View view, int index) {
+            viewMarginTop = view.getTop() + getResources().getDimensionPixelOffset(R.dimen.abc_action_bar_default_height_material);
+            Toast.makeText(mContext, "index " + index + " viewMarginTop " + viewMarginTop, Toast.LENGTH_SHORT).show();
+        }
     }
 }

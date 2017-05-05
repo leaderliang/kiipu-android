@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        tools:context="com.mycreat.kiipu.activity.NavigationDrawerActivity">
+        tools:context="com.mycreat.kiipu.activity.BookMarkActivity">
 
     <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
     <android.support.design.widget.AppBarLayout
@@ -62,6 +62,8 @@
                     android:id="@id/swipe_target"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:scrollbars="vertical"
+                    android:scrollbarStyle="outsideOverlay"
                     android:clipToPadding="false"/>
 
             <include
