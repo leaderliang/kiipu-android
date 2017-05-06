@@ -1,55 +1,39 @@
 package com.mycreat.kiipu.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.*;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mycreat.kiipu.R;
-import com.mycreat.kiipu.activity.BookMarkInfoActivity;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.utils.Constants;
-import com.mycreat.kiipu.view.CustomViewClick;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Handler;
 
 /**
  * Created by leaderliang on 2017/3/30.
  * email: leaderliang.dev@gmail.com
  * TODO
  */
-public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemViewHolder> {
+public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemViewHolder> implements View.OnClickListener {
 
 
-    private final Activity mContext;
     private List<Bookmark> mBookmarkList = new ArrayList<>();
     private List<Bookmark> mRefreshList = new ArrayList<>();
+    private final Activity mContext;
     private LayoutInflater mInflater;
     private BookmarksInfo mBookmarkInfo;
     public View moreView;
 
     private RecyclerViewItemOnClick mRecyclerViewItemOnClick;
-    private View view;
-
-    public void setOnRecyclerItemClick(RecyclerViewItemOnClick mRecyViewItemOnClick) {
-        this.mRecyclerViewItemOnClick = mRecyViewItemOnClick;
-    }
-
-    public interface RecyclerViewItemOnClick {
-        void onItemOnclick(View view, int index);
-    }
 
     public void addItem(List<Bookmark> list) {
         mBookmarkList.clear();
@@ -77,16 +61,17 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        view = mInflater.inflate(R.layout.item_recycle_view, parent, false);
+        View view = mInflater.inflate(R.layout.item_recycle_view, parent, false);
         ItemViewHolder viewHolder = new ItemViewHolder(view, mRecyclerViewItemOnClick);
+        view.setOnClickListener(this);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(final ItemViewHolder mItemViewHolder, int position) {
         mBookmarkInfo = mBookmarkList.get(position).getInfo();
-        view.setTag(position);
-         
+
+        mItemViewHolder.itemView.setTag(position);
         Glide.with(mContext)
                 .load(mBookmarkInfo.getImg())
                 .placeholder(R.mipmap.ic_launcher) // 占位图
@@ -127,7 +112,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
     }
 
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
         private final RecyclerViewItemOnClick mRecyViewItemOnClick;
         ImageView iv_item_header, iv_icon, img_more_info;
         TextView tv_title, tv_url;
@@ -140,13 +125,8 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
             tv_url = (TextView) view.findViewById(R.id.tv_url);
             img_more_info = (ImageView) view.findViewById(R.id.img_more_info);
             this.mRecyViewItemOnClick = mListener;
-            view.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View v) {
-            mRecyViewItemOnClick.onItemOnclick(v, getAdapterPosition());
-        }
     }
 
     public void showListPopupWindow(View view) {
@@ -165,13 +145,6 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
                 listPopupWindow.dismiss();
                 Toast.makeText(mContext, "getTop " + parent.getTop(), Toast.LENGTH_SHORT).show();
 
-//                moreView
-//                int viewMarginTop = getTop + mContext.getResources().getDimensionPixelOffset(R.dimen.abc_action_bar_default_height_material);
-//                Toast.makeText(mContext, "getTop "+getTop+" viewMarginTop "+viewMarginTop, Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(mContext, BookMarkInfoActivity.class);
-//                intent.putExtra("viewMarginTop", viewMarginTop);
-//                mContext.startActivity(intent);
-//                mContext.overridePendingTransition(0, 0);
             }
         });
 
@@ -192,6 +165,21 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
         listPopupWindow.setModal(false);
 
         listPopupWindow.show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(mRecyclerViewItemOnClick != null){
+            mRecyclerViewItemOnClick.onItemOnclick(v, (int) v.getTag());
+        }
+    }
+
+    public void setOnRecyclerItemClick(RecyclerViewItemOnClick mRecyclerViewItemOnClick) {
+        this.mRecyclerViewItemOnClick = mRecyclerViewItemOnClick;
+    }
+
+    public interface RecyclerViewItemOnClick {
+        void onItemOnclick(View view, int index);
     }
 
 }
