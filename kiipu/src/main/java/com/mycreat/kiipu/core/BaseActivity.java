@@ -1,28 +1,15 @@
 package com.mycreat.kiipu.core;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseArray;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
-import com.aspsine.swipetoloadlayout.OnRefreshListener;
-import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
-import com.mycreat.kiipu.R;
-import com.mycreat.kiipu.retrofit.RetrofitClient;
-import com.mycreat.kiipu.retrofit.RetrofitService;
 
 /**
  * Created by leaderliang on 2017/3/30.
@@ -39,7 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private View contentView;
     private LinearLayout mLinearContent;
     private int layoutId;
-    public KiipuApplication mKiipuApplication;
+    public MyApplication mKiipuApplication;
 
     protected abstract int getLayoutId();
 
@@ -63,7 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         mViews = new SparseArray<>();
         //过渡动画
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        mKiipuApplication = KiipuApplication.getInstance();
+        mKiipuApplication = MyApplication.getInstance();
         setContentView(getLayoutId());
         initViews();
         initData();

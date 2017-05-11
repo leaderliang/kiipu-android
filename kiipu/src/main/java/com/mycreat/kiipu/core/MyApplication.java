@@ -3,6 +3,7 @@ package com.mycreat.kiipu.core;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.util.Config;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
@@ -16,10 +17,10 @@ import java.util.ArrayList;
  * email: leaderliang.dev@gmail.com
  * TODO
  */
-public class KiipuApplication extends Application {
+public class MyApplication extends Application {
 
 
-    private static KiipuApplication instance;
+    private static MyApplication instance;
     private static Context appContext;
     private ArrayList<Activity> listActivitys;
     public static int SCREEN_WIDTH = -1;
@@ -28,7 +29,7 @@ public class KiipuApplication extends Application {
     public static int DIMEN_DPI = -1;
     public static RetrofitService mRetrofitService;
 
-    public static synchronized KiipuApplication getInstance() {
+    public static synchronized MyApplication getInstance() {
         return instance;
     }
 
@@ -38,6 +39,8 @@ public class KiipuApplication extends Application {
         super.onCreate();
         instance = this;
         appContext = this;
+        //开启debug模式，方便定位错误，具体错误检查方式可以查看http://dev.umeng.com/social/android/quick-integration的报错必看，正式发布，请关闭该模式
+//        Config.DEBUG = true;
         getScreenSize();
         mRetrofitService = RetrofitClient.getInstance().create(RetrofitService.class);
 
