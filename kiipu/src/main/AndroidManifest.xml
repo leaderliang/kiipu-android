@@ -19,7 +19,7 @@
 
 
     <application
-            android:name=".core.MyApplication"
+            android:name=".core.KiipuApplication"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -27,7 +27,7 @@
             android:theme="@style/AppTheme">
 
         <activity android:name=".activity.LoginActivity"
-                  android:theme="@style/AppTheme.NoActionBar">
+                   >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -42,7 +42,6 @@
                 android:label="mainActivity"
                 android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.RecycleViewActivity"/>
-
 
 
         <meta-data

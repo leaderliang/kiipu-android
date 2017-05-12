@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -17,7 +18,11 @@ import com.umeng.socialize.utils.SocializeUtils;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class LoginActivity extends AppCompatActivity {
+/**
+ * Login
+ * @author leaderliang
+ */
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button mBtSinaAuth;
     private SHARE_MEDIA[] list = {SHARE_MEDIA.SINA};
@@ -28,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        initView();
     }
 
     private void initView() {
@@ -56,32 +62,38 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onStart(SHARE_MEDIA platform) {
             SocializeUtils.safeShowDialog(dialog);
-            Toast.makeText(MainActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
             SocializeUtils.safeCloseDialog(dialog);
-            Toast.makeText(MainActivity.this, "授权成功了", Toast.LENGTH_LONG).show();
-
+            Toast.makeText(LoginActivity.this, "授权成功", Toast.LENGTH_LONG).show();
         }
 
         @Override
         public void onError(SHARE_MEDIA platform, int action, Throwable t) {
             SocializeUtils.safeCloseDialog(dialog);
-            Toast.makeText(MainActivity.this, "授权失败：" + t.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(LoginActivity.this, "授权失败：" + t.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         @Override
         public void onCancel(SHARE_MEDIA platform, int action) {
             SocializeUtils.safeCloseDialog(dialog);
-            Toast.makeText(MainActivity.this, "授权取消了", Toast.LENGTH_LONG).show();
+            Toast.makeText(LoginActivity.this, "授权取消", Toast.LENGTH_LONG).show();
         }
     };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Bundle bundle = data.getExtras();
+        if(bundle != null) {
+            String access_token = bundle.getString("access_token");
+            String userName = bundle.getString("userName");
+            String uid = bundle.getString("uid");
+            Log.e("LoginActivity", "access_token" +access_token+ "  userName"+userName+"  uid"+uid);
+        }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -97,3 +97,16 @@ public static final ** CREATOR;
 
 -keep class com.linkedin.** { *; }
 -keepattributes Signature
+
+##------------------------------------------
+# OkHttp3
+-dontwarn okhttp3.logging.**
+-keep class okhttp3.internal.**{*;}
+-dontwarn okio.**
+# Retrofit
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+-keepattributes Exceptions

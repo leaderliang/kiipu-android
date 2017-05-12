@@ -26,7 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private View contentView;
     private LinearLayout mLinearContent;
     private int layoutId;
-    public MyApplication mKiipuApplication;
+    public KiipuApplication mKiipuApplication;
 
     protected abstract int getLayoutId();
 
@@ -50,7 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         mViews = new SparseArray<>();
         //过渡动画
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        mKiipuApplication = MyApplication.getInstance();
+        mKiipuApplication = KiipuApplication.getInstance();
         setContentView(getLayoutId());
         initViews();
         initData();
