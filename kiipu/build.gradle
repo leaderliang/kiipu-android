@@ -92,4 +92,6 @@ dependencies {
     compile 'com.github.Aspsine:SwipeToLoadLayout:1.0.4'
     compile 'com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE'
 
+    // 配置方法数超过 64K 的应用（minSdkVersion <= 20 需要添加依赖 https://developer.android.com/studio/build/multidex.html）
+    compile 'com.android.support:multidex:1.0.1'
 }
