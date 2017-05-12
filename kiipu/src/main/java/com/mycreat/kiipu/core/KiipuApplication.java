@@ -1,6 +1,5 @@
 package com.mycreat.kiipu.core;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;

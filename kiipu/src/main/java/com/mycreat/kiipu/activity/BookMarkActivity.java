@@ -30,6 +30,7 @@ import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.RecycleAdapter;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.model.Bookmark;
+import com.mycreat.kiipu.utils.SharedPreferencesUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -68,6 +69,8 @@ public class BookMarkActivity extends BaseActivity
     private RecyclerView recyclerView;
 
     private int viewMarginTop;
+
+    private String header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -267,8 +270,8 @@ public class BookMarkActivity extends BaseActivity
 
     private void getBookmarkList() {
         itemId = REFRESH_TYPE == 0 ? "" : adapter.getLastItemId();
-
-        Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(10, itemId);
+        header = "Bearer "+ SharedPreferencesUtil.getData(mContext,"accessToken","");
+        Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(header,10, itemId);
         call.enqueue(new Callback<List<Bookmark>>() {
             @Override
             public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {

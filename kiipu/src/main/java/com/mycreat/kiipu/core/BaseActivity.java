@@ -1,15 +1,18 @@
 package com.mycreat.kiipu.core;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import com.mycreat.kiipu.R;
 
 /**
  * Created by leaderliang on 2017/3/30.
@@ -21,11 +24,17 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private SparseArray<Object> mViews;
 
     protected Activity mContext;
+
     protected ProgressBar mProgress;
+
     private LinearLayout linearLayout;
+
     private View contentView;
+
     private LinearLayout mLinearContent;
+
     private int layoutId;
+
     public KiipuApplication mKiipuApplication;
 
     protected abstract int getLayoutId();
@@ -43,6 +52,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         onViewClick(v);
     }
 
+    public BaseActivity() {
+        mContext = BaseActivity.this;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,7 +67,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         initViews();
         initData();
         initListener();
-        mContext = this;
         AppManager.getAppManager().addActivity(this);
 
     }
@@ -98,18 +109,18 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         AppManager.getAppManager().finishActivity(this);
     }
 
-//    public void showProgressDialog(Context context) {
-//        if (mProgress == null || !(mProgress.getVisibility() == View.VISIBLE)) {
-//            linearLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.view_loding_progress,null);
-//            mProgress = (ProgressBar) linearLayout.findViewById(R.id.pb_view);
-//            mProgress.setVisibility(View.VISIBLE);
-//        }
-//    }
-//
-//    public void disProgressDialog(Context context) {
-//        if (mProgress != null && mProgress.getVisibility() == View.VISIBLE) {
-//            linearLayout.setVisibility(View.GONE);
-//        }
-//    }
+    public void showProgressBar(View view) {
+        if (mProgress == null || !(mProgress.getVisibility() == View.VISIBLE)) {
+            linearLayout = (LinearLayout) view.findViewById(R.layout.view_loading_progress);
+            mProgress = (ProgressBar) view.findViewById(R.id.pb_view);
+            mProgress.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void disProgressBar(View view) {
+        if (mProgress != null && mProgress.getVisibility() == View.VISIBLE) {
+            linearLayout.setVisibility(View.GONE);
+        }
+    }
 
 }

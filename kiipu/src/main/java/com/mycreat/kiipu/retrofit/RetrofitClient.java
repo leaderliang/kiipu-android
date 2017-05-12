@@ -15,6 +15,8 @@ public class RetrofitClient {
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 //增加返回值为Gson的支持(以实体类返回)
                 .addConverterFactory(GsonConverterFactory.create())
+                //直接返回String类型需引入
+//                .addConverterFactory(ScalarsConverterFactory.create)
                 .build();
     }
 
