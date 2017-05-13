@@ -41,6 +41,10 @@ public class LoginActivity extends BaseActivity {
 
     private ProgressDialog dialog;
 
+    private String access_token,userName,uid;
+
+    private boolean isUseClient = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +89,12 @@ public class LoginActivity extends BaseActivity {
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
             SocializeUtils.safeCloseDialog(dialog);
             Toast.makeText(LoginActivity.this, "授权成功", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "onComplete data" + data );
+            if(!isUseClient){
+                access_token = data.get("access_token");
+                uid = data.get("uid");
+                requestLogin(access_token, uid);
+            }
         }
 
         @Override
@@ -100,15 +110,23 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
+    /**
+     * 执行顺序早于 authListener 实现的方法
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.e(TAG, "onActivityResult " + data );
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
         if(data != null) {
+            isUseClient = true;
             Bundle bundle = data.getExtras();
-            String access_token = bundle.getString("access_token");
-            String userName = bundle.getString("userName");
-            String uid = bundle.getString("uid");
+            access_token = bundle.getString("access_token");
+            userName = bundle.getString("userName");
+            uid = bundle.getString("uid");
             Log.e(TAG, "access_token" + access_token + "  userName" + userName + "  uid" + uid);
             requestLogin(access_token, uid);
         }
