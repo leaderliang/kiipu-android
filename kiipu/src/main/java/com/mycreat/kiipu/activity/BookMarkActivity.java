@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -14,22 +15,26 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
 import com.aspsine.swipetoloadlayout.OnRefreshListener;
 import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
+import com.bumptech.glide.Glide;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.RecycleAdapter;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.model.Bookmark;
+import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.utils.SharedPreferencesUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -71,6 +76,10 @@ public class BookMarkActivity extends BaseActivity
     private int viewMarginTop;
 
     private String header;
+
+    private ImageView mIvIcon,mIvDetail;
+
+    private TextView mTvTitle,mTvUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -270,8 +279,8 @@ public class BookMarkActivity extends BaseActivity
 
     private void getBookmarkList() {
         itemId = REFRESH_TYPE == 0 ? "" : adapter.getLastItemId();
-        header = "Bearer "+ SharedPreferencesUtil.getData(mContext,"accessToken","");
-        Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(header,10, itemId);
+        header = "Bearer " + SharedPreferencesUtil.getData(mContext, "accessToken", "");
+        Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(header, 10, itemId);
         call.enqueue(new Callback<List<Bookmark>>() {
             @Override
             public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
@@ -301,9 +310,45 @@ public class BookMarkActivity extends BaseActivity
 
     private class RecycleViewItemClick implements RecycleAdapter.RecyclerViewItemOnClick {
         @Override
-        public void onItemOnclick(View view, int index) {
+        public void onItemOnclick(View view, int itemPosition) {
             viewMarginTop = view.getTop() + getResources().getDimensionPixelOffset(R.dimen.abc_action_bar_default_height_material);
-            Toast.makeText(mContext, "index " + index + " viewMarginTop " + viewMarginTop, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "position " + itemPosition + " viewMarginTop " + viewMarginTop, Toast.LENGTH_SHORT).show();
         }
     }
+
+
+    public void onShowDetailClick(int position) {
+        showBottomSheetDialog(position);
+    }
+
+    private void showBottomSheetDialog(int position) {
+        BookmarksInfo mBookmarksInfo = mBookmarkList.get(position).getInfo();
+        final BottomSheetDialog dialog = new BottomSheetDialog(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.view_bottom_sheet, null);
+        mIvIcon = (ImageView) view.findViewById(R.id.iv_icon);
+        mTvTitle = (TextView) view.findViewById(R.id.tv_title);
+        mTvUrl = (TextView) view.findViewById(R.id.tv_url);
+        mIvDetail = (ImageView) view.findViewById(R.id.iv_detail);
+
+        Glide.with(mContext)
+                .load(mBookmarksInfo.getIcon())
+                .placeholder(R.mipmap.ic_launcher) // 占位图
+                .error(R.drawable.error) // 加载失败占位图
+//                .diskCacheStrategy(DiskCacheStrategy.NONE)// 禁用掉Glide的缓存功能,默认是打开的
+                .centerCrop() // 取图片的中间区域
+//                .fitCenter()
+                .into(mIvIcon);
+        Glide.with(mContext)
+                .load(mBookmarksInfo.getImg())
+                .placeholder(R.mipmap.ic_launcher)
+                .error(R.drawable.error)
+//                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(mIvDetail);
+        mTvTitle.setText(mBookmarksInfo.getTitle());
+        mTvUrl.setText(mBookmarksInfo.getUrl());
+        dialog.setContentView(view);
+        dialog.show();
+    }
+
+
 }

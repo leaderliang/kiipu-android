@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.bumptech.glide.Glide;
 import com.mycreat.kiipu.R;
+import com.mycreat.kiipu.activity.BookMarkActivity;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.utils.Constants;
@@ -26,14 +27,13 @@ import java.util.List;
 public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemViewHolder> implements View.OnClickListener {
 
 
+    private RecyclerViewItemOnClick mRecyclerViewItemOnClick;
     private List<Bookmark> mBookmarkList = new ArrayList<>();
     private List<Bookmark> mRefreshList = new ArrayList<>();
-    private final Activity mContext;
+    private BookMarkActivity mContext;
     private LayoutInflater mInflater;
     private BookmarksInfo mBookmarkInfo;
     public View moreView;
-
-    private RecyclerViewItemOnClick mRecyclerViewItemOnClick;
 
     public void addItem(List<Bookmark> list) {
         mBookmarkList.clear();
@@ -52,7 +52,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
         return mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).getId() : "";
     }
 
-    public RecycleAdapter(Activity context, List<Bookmark> list) {
+    public RecycleAdapter(BookMarkActivity context, List<Bookmark> list) {
         this.mContext = context;
         this.mInflater = LayoutInflater.from(context);
         this.mBookmarkList = list;
@@ -86,12 +86,10 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
                 .error(R.drawable.error)
 //                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(mItemViewHolder.iv_icon);
-        mItemViewHolder.img_more_info.setTag(position);
         mItemViewHolder.img_more_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                int position = (int) v.getTag();
-                showListPopupWindow(v);
+                showListPopupWindow(v, (int) mItemViewHolder.itemView.getTag());
 
             }
         });
@@ -113,7 +111,6 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
 
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        private final RecyclerViewItemOnClick mRecyViewItemOnClick;
         ImageView iv_item_header, iv_icon, img_more_info;
         TextView tv_title, tv_url;
 
@@ -124,27 +121,23 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
             tv_title = (TextView) view.findViewById(R.id.tv_title);
             tv_url = (TextView) view.findViewById(R.id.tv_url);
             img_more_info = (ImageView) view.findViewById(R.id.img_more_info);
-            this.mRecyViewItemOnClick = mListener;
         }
 
     }
 
-    public void showListPopupWindow(View view) {
+    public void showListPopupWindow(View view, final int position) {
         final ListPopupWindow listPopupWindow = new ListPopupWindow(mContext);
 
         // ListView适配器
         listPopupWindow.setAdapter(
                 new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, Constants.ITEMS));
-
         // 选择item的监听事件
         listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, int pos, long id) {
-//                Toast.makeText(mContext, Constants.ITEMS[pos], Toast.LENGTH_SHORT).show();
                 listPopupWindow.dismiss();
-                Toast.makeText(mContext, "getTop " + parent.getTop(), Toast.LENGTH_SHORT).show();
-
+                mContext.onShowDetailClick(position);
             }
         });
 
@@ -169,17 +162,18 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
 
     @Override
     public void onClick(View v) {
-        if(mRecyclerViewItemOnClick != null){
+        if (mRecyclerViewItemOnClick != null) {
             mRecyclerViewItemOnClick.onItemOnclick(v, (int) v.getTag());
         }
     }
 
-    public void setOnRecyclerItemClick(RecyclerViewItemOnClick mRecyclerViewItemOnClick) {
-        this.mRecyclerViewItemOnClick = mRecyclerViewItemOnClick;
-    }
 
     public interface RecyclerViewItemOnClick {
-        void onItemOnclick(View view, int index);
+        void onItemOnclick(View view, int position);
+    }
+
+    public void setOnRecyclerItemClick(RecyclerViewItemOnClick mRecyclerViewItemOnClick) {
+        this.mRecyclerViewItemOnClick = mRecyclerViewItemOnClick;
     }
 
 }
