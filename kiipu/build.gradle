@@ -16,9 +16,9 @@ android {
     dexOptions {
         preDexLibraries false
         jumboMode true
-        incremental true
+//      incremental false  //  添加会报 （android.dexOptions.incremental property is deprecated and it has no effect on the build process）
         // 增加java堆内存大小(否则会OutOfMemoryError)
-        javaMaxHeapSize "2g"
+        javaMaxHeapSize "4g"
     }
 
     defaultConfig {
