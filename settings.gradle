@@ -1,1 +1,1 @@
-include ':kiipu'
+include ':kiipu',':library','material-spinner-1.0.5'

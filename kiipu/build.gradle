@@ -69,6 +69,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':library')
+    compile project(':material-spinner-1.0.5')
     //声明本地测试的依赖
     testCompile 'junit:junit:4.12'
 
