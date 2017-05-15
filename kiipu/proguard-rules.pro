@@ -110,3 +110,7 @@ public static final ** CREATOR;
     @retrofit2.http.* <methods>;
 }
 -keepattributes Exceptions
+#library
+-keep class com.chad.library.adapter.** {
+    *;
+ }

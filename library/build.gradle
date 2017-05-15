@@ -47,5 +47,7 @@ artifacts {
 }
 
 dependencies {
+
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    provided 'com.android.support:recyclerview-v7:25.3.1'
 }
