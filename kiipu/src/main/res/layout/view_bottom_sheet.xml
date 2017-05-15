@@ -11,7 +11,9 @@
                     android:orientation="horizontal">
 
 
-        <ImageView android:layout_width="25dp" android:layout_height="25dp"
+        <ImageView android:id="@+id/iv_close"
+                   android:layout_width="20dp"
+                   android:layout_height="20dp"
                    android:src="@drawable/view_close"
                    android:layout_margin="10dp"
 
@@ -74,7 +76,8 @@
 
 
         <ImageView
-                android:id="@+id/iv_detail" android:layout_width="match_parent"
+                android:id="@+id/iv_detail"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="10dp"

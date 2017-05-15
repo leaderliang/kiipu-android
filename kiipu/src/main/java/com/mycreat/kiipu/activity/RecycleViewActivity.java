@@ -1,8 +1,7 @@
 package com.mycreat.kiipu.activity;
 
 import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,19 +9,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
-import com.aspsine.swipetoloadlayout.OnRefreshListener;
-import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecycleViewActivity extends BaseActivity implements OnRefreshListener,OnLoadMoreListener  {
+public class RecycleViewActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private List list = new ArrayList();
-    private SwipeToLoadLayout swipeToLoadLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
 
     @Override
@@ -39,18 +35,17 @@ public class RecycleViewActivity extends BaseActivity implements OnRefreshListen
     @Override
     public void initViews() {
         super.initViews();
-        swipeToLoadLayout = (SwipeToLoadLayout) findViewById(R.id.swipeToLoadLayout);
-        recyclerView = (RecyclerView) findViewById(R.id.swipe_target);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_Layout);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        swipeToLoadLayout.setOnRefreshListener(this);
-        swipeToLoadLayout.setOnLoadMoreListener(this);
+        swipeRefreshLayout.setOnRefreshListener(this);
     }
 
     @Override
     public void initData() {
         super.initData();
-        for (int i = 0;i<10;i++){
+        for (int i = 0; i < 10; i++) {
             list.add("test");
         }
         RecyclerViewAdapter mRecyclerViewAdapter = new RecyclerViewAdapter(list);
@@ -101,22 +96,14 @@ public class RecycleViewActivity extends BaseActivity implements OnRefreshListen
 
     }
 
-    @Override
-    public void onLoadMore() {
-        swipeToLoadLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                swipeToLoadLayout.setLoadingMore(false);
-            }
-        }, 2000);
-    }
+
 
     @Override
     public void onRefresh() {
-        swipeToLoadLayout.postDelayed(new Runnable() {
+        swipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                swipeToLoadLayout.setRefreshing(false);
+                swipeRefreshLayout.setRefreshing(false);
 
             }
         }, 2000);

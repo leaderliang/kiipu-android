@@ -99,6 +99,7 @@ public static final ** CREATOR;
 -keepattributes Signature
 
 ##------------------------------------------
+
 # OkHttp3
 -dontwarn okhttp3.logging.**
 -keep class okhttp3.internal.**{*;}
@@ -110,7 +111,7 @@ public static final ** CREATOR;
     @retrofit2.http.* <methods>;
 }
 -keepattributes Exceptions
-#library
+# library
 -keep class com.chad.library.adapter.** {
     *;
  }

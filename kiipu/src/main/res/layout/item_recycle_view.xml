@@ -67,7 +67,7 @@
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="大赛框架发送单卡囧到经发局空皇甫看阿訇扥老空皇甫看阿訇扥老"
+                    android:text="title"
                     android:paddingLeft="10dp"
                     android:layout_toRightOf="@+id/iv_icon"
                     android:maxLines="2"
