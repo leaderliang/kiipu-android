@@ -49,3 +49,19 @@ card_view:cardPreventConrerOverlap |	在V20和之前的版本中添加内边距�
 > DiskCacheStrategy.ALL：缓存SOURC和RESULT；
 
 > 默认采用DiskCacheStrategy.RESULT策略，对于download only操作要使用DiskCacheStrategy.SOURCE。
+
+## SwipeRefreshLayout 
+```
+//改变加载显示的颜色  
+swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.RED);  
+//设置背景颜色  
+swipeRefreshLayout.setBackgroundColor(Color.YELLOW);  
+//设置初始时的大小  
+swipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);  
+//设置监听  
+swipeRefreshLayout.setOnRefreshListener(this);  
+//设置向下拉多少出现刷新  
+swipeRefreshLayout.setDistanceToTriggerSync(100);  
+//设置刷新出现的位置  
+swipeRefreshLayout.setProgressViewEndTarget(false, 200); 
+```

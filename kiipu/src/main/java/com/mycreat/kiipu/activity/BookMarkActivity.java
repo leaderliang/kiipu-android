@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import com.mycreat.kiipu.view.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -151,22 +150,10 @@ public class BookMarkActivity extends BaseActivity
     }
 
     public void initListener() {
-
         setOnClick(mFloatingActionButton);
         // 左侧菜单显示隐藏事件监听，左侧菜单点击选中 selector
         navigationView.setNavigationItemSelectedListener(this);
         swipeToLoadLayout.setOnRefreshListener(this);
-//        swipeToLoadLayout.setOnLoadMoreListener(this);
-
-//        adapter.setOnRecyclerItemClick(new RecycleViewItemClick());
-
-//        swipeToLoadLayout.setOnRefreshListener(new OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                    REFRESH_TYPE = 0; // PULL
-//                    initData();
-//            }
-//            });
     }
 
     public void initData() {
