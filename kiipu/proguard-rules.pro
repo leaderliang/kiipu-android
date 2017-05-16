@@ -15,7 +15,7 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
-
+#代码混淆文件
 -dontusemixedcaseclassnames
 -dontshrink
 -dontoptimize

@@ -31,6 +31,7 @@ import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.utils.Constants;
 import com.mycreat.kiipu.utils.SharedPreferencesUtil;
+import com.mycreat.kiipu.view.MyBottomSheetDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -95,17 +96,12 @@ public class BookMarkActivity extends BaseActivity
         drawer = initViewById(R.id.drawer_layout);
         // left menu
         navigationView = initViewById(R.id.nav_view);
-
         toolbar = initViewById(R.id.toolbar);
-
         mFloatingActionButton = initViewById(R.id.floating_action_bt);
-
         mProgress = initViewById(R.id.pb_view);
-
         swipeToLoadLayout = initViewById(R.id.swipe_refresh_layout);
-
         recyclerView = initViewById(R.id.recyclerView);
-
+        swipeToLoadLayout.setColorSchemeColors(Color.parseColor("#FFB74D"));
         setSupportActionBar(toolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -347,7 +343,7 @@ public class BookMarkActivity extends BaseActivity
 
     private void showBottomSheetDialog(int position) {
         BookmarksInfo mBookmarksInfo = requestData.get(position).getInfo();
-        final BottomSheetDialog dialog = new BottomSheetDialog(this);
+        final MyBottomSheetDialog dialog = new MyBottomSheetDialog(BookMarkActivity.this);
         View view = LayoutInflater.from(this).inflate(R.layout.view_bottom_sheet, null);
         mIvClose = (ImageView) view.findViewById(R.id.iv_close);
         mIvIcon = (ImageView) view.findViewById(R.id.iv_icon);

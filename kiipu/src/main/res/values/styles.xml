@@ -4,10 +4,10 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primary_material_light</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <!-- 状态栏背景-->
-        <item name="colorPrimaryDark">@color/primary_dark_material_light</item>
-        <item name="colorAccent">@color/accent_material_light</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="alertDialogTheme">@style/Theme.AppCompat.Light.Dialog.Alert.Self</item>
     </style>
 
@@ -23,7 +23,8 @@
         <item name="windowNoTitle">true</item>
     </style>
     <!-- appBar 上文字颜色和样式 ThemeOverlay.AppCompat.Dark.ActionBar-->
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat"/>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <!-- toolbar setting -->
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
 
