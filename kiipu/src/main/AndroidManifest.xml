@@ -27,7 +27,7 @@
             android:theme="@style/AppTheme">
 
         <activity android:name=".activity.LoginActivity"
-                   >
+        >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -36,22 +36,22 @@
         </activity>
         <activity
                 android:name=".activity.BookMarkActivity"
-                android:theme="@style/AppTheme.NoActionBar"/>
+                android:theme="@style/AppTheme"/>
         <activity
                 android:name=".activity.MainActivity"
                 android:label="mainActivity"
                 android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".activity.RecycleViewActivity"/>
+        <activity android:name=".activity.RecycleViewActivity"
+                  android:theme="@style/BaseTheme"
+        />
 
-
+        <!-- 友盟 -->
         <meta-data
                 android:name="UMENG_APPKEY"
-                android:value="5911e1a21c5dd0604e000e04">
-        </meta-data>
+                android:value="5911e1a21c5dd0604e000e04"/>
         <meta-data
                 android:name="UMENG_CHANNEL"
-                android:value="Umeng">
-        </meta-data>
+                android:value="Umeng"/>
     </application>
 
 </manifest>

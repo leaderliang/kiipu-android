@@ -1,7 +1,5 @@
 package com.mycreat.kiipu.adapter;
 
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -12,8 +10,6 @@ import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.utils.ImageCallback;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by leaderliang on 2017/3/30.
@@ -51,7 +47,7 @@ public class BookMarkAdapter extends BaseQuickAdapter<Bookmark, com.mycreat.kiip
             @Override
             public void callback(ImageView imageView) {
                 Glide.with(mContext)
-                        .load(mBookmarksInfo.getImg())
+                        .load(mBookmarksInfo.getIcon())
                         .placeholder(R.mipmap.ic_launcher) // 占位图
                         .error(R.drawable.error) // 加载失败占位图
                         .into(imageView);
@@ -68,12 +64,5 @@ public class BookMarkAdapter extends BaseQuickAdapter<Bookmark, com.mycreat.kiip
         }
         holder.setText(R.id.tv_url, url.getHost());
     }
-
-
-//
-//    public String getLastItemId() {
-//        return mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).getId() : "";
-//    }
-
 
 }

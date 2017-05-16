@@ -1,18 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout
+<!--<android.support.v4.widget.SwipeRefreshLayout-->
+        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--xmlns:tools="http://schemas.android.com/tools"-->
+        <!--android:id="@+id/swipe_refresh_Layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--tools:context=".activity.RecycleViewActivity">-->
+
+
+    <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/recyclerView"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:clipToPadding="false"/>-->
+
+
+<!--</android.support.v4.widget.SwipeRefreshLayout>-->
+<android.support.design.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/swipe_refresh_Layout"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activity.RecycleViewActivity">
+        android:fitsSystemWindows="true"
+>
 
-
-    <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
+    <android.support.v4.widget.NestedScrollView
+            android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"/>
-
-
-</android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="wrap_content"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="150dp"
+            app:layout_behavior="@string/bottom_sheet_behavior"
+    >
+        <ImageView android:layout_width="match_parent"
+                   android:layout_height="60dp"
+              android:background="@color/google_blue"
+        />
+        <!-- NestedScrollView里设置你的底部表长什么样的-->
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

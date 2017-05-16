@@ -137,7 +137,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, int pos, long id) {
                 listPopupWindow.dismiss();
-                mContext.onShowDetailClick(position);
+//                mContext.onShowDetailClick(position);
             }
         });
 

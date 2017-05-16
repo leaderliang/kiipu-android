@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialog;
+import com.mycreat.kiipu.view.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -15,15 +15,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.*;
 import android.support.v7.widget.ListPopupWindow;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.*;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -348,9 +344,6 @@ public class BookMarkActivity extends BaseActivity
         }
     }
 
-    public void onShowDetailClick(int position) {
-        showBottomSheetDialog(position);
-    }
 
     private void showBottomSheetDialog(int position) {
         BookmarksInfo mBookmarksInfo = requestData.get(position).getInfo();
@@ -423,5 +416,12 @@ public class BookMarkActivity extends BaseActivity
 
         listPopupWindow.show();
     }
+
+
+
+
+
+
+
 
 }
