@@ -36,7 +36,8 @@
         </activity>
         <activity
                 android:name=".activity.BookMarkActivity"
-                android:theme="@style/AppTheme"/>
+                android:theme="@style/AppTheme.NoActionBar"
+                 />
         <activity
                 android:name=".activity.MainActivity"
                 android:label="mainActivity"
