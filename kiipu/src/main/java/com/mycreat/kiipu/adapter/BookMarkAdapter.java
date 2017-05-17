@@ -1,5 +1,6 @@
 package com.mycreat.kiipu.adapter;
 
+import android.view.View;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -29,19 +30,29 @@ public class BookMarkAdapter extends BaseQuickAdapter<Bookmark, com.mycreat.kiip
     @Override
     protected void convert(com.mycreat.kiipu.utils.BaseViewHolder holder, Bookmark bookmark) {
         final BookmarksInfo mBookmarksInfo = bookmark.getInfo();
-        holder.setImage(R.id.iv_item_header, new ImageCallback() {
-            @Override
-            public void callback(ImageView imageView) {
-                Glide.with(mContext)
-                        .load(mBookmarksInfo.getImg())
-                        .placeholder(R.mipmap.ic_launcher) // 占位图
-                        .error(R.drawable.error) // 加载失败占位图
-//                      .diskCacheStrategy(DiskCacheStrategy.NONE)// 禁用掉Glide的缓存功能,默认是打开的
-                        .centerCrop() // 取图片的中间区域
-//                      .fitCenter()
-                        .into(imageView);
-            }
-        });
+        if(bookmark.getType().equals("1")) {
+            holder.getView(R.id.iv_item_header).setVisibility(View.VISIBLE);
+            holder.getView(R.id.iv_cover).setVisibility(View.VISIBLE);
+            holder.getView(R.id.tv_introduce).setVisibility(View.GONE);
+            holder.setImage(R.id.iv_item_header, new ImageCallback() {
+                @Override
+                public void callback(ImageView imageView) {
+                    Glide.with(mContext)
+                            .load(mBookmarksInfo.getImg())
+                            .placeholder(R.mipmap.ic_launcher) // 占位图
+                            .error(R.drawable.error) // 加载失败占位图
+//                          .diskCacheStrategy(DiskCacheStrategy.NONE)// 禁用掉Glide的缓存功能,默认是打开的
+                            .centerCrop() // 取图片的中间区域
+//                          .fitCenter()
+                            .into(imageView);
+                }
+            });
+        }else{
+            holder.getView(R.id.iv_item_header).setVisibility(View.GONE);
+            holder.getView(R.id.iv_cover).setVisibility(View.GONE);
+            holder.getView(R.id.tv_introduce).setVisibility(View.VISIBLE);
+            holder.setText(R.id.tv_introduce,mBookmarksInfo.getIntroduce());
+        }
 
         holder.setImage(R.id.iv_icon, new ImageCallback() {
             @Override
@@ -64,5 +75,6 @@ public class BookMarkAdapter extends BaseQuickAdapter<Bookmark, com.mycreat.kiip
         }
         holder.setText(R.id.tv_url, url.getHost());
     }
+
 
 }

@@ -30,6 +30,7 @@ import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.utils.Constants;
 import com.mycreat.kiipu.utils.SharedPreferencesUtil;
+import com.mycreat.kiipu.view.CustomAnimation;
 import com.mycreat.kiipu.view.MyBottomSheetDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,7 +39,11 @@ import retrofit2.Response;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ *
+ * 主书签界面
+ * @author leaderliang
+ */
 public class BookMarkActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -136,7 +141,7 @@ public class BookMarkActivity extends BaseActivity
         adapter = new BookMarkAdapter(this);
 //      adapter = new RecycleAdapter(BookMarkActivity.this, mBookmarkList);
         adapter.setOnLoadMoreListener(BookMarkActivity.this, recyclerView);
-        adapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_BOTTOM);
+        adapter.openLoadAnimation(new CustomAnimation());
         adapter.setOnItemChildClickListener(new OnItemChildClickListener());
         recyclerView.setAdapter(adapter);
         recyclerView.addOnItemTouchListener(new OnItemClickListener() {
@@ -246,15 +251,16 @@ public class BookMarkActivity extends BaseActivity
             }
         } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
+//        else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        } else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

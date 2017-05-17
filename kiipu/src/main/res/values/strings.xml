@@ -6,4 +6,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="favorites">收藏夹</string>
+    <string name="all">全部</string>
+    <string name="inbox">收件箱</string>
 </resources>

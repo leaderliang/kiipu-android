@@ -24,10 +24,9 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppBaseTheme">
 
-        <activity android:name=".activity.LoginActivity"
-        >
+        <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -36,15 +35,13 @@
         </activity>
         <activity
                 android:name=".activity.BookMarkActivity"
-                android:theme="@style/AppTheme.NoActionBar"
-                 />
+                android:theme="@style/NoActionBar"/>
         <activity
                 android:name=".activity.MainActivity"
                 android:label="mainActivity"
-                android:theme="@style/AppTheme.NoActionBar"/>
+                android:theme="@style/NoActionBar"/>
         <activity android:name=".activity.RecycleViewActivity"
-                  android:theme="@style/BaseTheme"
-        />
+                  android:theme="@style/AppTheme"/>
 
         <!-- 友盟 -->
         <meta-data

@@ -14,6 +14,10 @@ public class Bookmark {
     @Expose
     @SerializedName("id")
     private String id;
+    /**
+     * type 1 带图片
+     * type 2 带文字
+     */
     @Expose
     @SerializedName("type")
     private String type;

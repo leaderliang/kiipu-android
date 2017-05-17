@@ -22,6 +22,9 @@ public class BookmarksInfo {
     @Expose
     @SerializedName("title")
     private String title;
+    @Expose
+    @SerializedName("note")
+    private String introduce;
 
 
     public String getImg() {
@@ -54,5 +57,13 @@ public class BookmarksInfo {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getIntroduce() {
+        return introduce;
+    }
+
+    public void setIntroduce(String introduce) {
+        this.introduce = introduce;
     }
 }

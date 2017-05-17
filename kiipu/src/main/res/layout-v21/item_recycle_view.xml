@@ -20,14 +20,14 @@
         card_view:cardCornerRadius="30dp"   //圆角 角度
         card_view:cardElevation="5dp    // 阴影的大小，值越大间距越大
     -->
-<RelativeLayout android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white"
->
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+    >
 
         <RelativeLayout android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                android:id="@+id/rl_item_header"
+                        android:id="@+id/rl_item_header"
         >
 
             <ImageView
@@ -35,10 +35,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
             />
-            <ImageView android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:background="@drawable/item_header_dark_bg"
-                       android:layout_alignParentTop="true"
+            <ImageView
+                    android:id="@+id/iv_cover"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/item_header_dark_bg"
+                    android:layout_alignParentTop="true"
             />
 
         </RelativeLayout>
@@ -68,37 +70,39 @@
                     android:maxLines="2"
 
             />
-            <!--<TextView-->
-            <!--android:id="@+id/tv_title_bottom"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="大赛框架发送单风看啊丧胆阿恐慌看基佬阿囧带肯借啊监控皇甫看阿訇扥老"-->
-            <!--android:paddingLeft="10dp"-->
-            <!--android:layout_below="@+id/iv_icon"-->
-            <!--android:maxLines="1"-->
-            <!--android:ellipsize="end"-->
-            <!--/>-->
-        </RelativeLayout>
+
             <TextView
-                    android:id="@+id/tv_url"
+                    android:id="@+id/tv_introduce"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="www.zhihu.com"
-                    android:textColor="@android:color/darker_gray"
-                    android:paddingLeft="8dp"
-                    android:paddingBottom="5dp"
-                    android:layout_below="@+id/rl_item_title"
-                    android:layout_alignParentBottom="true"
-                    android:gravity="bottom"
+                    android:layout_height="100dp"
+                    android:ellipsize="end"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@+id/tv_title"
+                    android:visibility="gone"
             />
-    <ImageView
-            android:id="@+id/img_more_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/item_more_info_icon"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:foreground="?android:attr/selectableItemBackground"
-    />
+
         </RelativeLayout>
+        <TextView
+                android:id="@+id/tv_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="www.zhihu.com"
+                android:textColor="@android:color/darker_gray"
+                android:paddingLeft="8dp"
+                android:paddingBottom="5dp"
+                android:layout_below="@+id/rl_item_title"
+                android:layout_alignParentBottom="true"
+                android:gravity="bottom"
+        />
+        <ImageView
+                android:id="@+id/img_more_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/item_more_info_icon"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:foreground="?android:attr/selectableItemBackground"
+        />
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

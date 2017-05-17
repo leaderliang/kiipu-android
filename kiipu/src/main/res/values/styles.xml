@@ -2,34 +2,53 @@
 
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <!-- actiinbar的属性颜色 -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <!-- 状态栏背景-->
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!-- progress refresh..-->
         <item name="colorAccent">@color/colorAccent</item>
         <item name="alertDialogTheme">@style/Theme.AppCompat.Light.Dialog.Alert.Self</item>
+        <!-- 虚拟键透明，这个虚拟键就是返回和菜单键等 -->
+        <item name="android:windowTranslucentNavigation">true</item>
+        <!-- 可以拉升到顶部状态栏，并且定义顶部状态栏透明 会有一层黑色阴影 -->
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
-    <style name="BaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
     <!-- appBar 上文字颜色和样式 ThemeOverlay.AppCompat.Dark.ActionBar-->
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
     <!-- toolbar setting -->
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="NoActionBar" parent="AppBaseTheme">
+        <!-- 在自定义的Theme中设置成false，就没有系统默认的那个菜单选项了-->
+        <item name="windowActionBar">false</item>
+        <!--  设置这个属性为true则不显示标题了-->
+        <item name="windowNoTitle">true</item>
+    </style>
+
 
     <style name="Theme.AppCompat.Light.Dialog.Alert.Self" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
         <!--修改AlertDialog按钮的颜色-->
         <item name="colorAccent">@color/accent_material_light</item>
+    </style>
+
+    <!-- Application theme. -->
+    <style name="ImageTranslucentTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="ColorTranslucentTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 </resources>
