@@ -3,6 +3,8 @@ package com.mycreat.kiipu.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -49,10 +51,12 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initView();
+
     }
 
-    private void initView() {
+    @Override
+    protected void initViews() {
+        super.initViews();
         mBtSinaAuth = (Button) findViewById(R.id.bt_sina_auth);
         dialog = new ProgressDialog(this);
         mBtSinaAuth.setOnClickListener(this);
@@ -62,6 +66,25 @@ public class LoginActivity extends BaseActivity {
                 platforms.add(e.toSnsPlatform());
             }
         }
+    }
+
+    @Override
+    protected void initData() {
+        super.initData();
+        String accessToken = (String) SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN,"");
+        String userId = (String) SharedPreferencesUtil.getData(mContext,Constants.USER_ID,"");
+        if(!TextUtils.isEmpty(accessToken) && !TextUtils.isEmpty(userId)){
+            ToastUtil.showToastLong(this,"自动登录中，请稍后...");
+            SocializeUtils.safeShowDialog(dialog);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    SocializeUtils.safeCloseDialog(dialog);
+                    startActivity(new Intent(mContext,BookMarkActivity.class));
+                }
+            },3000);
+        }
+
     }
 
     @Override
