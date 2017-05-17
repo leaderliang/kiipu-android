@@ -13,23 +13,23 @@ public class Bookmark {
 
     @Expose
     @SerializedName("id")
-    private String id;
+    public String id;
     /**
      * type 1 带图片
      * type 2 带文字
      */
     @Expose
     @SerializedName("type")
-    private String type;
+    public String type;
     @Expose
     @SerializedName("data")
-    private BookmarksInfo info;
+    public BookmarksInfo info;
     @Expose
     @SerializedName("create_time")
-    private String createOn;
+    public String createOn;
     @Expose
     @SerializedName("update_time")
-    private String updateOn;
+    public String updateOn;
 
 
     public String getId() {

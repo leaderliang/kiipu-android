@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.model.LoginInfo;
+import com.mycreat.kiipu.utils.Constants;
 import com.mycreat.kiipu.utils.SharedPreferencesUtil;
 import com.mycreat.kiipu.utils.ToastUtil;
 import com.umeng.socialize.UMAuthListener;
@@ -142,8 +143,8 @@ public class LoginActivity extends BaseActivity {
                 LoginInfo loginInfo = response.body();
                 String accessToken = loginInfo.accessToken;
                 String userId = loginInfo.userId;
-                SharedPreferencesUtil.saveData(mContext,"accessToken",loginInfo.accessToken);
-                SharedPreferencesUtil.saveData(mContext,"userId",loginInfo.userId);
+                SharedPreferencesUtil.saveData(mContext, Constants.ACCESS_TOKEN,loginInfo.accessToken);
+                SharedPreferencesUtil.saveData(mContext,Constants.USER_ID,loginInfo.userId);
                 Log.e(TAG, "loginInfo userId " + loginInfo.userId +" token "+loginInfo.accessToken);
                 startActivity(new Intent(mContext,BookMarkActivity.class));
             }

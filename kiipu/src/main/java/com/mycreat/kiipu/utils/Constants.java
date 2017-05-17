@@ -8,4 +8,6 @@ package com.mycreat.kiipu.utils;
 public class Constants {
 
     public static final String ITEMS[] = { "查看详情", "移动到", "删除", "分享"};
+    public static final String ACCESS_TOKEN = "accessToken";
+    public static final String USER_ID = "userId";
 }

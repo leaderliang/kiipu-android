@@ -30,7 +30,11 @@ public class RetrofitApi {
      * /bookmarks/:id
      */
     public static final String DELETE_BOOK_MARKS = BASE_URL + "/bookmarks/";
-
+    /**
+     * collections
+     * 参数：header : access_token
+     */
+    public static final String COLLECTION_LIST = BASE_URL + "/collections";
 
 
 }

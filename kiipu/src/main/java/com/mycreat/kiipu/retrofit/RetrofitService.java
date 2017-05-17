@@ -1,6 +1,7 @@
 package com.mycreat.kiipu.retrofit;
 
 import com.mycreat.kiipu.model.Bookmark;
+import com.mycreat.kiipu.model.Collections;
 import com.mycreat.kiipu.model.LoginInfo;
 import retrofit2.Call;
 import retrofit2.http.*;
@@ -28,4 +29,7 @@ public interface RetrofitService {
     @FormUrlEncoded
     @POST(RetrofitApi.BOOK_MARKS_LOGIN)
     Call<LoginInfo> loginBookmarks(@FieldMap Map<String, String> params);
+
+    @GET(RetrofitApi.COLLECTION_LIST)
+    Call<List<Collections>> getCollectionList(@Header("Authorization") String value);
 }

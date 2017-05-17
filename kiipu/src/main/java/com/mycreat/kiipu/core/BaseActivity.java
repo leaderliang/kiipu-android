@@ -13,6 +13,8 @@ import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import com.mycreat.kiipu.R;
+import com.mycreat.kiipu.utils.Constants;
+import com.mycreat.kiipu.utils.SharedPreferencesUtil;
 
 /**
  * Created by leaderliang on 2017/3/30.
@@ -36,6 +38,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private int layoutId;
 
     public KiipuApplication mKiipuApplication;
+
+    public String userAccessToken;
 
     protected abstract int getLayoutId();
 
@@ -63,10 +67,12 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         //过渡动画
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         mKiipuApplication = KiipuApplication.getInstance();
+        getUserAccessToken();
         setContentView(getLayoutId());
         initViews();
         initData();
         initListener();
+
         AppManager.getAppManager().addActivity(this);
 
     }
@@ -121,6 +127,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         if (mProgress != null && mProgress.getVisibility() == View.VISIBLE) {
             linearLayout.setVisibility(View.GONE);
         }
+    }
+
+    public void getUserAccessToken(){
+         userAccessToken = "Bearer " + SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN, "");
     }
 
 }

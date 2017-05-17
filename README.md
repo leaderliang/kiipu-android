@@ -65,3 +65,26 @@ swipeRefreshLayout.setDistanceToTriggerSync(100);
 //设置刷新出现的位置  
 swipeRefreshLayout.setProgressViewEndTarget(false, 200); 
 ```
+
+## FloatingActionButton
+```
+app:fabSize=”normal” 用来定义 FAB 的大小
+app:elevation 　　为空闲状态下的阴影深度，
+app:pressedTranslationZ　　 为按下状态的。
+app:backgroundTint 　　是指定默认的背景颜色 
+app:rippleColor 　　是指定点击时的背景颜色 
+app:border 　　 Width 　border的宽度 
+app:fabSize 　　是指FloatingActionButton的大小，可选normal|mini 
+app:pressedTranslationZ 　　按下去时的z轴的便宜
+```
+
+## NavigationView
+
+/**设置MenuItem的字体颜色**/  
+NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);  
+        navigationView.setNavigationItemSelectedListener(this);  
+        Resources resource=(Resources)getBaseContext().getResources();  
+        ColorStateList csl=(ColorStateList)resource.getColorStateList(R.color.navigation_menu_item_color);  
+navigationView.setItemTextColor(csl);  
+/**设置MenuItem默认选中项**/  
+navigationView.getMenu().getItem(0).setChecked(true);  

@@ -3,6 +3,7 @@ package com.mycreat.kiipu.activity;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,8 +29,9 @@ import com.mycreat.kiipu.adapter.BookMarkAdapter;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
+import com.mycreat.kiipu.model.Collections;
+import com.mycreat.kiipu.utils.CollectionUtils;
 import com.mycreat.kiipu.utils.Constants;
-import com.mycreat.kiipu.utils.SharedPreferencesUtil;
 import com.mycreat.kiipu.view.CustomAnimation;
 import com.mycreat.kiipu.view.MyBottomSheetDialog;
 import retrofit2.Call;
@@ -58,14 +60,10 @@ public class BookMarkActivity extends BaseActivity
     private Toolbar toolbar;
 
     private DrawerLayout drawer;
-
+    //  left menu
     private NavigationView navigationView;
 
     private String itemId = "";
-
-    private List<Bookmark> mBookmarkList = new ArrayList<>();
-
-    private List<Bookmark> requestData = new ArrayList<>();
 
     private BookMarkAdapter adapter;
 
@@ -77,13 +75,17 @@ public class BookMarkActivity extends BaseActivity
 
     private int viewMarginTop;
 
-    private String header;
-
     private ImageView mIvClose, mIvIcon, mIvDetail;
 
     private TextView mTvTitle, mTvUrl;
 
     private final int PAGE_SIZE = 10;
+
+    private List<Bookmark> mBookmarkList = new ArrayList<>();
+
+    private List<Bookmark> requestData = new ArrayList<>();
+
+    private List<Collections> mCollectionList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,17 +102,26 @@ public class BookMarkActivity extends BaseActivity
         drawer = initViewById(R.id.drawer_layout);
         // left menu
         navigationView = initViewById(R.id.nav_view);
+
         toolbar = initViewById(R.id.toolbar);
+
         mFloatingActionButton = initViewById(R.id.floating_action_bt);
+
         mProgress = initViewById(R.id.pb_view);
+
         swipeToLoadLayout = initViewById(R.id.swipe_refresh_layout);
+
         recyclerView = initViewById(R.id.recyclerView);
+
         swipeToLoadLayout.setColorSchemeColors(Color.parseColor("#FFB74D"));
+
         setSupportActionBar(toolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
         drawer.setDrawerListener(toggle);
+
         toggle.syncState();
         //如果可以确定每个item的高度是固定的，设置这个选项可以提高性能
         recyclerView.setHasFixedSize(true);
@@ -118,7 +129,6 @@ public class BookMarkActivity extends BaseActivity
         //LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
         //mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         //mRecyclerView.setLayoutManager(mLinearLayoutManager);
-
 
         /**
          * spanCount，每列或者每行的item个数，设置为1，就是列表样式  该构造函数默认是竖直方向的网格样式,每列或者每行的item个数，设置为1，就是列表样式
@@ -128,7 +138,6 @@ public class BookMarkActivity extends BaseActivity
          * */
         GridLayoutManager mGirdLayoutManager = new GridLayoutManager(this, SPAN_COUNT, GridLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(mGirdLayoutManager);
-
         // 创建 瀑布流
         //StaggeredGridLayoutManager staggeredGridLayoutManager=new StaggeredGridLayoutManager(SPAN_COUNT,OrientationHelper.VERTICAL);
         //mRecyclerView.setLayoutManager(staggeredGridLayoutManager);
@@ -139,11 +148,13 @@ public class BookMarkActivity extends BaseActivity
         //mRecyclerView.setLayoutManager(mLayoutManager);
 
         adapter = new BookMarkAdapter(this);
-//      adapter = new RecycleAdapter(BookMarkActivity.this, mBookmarkList);
+
         adapter.setOnLoadMoreListener(BookMarkActivity.this, recyclerView);
         adapter.openLoadAnimation(new CustomAnimation());
         adapter.setOnItemChildClickListener(new OnItemChildClickListener());
+
         recyclerView.setAdapter(adapter);
+
         recyclerView.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -164,7 +175,10 @@ public class BookMarkActivity extends BaseActivity
     public void initData() {
         //showProgressDialog(this);
         getBookmarkList();
+        getCollectionList();
     }
+
+
 
     @Override
     public void onViewClick(View v) {
@@ -225,12 +239,10 @@ public class BookMarkActivity extends BaseActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -285,23 +297,24 @@ public class BookMarkActivity extends BaseActivity
     private void getBookmarkList() {
         String lastItemId = mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).getId() : "";
         itemId = REFRESH_TYPE == 0 ? "" : lastItemId;
-        header = "Bearer " + SharedPreferencesUtil.getData(mContext, "accessToken", "");
-        Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(header, PAGE_SIZE, itemId);
+        Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(userAccessToken, PAGE_SIZE, itemId);
         call.enqueue(new Callback<List<Bookmark>>() {
             @Override
             public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
-                mBookmarkList = response.body();
-                if (REFRESH_TYPE == 0) {
-                    requestData.clear();
-                    requestData.addAll(mBookmarkList);
-                    adapter.setNewData(mBookmarkList);
-                    swipeToLoadLayout.setRefreshing(false);
-                } else if (REFRESH_TYPE == 1) {// load more
-                    requestData.addAll(mBookmarkList);
-                    adapter.addData(mBookmarkList);
-                    adapter.loadMoreComplete();// 数据加载完成
-                    if (mBookmarkList.size() < PAGE_SIZE) {// 没有更多数据
-                        adapter.loadMoreEnd(false);
+                if(!CollectionUtils.isEmpty(response.body())) {
+                    mBookmarkList = response.body();
+                    if (REFRESH_TYPE == 0) {
+                        requestData.clear();
+                        requestData.addAll(mBookmarkList);
+                        adapter.setNewData(mBookmarkList);
+                        swipeToLoadLayout.setRefreshing(false);
+                    } else if (REFRESH_TYPE == 1) {// load more
+                        requestData.addAll(mBookmarkList);
+                        adapter.addData(mBookmarkList);
+                        adapter.loadMoreComplete();// 数据加载完成
+                        if (mBookmarkList.size() < PAGE_SIZE) {// 没有更多数据
+                            adapter.loadMoreEnd(false);
+                        }
                     }
                 }
                 mProgress.setVisibility(View.GONE);
@@ -320,6 +333,32 @@ public class BookMarkActivity extends BaseActivity
         });
     }
 
+    private void getCollectionList() {
+        Call<List<Collections>> call = mKiipuApplication.mRetrofitService.getCollectionList(userAccessToken);
+        call.enqueue(new Callback<List<Collections>>() {
+
+            @Override
+            public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                mCollectionList = response.body();
+                if(!CollectionUtils.isEmpty(mCollectionList)){
+//                  navigationView.setItemIconTintList(null);//此处是设置menu图标的颜色为图标本身的颜色 设置后图标恢复黑色
+                    navigationView.getMenu().findItem(R.id.nav_share).setTitle(mCollectionList.get(0).collectionName);
+                    for (int i = 1; i < mCollectionList.size(); i++) {
+                        navigationView.getMenu().add(0, R.id.item_collection, 1, mCollectionList.get(i).collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
+                    }
+
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Collections>> call, Throwable t) {
+                Snackbar.make(mFloatingActionButton, "getCollectionList response fail", Snackbar.LENGTH_LONG)
+                        .setDuration(4000)
+                        .show();
+            }
+        });
+    }
 
     private class OnItemChildClickListener implements BaseQuickAdapter.OnItemChildClickListener {
 
