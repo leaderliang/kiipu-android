@@ -35,4 +35,9 @@
         </menu>
     </item>
 
+    <!--<item android:id="@+id/add_collection"-->
+          <!--android:title="添加书签"-->
+          <!--android:icon="@drawable/ic_add" android:orderInCategory="1"-->
+    <!--/>-->
+
 </menu>

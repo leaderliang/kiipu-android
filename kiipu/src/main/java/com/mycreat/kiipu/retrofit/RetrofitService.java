@@ -39,6 +39,12 @@ public interface RetrofitService {
     @GET(RetrofitApi.COLLECTION_LIST)
     Call<List<Collections>> getCollectionList(@Header("Authorization") String value);
 
+    @FormUrlEncoded
+    @POST(RetrofitApi.CREAT_COLLECTION)
+    Call<Collections> creatCollection(@Header("Authorization") String value,
+                                      @Field("name") String collectionName);
+
     @GET(RetrofitApi.USER_INFO)
     Call<UserInfo> getUserInfo(@Header("Authorization") String value);
+
 }

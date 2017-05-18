@@ -33,6 +33,7 @@ import com.mycreat.kiipu.model.Collections;
 import com.mycreat.kiipu.model.UserInfo;
 import com.mycreat.kiipu.utils.CollectionUtils;
 import com.mycreat.kiipu.utils.Constants;
+import com.mycreat.kiipu.utils.ToastUtil;
 import com.mycreat.kiipu.view.CustomAnimation;
 import com.mycreat.kiipu.view.MyBottomSheetDialog;
 import com.mycreat.kiipu.view.RoundImageView;
@@ -347,6 +348,7 @@ public class BookMarkActivity extends BaseActivity
     }
 
     private void getCollectionList() {
+        ToastUtil.showToastShort(navigationView.getMenu().getItem(R.id.item_collection).getSubMenu().size());
         Call<List<Collections>> call = mKiipuApplication.mRetrofitService.getCollectionList(userAccessToken);
         call.enqueue(new Callback<List<Collections>>() {
             @Override
@@ -356,8 +358,11 @@ public class BookMarkActivity extends BaseActivity
 //                  navigationView.setItemIconTintList(null);//此处是设置menu图标的颜色为图标本身的颜色 设置后图标恢复黑色
                     navigationView.getMenu().findItem(R.id.nav_share).setTitle(mCollectionList.get(0).collectionName);
                     for (int i = 1; i < mCollectionList.size(); i++) {
-                        navigationView.getMenu().add(0, R.id.item_collection, 1, mCollectionList.get(i).collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
+                        navigationView.getMenu().add(0, R.id.item_collection, i, mCollectionList.get(i).collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
                     }
+                    // 添加书签按钮
+                    navigationView.getMenu().add(0, R.id.item_collection, mCollectionList.size(), "添加书签").setIcon(getDrawable(R.drawable.ic_add));
+
                 }
             }
 
@@ -398,6 +403,27 @@ public class BookMarkActivity extends BaseActivity
 
     }
 
+    private void creatCollection(String collectionName){
+        Call<Collections> call = mKiipuApplication.mRetrofitService.creatCollection(userAccessToken, collectionName);
+        call.enqueue(new Callback<Collections>() {
+            @Override
+            public void onResponse(Call<Collections> call, Response<Collections> response) {
+                if(response.body() != null){
+                    Collections collection = response.body();
+                    navigationView.getMenu().add(0, R.id.item_collection, 1, collection.collectionName + "")
+                                            .setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Collections> call, Throwable t) {
+                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
+                        .setDuration(2500)
+                        .show();
+            }
+        });
+
+    }
     private class OnItemChildClickListener implements BaseQuickAdapter.OnItemChildClickListener {
 
         @Override
