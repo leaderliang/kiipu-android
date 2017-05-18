@@ -11,7 +11,6 @@ public class RetrofitApi {
      * Base API
      */
     public static final String BASE_URL = "http://api.kiipu.com";
-
     /**
      * POST
      * Login
@@ -35,6 +34,11 @@ public class RetrofitApi {
      * 参数：header : access_token
      */
     public static final String COLLECTION_LIST = BASE_URL + "/collections";
+    /**
+     * user
+     * 参数：header : access_token
+     */
+    public static final String USER_INFO = BASE_URL + "/user";
 
 
 }

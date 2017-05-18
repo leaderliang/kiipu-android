@@ -3,13 +3,17 @@ package com.mycreat.kiipu.retrofit;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.Collections;
 import com.mycreat.kiipu.model.LoginInfo;
+import com.mycreat.kiipu.model.UserInfo;
 import retrofit2.Call;
 import retrofit2.http.*;
 
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * 接口参数封装
+ * @author leaderliang
+ */
 public interface RetrofitService {
 
     @GET(RetrofitApi.BOOK_MARKS_LIST)
@@ -20,7 +24,9 @@ public interface RetrofitService {
     @DELETE(RetrofitApi.DELETE_BOOK_MARKS)
     Call<Bookmark> deleteBookmark(@Query(":id") String id);
 
-    // 当POST请求时，@FormUrlEncoded和@Field简单的表单键值对。两个需要结合使用，否则会报错
+    /**
+     * 当POST请求时，@FormUrlEncoded和@Field简单的表单键值对。两个需要结合使用，否则会报错
+     */
     @FormUrlEncoded
     @POST(RetrofitApi.BOOK_MARKS_LOGIN)
     Call<LoginInfo> loginBookmark(@Field("token") String accessToken,
@@ -32,4 +38,7 @@ public interface RetrofitService {
 
     @GET(RetrofitApi.COLLECTION_LIST)
     Call<List<Collections>> getCollectionList(@Header("Authorization") String value);
+
+    @GET(RetrofitApi.USER_INFO)
+    Call<UserInfo> getUserInfo(@Header("Authorization") String value);
 }

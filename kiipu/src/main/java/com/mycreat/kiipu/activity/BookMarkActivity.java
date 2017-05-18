@@ -3,7 +3,6 @@ package com.mycreat.kiipu.activity;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +18,7 @@ import android.support.v7.widget.*;
 import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.bumptech.glide.Glide;
@@ -30,10 +30,12 @@ import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.model.Collections;
+import com.mycreat.kiipu.model.UserInfo;
 import com.mycreat.kiipu.utils.CollectionUtils;
 import com.mycreat.kiipu.utils.Constants;
 import com.mycreat.kiipu.view.CustomAnimation;
 import com.mycreat.kiipu.view.MyBottomSheetDialog;
+import com.mycreat.kiipu.view.RoundImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -77,7 +79,9 @@ public class BookMarkActivity extends BaseActivity
 
     private ImageView mIvClose, mIvIcon, mIvDetail;
 
-    private TextView mTvTitle, mTvUrl;
+    private RoundImageView mIvUserHeader;
+
+    private TextView mTvTitle, mTvUrl, mTvUserName;
 
     private final int PAGE_SIZE = 10;
 
@@ -86,6 +90,10 @@ public class BookMarkActivity extends BaseActivity
     private List<Bookmark> requestData = new ArrayList<>();
 
     private List<Collections> mCollectionList = new ArrayList<>();
+
+    private UserInfo mUserInfo;
+
+    private View headerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +110,12 @@ public class BookMarkActivity extends BaseActivity
         drawer = initViewById(R.id.drawer_layout);
         // left menu
         navigationView = initViewById(R.id.nav_view);
+
+        headerView = navigationView.getHeaderView(0);
+
+        mIvUserHeader = (RoundImageView) headerView.findViewById(R.id.iv_user_icon);
+
+        mTvUserName = (TextView) headerView.findViewById(R.id.tv_user_name);
 
         toolbar = initViewById(R.id.toolbar);
 
@@ -148,7 +162,6 @@ public class BookMarkActivity extends BaseActivity
         //mRecyclerView.setLayoutManager(mLayoutManager);
 
         adapter = new BookMarkAdapter(this);
-
         adapter.setOnLoadMoreListener(BookMarkActivity.this, recyclerView);
         adapter.openLoadAnimation(new CustomAnimation());
         adapter.setOnItemChildClickListener(new OnItemChildClickListener());
@@ -176,8 +189,8 @@ public class BookMarkActivity extends BaseActivity
         //showProgressDialog(this);
         getBookmarkList();
         getCollectionList();
+        getUserInfo();
     }
-
 
 
     @Override
@@ -326,8 +339,8 @@ public class BookMarkActivity extends BaseActivity
                 mProgress.setVisibility(View.GONE);
                 swipeToLoadLayout.setRefreshing(false);
                 adapter.loadMoreFail();
-                Snackbar.make(mFloatingActionButton, "response fail", Snackbar.LENGTH_LONG)
-                        .setDuration(4000)
+                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
+                        .setDuration(2500)
                         .show();
             }
         });
@@ -336,7 +349,6 @@ public class BookMarkActivity extends BaseActivity
     private void getCollectionList() {
         Call<List<Collections>> call = mKiipuApplication.mRetrofitService.getCollectionList(userAccessToken);
         call.enqueue(new Callback<List<Collections>>() {
-
             @Override
             public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
                 mCollectionList = response.body();
@@ -346,18 +358,44 @@ public class BookMarkActivity extends BaseActivity
                     for (int i = 1; i < mCollectionList.size(); i++) {
                         navigationView.getMenu().add(0, R.id.item_collection, 1, mCollectionList.get(i).collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
                     }
-
-
                 }
             }
 
             @Override
             public void onFailure(Call<List<Collections>> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, "getCollectionList response fail", Snackbar.LENGTH_LONG)
-                        .setDuration(4000)
+                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
+                        .setDuration(2500)
                         .show();
             }
         });
+    }
+
+    private void getUserInfo() {
+        Call<UserInfo> call = mKiipuApplication.mRetrofitService.getUserInfo(userAccessToken);
+        Log.e("getUserInfo","userAccessToken "+userAccessToken);
+        call.enqueue(new Callback<UserInfo>() {
+            @Override
+            public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                mUserInfo = response.body();
+//                mIvUserHeader  mTvUserName
+                if(mUserInfo != null){
+                    Glide.with(mContext)
+                            .load(mUserInfo.avatarUrl)
+                            .placeholder(R.mipmap.ic_launcher) // 占位图
+                            .error(R.drawable.error) // 加载失败占位图
+                            .into(mIvUserHeader);
+                    mTvUserName.setText(mUserInfo.nickName);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserInfo> call, Throwable t) {
+                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
+                        .setDuration(2500)
+                        .show();
+            }
+        });
+
     }
 
     private class OnItemChildClickListener implements BaseQuickAdapter.OnItemChildClickListener {
