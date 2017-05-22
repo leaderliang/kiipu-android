@@ -9,6 +9,7 @@ import com.mycreat.kiipu.activity.BookMarkActivity;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.utils.ImageCallback;
+import com.mycreat.kiipu.view.LeftIvTextView;
 
 import java.net.MalformedURLException;
 
@@ -54,19 +55,21 @@ public class BookMarkAdapter extends BaseQuickAdapter<Bookmark, com.mycreat.kiip
             holder.setText(R.id.tv_introduce,mBookmarksInfo.getIntroduce());
         }
 
-        holder.setImage(R.id.iv_icon, new ImageCallback() {
-            @Override
-            public void callback(ImageView imageView) {
-                Glide.with(mContext)
-                        .load(mBookmarksInfo.getIcon())
-                        .placeholder(R.mipmap.ic_launcher) // 占位图
-                        .error(R.drawable.error) // 加载失败占位图
-                        .into(imageView);
-            }
-        });
+//        holder.setImage(R.id.iv_icon, new ImageCallback() {
+//            @Override
+//            public void callback(ImageView imageView) {
+//                Glide.with(mContext)
+//                        .load(mBookmarksInfo.getIcon())
+//                        .placeholder(R.mipmap.ic_launcher) // 占位图
+//                        .error(R.drawable.error) // 加载失败占位图
+//                        .into(imageView);
+//            }
+//        });
+//        holder.setText(R.id.tv_title, mBookmarksInfo.getTitle());
+        LeftIvTextView mLeftIvTextView = holder.getView(R.id.card_view_title);
+        mLeftIvTextView.loadImage(mBookmarksInfo.getIcon());
+        mLeftIvTextView.setText(mBookmarksInfo.getTitle());
 
-        holder.addOnClickListener(R.id.img_more_info);
-        holder.setText(R.id.tv_title, mBookmarksInfo.getTitle());
         java.net.URL url = null;
         try {
             url = new java.net.URL(mBookmarksInfo.getUrl());
@@ -74,6 +77,7 @@ public class BookMarkAdapter extends BaseQuickAdapter<Bookmark, com.mycreat.kiip
             e.printStackTrace();
         }
         holder.setText(R.id.tv_url, url.getHost());
+        holder.addOnClickListener(R.id.img_more_info);
     }
 
 
