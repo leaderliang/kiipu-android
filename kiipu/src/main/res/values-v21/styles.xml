@@ -1,4 +1,10 @@
 <resources>
+
+    <style name="AppTheme" parent="AppBaseTheme">
+
+        <item name="android:navigationBarColor">@color/accent_material_light</item>
+    </style>
+
     <style name="NoActionBar" parent="AppBaseTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

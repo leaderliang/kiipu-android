@@ -5,10 +5,20 @@ import android.widget.Toast;
 import com.mycreat.kiipu.core.KiipuApplication;
 
 /**
+ * ToastUtil
  * @author leaderliang
  */
 public class ToastUtil {
+
     private static Toast toast = null;
+
+    public static boolean isShow = true;
+
+    private ToastUtil()
+    {
+        /* cannot be instantiated */
+        throw new UnsupportedOperationException("cannot be instantiated");
+    }
 
     private static void showMessage(final Context context, final String message, final int length) {
         try {
@@ -17,7 +27,9 @@ public class ToastUtil {
             } else {
                 toast.setText(message);
             }
-            toast.show();
+            if(isShow) {
+                toast.show();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             toast = null;

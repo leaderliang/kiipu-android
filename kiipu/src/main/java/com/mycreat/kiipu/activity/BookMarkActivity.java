@@ -17,6 +17,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.*;
 import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.transition.Explode;
 import android.util.Log;
 import android.view.*;
@@ -31,9 +33,7 @@ import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.model.Collections;
 import com.mycreat.kiipu.model.UserInfo;
-import com.mycreat.kiipu.utils.CollectionUtils;
-import com.mycreat.kiipu.utils.Constants;
-import com.mycreat.kiipu.utils.ToastUtil;
+import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.CustomAnimation;
 import com.mycreat.kiipu.view.MyBottomSheetDialog;
 import com.mycreat.kiipu.view.RoundImageView;
@@ -96,6 +96,12 @@ public class BookMarkActivity extends BaseActivity
 
     private View headerView;
 
+    private long nowTime;
+
+    public Button finalButton;
+
+    private String inputName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +137,8 @@ public class BookMarkActivity extends BaseActivity
         swipeToLoadLayout.setColorSchemeColors(Color.parseColor("#FFB74D"));
 
         setSupportActionBar(toolbar);
+
+//        navigationView.setItemIconTintList(null);// set menu item default color
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -260,6 +268,7 @@ public class BookMarkActivity extends BaseActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /* menu item click */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -307,7 +316,9 @@ public class BookMarkActivity extends BaseActivity
         getBookmarkList();
     }
 
-
+    /**
+     * 获取书签
+     */
     private void getBookmarkList() {
         String lastItemId = mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).getId() : "";
         itemId = REFRESH_TYPE == 0 ? "" : lastItemId;
@@ -347,8 +358,10 @@ public class BookMarkActivity extends BaseActivity
         });
     }
 
+    /**
+     * 获取书签列表
+     */
     private void getCollectionList() {
-        ToastUtil.showToastShort(navigationView.getMenu().getItem(R.id.item_collection).getSubMenu().size());
         Call<List<Collections>> call = mKiipuApplication.mRetrofitService.getCollectionList(userAccessToken);
         call.enqueue(new Callback<List<Collections>>() {
             @Override
@@ -356,12 +369,55 @@ public class BookMarkActivity extends BaseActivity
                 mCollectionList = response.body();
                 if(!CollectionUtils.isEmpty(mCollectionList)){
 //                  navigationView.setItemIconTintList(null);//此处是设置menu图标的颜色为图标本身的颜色 设置后图标恢复黑色
-                    navigationView.getMenu().findItem(R.id.nav_share).setTitle(mCollectionList.get(0).collectionName);
-                    for (int i = 1; i < mCollectionList.size(); i++) {
+//                  navigationView.getMenu().findItem(R.id.nav_share).setTitle(mCollectionList.get(0).collectionName);
+                    navigationView.getMenu().clear();
+                    for (int i = 0; i < mCollectionList.size(); i++) {
                         navigationView.getMenu().add(0, R.id.item_collection, i, mCollectionList.get(i).collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
                     }
                     // 添加书签按钮
-                    navigationView.getMenu().add(0, R.id.item_collection, mCollectionList.size(), "添加书签").setIcon(getDrawable(R.drawable.ic_add));
+                    navigationView.getMenu().add(0, R.id.item_collection, mCollectionList.size(), "添加书签")
+                            .setIcon(getDrawable(R.drawable.ic_add))
+                            .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                                @Override
+                                public boolean onMenuItemClick(MenuItem item) {
+                                    //@return Return true to consume this click and prevent others from executing
+                                    DialogUtil.showEditDialog(BookMarkActivity.this, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            createCollection(inputName);
+                                        }
+                                    }, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                        }
+                                    }, new TextWatcher() {
+                                        @Override
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                                        }
+
+                                        @Override
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                        }
+
+                                        @Override
+                                        public void afterTextChanged(Editable s) {
+                                            inputName = s.toString().trim();
+                                            if (inputName.isEmpty()) {
+                                                finalButton.setEnabled(false);
+                                            } else {
+                                                finalButton.setEnabled(true);
+                                            }
+                                        }
+                                    }, new DialogUtil.ButtonCallBack() {
+                                        @Override
+                                        public void buttonCallBack(Button btn) {
+                                            finalButton = btn;
+                                            finalButton.setEnabled(false);
+                                        }
+                                    });
+                                    return false;
+                                }
+                            });
 
                 }
             }
@@ -375,6 +431,9 @@ public class BookMarkActivity extends BaseActivity
         });
     }
 
+    /**
+     * 获取用户信息
+     */
     private void getUserInfo() {
         Call<UserInfo> call = mKiipuApplication.mRetrofitService.getUserInfo(userAccessToken);
         Log.e("getUserInfo","userAccessToken "+userAccessToken);
@@ -403,15 +462,16 @@ public class BookMarkActivity extends BaseActivity
 
     }
 
-    private void creatCollection(String collectionName){
+    private void createCollection(String collectionName){
         Call<Collections> call = mKiipuApplication.mRetrofitService.creatCollection(userAccessToken, collectionName);
         call.enqueue(new Callback<Collections>() {
             @Override
             public void onResponse(Call<Collections> call, Response<Collections> response) {
                 if(response.body() != null){
-                    Collections collection = response.body();
-                    navigationView.getMenu().add(0, R.id.item_collection, 1, collection.collectionName + "")
-                                            .setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
+//                    Collections collection = response.body();
+//                    navigationView.getMenu().add(0, R.id.item_collection, 1, collection.collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
+                    ToastUtil.showToastShort("创建成功");
+                    getCollectionList();
                 }
             }
 
@@ -512,7 +572,22 @@ public class BookMarkActivity extends BaseActivity
 
 
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - nowTime) > 2000) {
+                Toast.makeText(this, "再按一次退出程序并清空登录信息", Toast.LENGTH_SHORT).show();
+                nowTime = System.currentTimeMillis();
+            } else {
+                finish();
+               SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
+               SharedPreferencesUtil.removeKey(mContext,Constants.USER_ID);
 
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
 
 

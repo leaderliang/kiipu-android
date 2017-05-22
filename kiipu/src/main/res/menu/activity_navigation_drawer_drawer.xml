@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <!-- single 设定一组菜单项为至多只有一个可被选中 -->
     <group android:checkableBehavior="single">
         <item
                 android:id="@+id/nav_camera"
