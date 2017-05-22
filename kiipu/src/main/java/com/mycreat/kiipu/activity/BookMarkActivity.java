@@ -28,6 +28,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.BookMarkAdapter;
+import com.mycreat.kiipu.core.AppManager;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
@@ -579,9 +580,10 @@ public class BookMarkActivity extends BaseActivity
                 Toast.makeText(this, "再按一次退出程序并清空登录信息", Toast.LENGTH_SHORT).show();
                 nowTime = System.currentTimeMillis();
             } else {
-                finish();
                SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
                SharedPreferencesUtil.removeKey(mContext,Constants.USER_ID);
+               finish();
+               AppManager.getAppManager().appExit(this);
 
             }
             return true;
