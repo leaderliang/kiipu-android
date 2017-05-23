@@ -408,7 +408,7 @@ public class BookMarkActivity extends BaseActivity
                 if(mUserInfo != null){
                     Glide.with(mContext)
                             .load(mUserInfo.avatarUrl)
-                            .placeholder(R.mipmap.ic_launcher) // 占位图
+                            .placeholder(R.drawable.ic_launcher) // 占位图
                             .error(R.drawable.error) // 加载失败占位图
                             .into(mIvUserHeader);
                     mTvUserName.setText(mUserInfo.nickName);
@@ -482,7 +482,7 @@ public class BookMarkActivity extends BaseActivity
         });
         Glide.with(mContext)
                 .load(mBookmarksInfo.getIcon())
-                .placeholder(R.mipmap.ic_launcher) // 占位图
+                .placeholder(R.drawable.ic_launcher) // 占位图
                 .error(R.drawable.error) // 加载失败占位图
 //                .diskCacheStrategy(DiskCacheStrategy.NONE)// 禁用掉Glide的缓存功能,默认是打开的
                 .centerCrop() // 取图片的中间区域
@@ -490,7 +490,7 @@ public class BookMarkActivity extends BaseActivity
                 .into(mIvIcon);
         Glide.with(mContext)
                 .load(mBookmarksInfo.getImg())
-                .placeholder(R.mipmap.ic_launcher)
+                .placeholder(R.drawable.ic_launcher)
                 .error(R.drawable.error)
 //                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(mIvDetail);

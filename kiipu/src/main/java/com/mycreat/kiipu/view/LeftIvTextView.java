@@ -45,7 +45,7 @@ public class LeftIvTextView extends RelativeLayout {
     public void loadImage(String url) {
         Glide.with(mContext)
                 .load(url)
-                .placeholder(R.mipmap.ic_launcher) // 占位图
+                .placeholder(R.drawable.ic_launcher) // 占位图
                 .error(R.drawable.error) // 加载失败占位图
                 .into(mImageView);
     }

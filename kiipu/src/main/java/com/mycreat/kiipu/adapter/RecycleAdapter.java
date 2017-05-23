@@ -74,7 +74,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
         mItemViewHolder.itemView.setTag(position);
         Glide.with(mContext)
                 .load(mBookmarkInfo.getImg())
-                .placeholder(R.mipmap.ic_launcher) // 占位图
+                .placeholder(R.drawable.ic_launcher) // 占位图
                 .error(R.drawable.error) // 加载失败占位图
 //                .diskCacheStrategy(DiskCacheStrategy.NONE)// 禁用掉Glide的缓存功能,默认是打开的
                 .centerCrop() // 取图片的中间区域
@@ -82,7 +82,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ItemView
                 .into(mItemViewHolder.iv_item_header);
         Glide.with(mContext)
                 .load(mBookmarkInfo.getIcon())
-                .placeholder(R.mipmap.ic_launcher)
+                .placeholder(R.drawable.ic_launcher)
                 .error(R.drawable.error)
 //                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(mItemViewHolder.iv_icon);
