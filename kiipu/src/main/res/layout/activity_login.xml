@@ -5,66 +5,71 @@
                 android:id="@+id/activity_main"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/login_bg"
                 android:fitsSystemWindows="true"
                 tools:context="com.mycreat.kiipu.activity.MainActivity">
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:orientation="vertical"
-                  android:gravity="center">
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="kiipu" android:textSize="40dp"
-                  android:layout_marginBottom="60dp"
+        <ImageView android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:background="@mipmap/ic_launcher"
+                   android:layout_centerHorizontal="true"
+                   android:id="@+id/iv_logo"
         />
 
-        <android.support.design.widget.TextInputLayout
-                android:id="@+id/layout_username"
-                app:passwordToggleDrawable="@drawable/ic_password_visibility_selector"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <android.support.design.widget.TextInputEditText
-                    android:id="@+id/editText_username"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
-                    android:inputType="number"
-                    android:maxLines="1"
-                    android:paddingTop="0dp"
-                    tools:text="liang"
-                    android:paddingLeft="20dp"
-            />
-        </android.support.design.widget.TextInputLayout>
-
-
-        <android.support.design.widget.TextInputLayout
-                android:id="@+id/layoutPassword"
-                app:passwordToggleDrawable="@drawable/ic_password_visibility_selector"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <android.support.design.widget.TextInputEditText
-                    android:id="@+id/editTextPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:paddingTop="0dp"
-                    tools:text="*****"
-                    android:paddingLeft="20dp"
-            />
-        </android.support.design.widget.TextInputLayout>
-
-
-        <Button android:id="@+id/bt_sina_auth" android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                android:text="微博登录" android:textColor="@color/white"
-                android:textSize="16sp"
-                android:layout_marginTop="60dp"
+        <TextView android:id="@+id/tv_logo" android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="kiipu"
+                  android:textSize="40dp"
+                  android:textColor="@color/white"
+                  android:layout_marginTop="12dp"
+                  android:layout_marginBottom="130dp"
+                  android:layout_centerHorizontal="true"
+                  android:layout_below="@+id/iv_logo"
         />
-    </LinearLayout>
-    <include
-            layout="@layout/view_loading_progress"
-    />
+
+        <RelativeLayout android:id="@+id/rl_sina_auth"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="48dp"
+                        android:layout_marginRight="48dp"
+                        android:clickable="true"
+                        android:layout_below="@+id/tv_logo"
+                        android:background="@drawable/login_sina_btn_shape"
+                        android:elevation="10dp"
+        >
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?android:attr/selectableItemBackgroundBorderless">
+
+
+                <LinearLayout android:id="@+id/ll_sina_logo" android:layout_width="48dp"
+                              android:layout_height="48dp"
+                              android:layout_centerVertical="true"
+                              android:layout_alignParentLeft="true"
+                              android:layout_marginRight="6dp" android:gravity="center">
+
+                    <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/login_sina_logo"
+
+                    />
+                </LinearLayout>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="新浪微博账号登录"
+                        android:textColor="@color/color_ffb851"
+                        android:textSize="16sp"
+                        android:layout_centerVertical="true"
+                        android:layout_centerInParent="true"
+                />
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+    <include layout="@layout/view_loading_progress"/>
 </RelativeLayout>

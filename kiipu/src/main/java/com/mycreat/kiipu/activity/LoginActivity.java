@@ -7,7 +7,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.BaseActivity;
@@ -36,7 +36,7 @@ public class LoginActivity extends BaseActivity {
 
     private final String TAG = getClass().getSimpleName();
 
-    private Button mBtSinaAuth;
+    private RelativeLayout mRlSinaAuth;
 
     private SHARE_MEDIA[] list = {SHARE_MEDIA.SINA};
 
@@ -44,7 +44,7 @@ public class LoginActivity extends BaseActivity {
 
     private ProgressDialog dialog;
 
-    private String access_token,userName,uid;
+    private String access_token, userName, uid;
 
     private boolean isUseClient = false;
 
@@ -57,10 +57,10 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
-        mBtSinaAuth = (Button) findViewById(R.id.bt_sina_auth);
-        dialog = new ProgressDialog(this);
-        mBtSinaAuth.setOnClickListener(this);
+        mRlSinaAuth = (RelativeLayout) findViewById(R.id.rl_sina_auth);
 
+        dialog = new ProgressDialog(this);
+        mRlSinaAuth.setOnClickListener(this);
         for (SHARE_MEDIA e : list) {
             if (!e.toString().equals(SHARE_MEDIA.GENERIC.toString())) {
                 platforms.add(e.toSnsPlatform());
@@ -71,18 +71,18 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initData() {
         super.initData();
-        String accessToken = (String) SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN,"");
-        String userId = (String) SharedPreferencesUtil.getData(mContext,Constants.USER_ID,"");
-        if(!TextUtils.isEmpty(accessToken) && !TextUtils.isEmpty(userId)){
-            ToastUtil.showToastLong(this,"自动登录中，请稍后...");
+        String accessToken = (String) SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN, "");
+        String userId = (String) SharedPreferencesUtil.getData(mContext, Constants.USER_ID, "");
+        if (!TextUtils.isEmpty(accessToken) && !TextUtils.isEmpty(userId)) {
+            ToastUtil.showToastLong(this, "自动登录中，请稍后...");
             SocializeUtils.safeShowDialog(dialog);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     SocializeUtils.safeCloseDialog(dialog);
-                    startActivity(new Intent(mContext,BookMarkActivity.class));
+                    startActivity(new Intent(mContext, BookMarkActivity.class));
                 }
-            },3000);
+            }, 3000);
         }
 
     }
@@ -95,7 +95,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onViewClick(View v) {
         switch (v.getId()) {
-            case R.id.bt_sina_auth:
+            case R.id.rl_sina_auth:
                 UMShareAPI.get(this).doOauthVerify(this, platforms.get(0).mPlatform, authListener);
                 break;
         }
@@ -113,8 +113,8 @@ public class LoginActivity extends BaseActivity {
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
             SocializeUtils.safeCloseDialog(dialog);
             Toast.makeText(LoginActivity.this, "授权成功", Toast.LENGTH_LONG).show();
-            Log.e(TAG, "onComplete data" + data );
-            if(!isUseClient){
+            Log.e(TAG, "onComplete data" + data);
+            if (!isUseClient) {
                 access_token = data.get("access_token");
                 uid = data.get("uid");
                 requestLogin(access_token, uid);
@@ -136,6 +136,7 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 执行顺序早于 authListener 实现的方法
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -143,9 +144,9 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e(TAG, "onActivityResult " + data );
+        Log.e(TAG, "onActivityResult " + data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
-        if(data != null) {
+        if (data != null) {
             isUseClient = true;
             Bundle bundle = data.getExtras();
             access_token = bundle.getString("access_token");
@@ -166,10 +167,10 @@ public class LoginActivity extends BaseActivity {
                 LoginInfo loginInfo = response.body();
                 String accessToken = loginInfo.accessToken;
                 String userId = loginInfo.userId;
-                SharedPreferencesUtil.saveData(mContext, Constants.ACCESS_TOKEN,loginInfo.accessToken);
-                SharedPreferencesUtil.saveData(mContext,Constants.USER_ID,loginInfo.userId);
-                Log.e(TAG, "loginInfo userId " + loginInfo.userId +" token "+loginInfo.accessToken);
-                startActivity(new Intent(mContext,BookMarkActivity.class));
+                SharedPreferencesUtil.saveData(mContext, Constants.ACCESS_TOKEN, loginInfo.accessToken);
+                SharedPreferencesUtil.saveData(mContext, Constants.USER_ID, loginInfo.userId);
+                Log.e(TAG, "loginInfo userId " + loginInfo.userId + " token " + loginInfo.accessToken);
+                startActivity(new Intent(mContext, BookMarkActivity.class));
             }
 
             @Override

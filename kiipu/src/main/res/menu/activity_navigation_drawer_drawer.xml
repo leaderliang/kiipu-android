@@ -22,12 +22,15 @@
 
     </group>
 
-    <item android:title="@string/favorites" android:id="@+id/item_collection">
+    <item android:title="@string/favorites"
+          android:id="@+id/item_collection"
+           >
         <menu>
             <item
                     android:id="@+id/nav_share"
                     android:icon="@drawable/ic_menu_share"
-                    android:title="Share"/>
+                    android:title="Share"
+                    />
             <!--<item-->
                     <!--android:id="@+id/nav_send"-->
                     <!--android:icon="@drawable/ic_menu_send"-->
@@ -35,9 +38,21 @@
         </menu>
     </item>
 
+
     <!--<item android:id="@+id/add_collection"-->
           <!--android:title="添加书签"-->
-          <!--android:icon="@drawable/ic_add" android:orderInCategory="1"-->
+          <!--android:icon="@drawable/ic_add"
+          android:orderInCategory="1"-->
     <!--/>-->
+
+
+    <!-- 在 menu 菜单中创建多个 group，且为其设置 id，就会有上下两条分割线 -->
+    <!--<group android:checkableBehavior="single"-->
+           <!--android:id="@+id/group_collection">-->
+        <!--<item-->
+                <!--android:id="@+id/lalal"-->
+                <!--android:icon="@drawable/ic_menu_gallery"-->
+                <!--android:title="@string/inbox"/>-->
+    <!--</group>-->
 
 </menu>

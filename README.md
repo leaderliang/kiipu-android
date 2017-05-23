@@ -80,11 +80,31 @@ app:pressedTranslationZ 　　按下去时的z轴的便宜
 
 ## NavigationView
 
-/**设置MenuItem的字体颜色**/  
+## 设置MenuItem的字体颜色 
 NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);  
         navigationView.setNavigationItemSelectedListener(this);  
         Resources resource=(Resources)getBaseContext().getResources();  
         ColorStateList csl=(ColorStateList)resource.getColorStateList(R.color.navigation_menu_item_color);  
 navigationView.setItemTextColor(csl);  
-/**设置MenuItem默认选中项**/  
-navigationView.getMenu().getItem(0).setChecked(true);  
+/设置MenuItem默认选中项/  
+navigationView.getMenu().getItem(0).setChecked(true); 
+
+/此处是设置menu图标的颜色为图标本身的颜色 设置后图标恢复黑色/
+navigationView.setItemIconTintList(null);
+navigationView.getMenu().removeItem(R.id.item_collection);
+
+
+## 获得 LayoutInflater 实例的三种方式
+```
+http://www.cnblogs.com/top5/archive/2012/05/04/2482328.html
+
+LayoutInflater inflater = getLayoutInflater();//调用Activity的getLayoutInflater() 
+LayoutInflater inflater = LayoutInflater.from(context);  
+LayoutInflater inflater =  (LayoutInflater)context.getSystemService
+                              (Context.LAYOUT_INFLATER_SERVICE);
+```
+## 按钮波纹效果的两个属性
+```
+android:background="?android:attr/selectableItemBackground"> // 波纹有边界
+android:background="?android:attr/selectableItemBackgroundBorderless"> // 波纹超出边界，就是一个圆型
+```

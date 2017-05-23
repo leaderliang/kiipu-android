@@ -1,6 +1,5 @@
 package com.mycreat.kiipu.utils;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
@@ -19,7 +18,7 @@ import com.mycreat.kiipu.R;
  */
 public class DialogUtil {
 
-    public interface ButtonCallBack{
+    public interface ButtonCallBack {
         void buttonCallBack(Button bt);
     }
 
@@ -31,7 +30,7 @@ public class DialogUtil {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.view_edit_dialog, null);
         final EditText editText = (EditText) view.findViewById(R.id.et_name);
-        editText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(10)});
+        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
         editText.addTextChangedListener(textWatcher);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("名称");
@@ -43,9 +42,74 @@ public class DialogUtil {
         dialog.show();
         // 获取PositiveButton 重点在这里
         Button btn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        if(callBack != null){
+        if (callBack != null) {
             callBack.buttonCallBack(btn);
         }
+    }
+
+    public static void showCommonDialog(Context context,
+                                        int iconId,
+                                        String title,
+                                        String message,
+                                        String positiveStr,
+                                        String negativeStr,
+                                        boolean isCancelable,
+                                        DialogInterface.OnClickListener positiveButtonClick,
+                                        DialogInterface.OnClickListener negativeButtonClick) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title)
+                .setIcon(iconId)
+                .setMessage(message)
+                .setCancelable(isCancelable)
+                .setPositiveButton(positiveStr, positiveButtonClick)
+                .setNegativeButton(negativeStr, negativeButtonClick);
+        builder.show();
+    }
+
+    public static void showCommonDialog(Context context,
+                                        String title,
+                                        String message,
+                                        String positiveStr,
+                                        String negativeStr,
+                                        boolean isCancelable,
+                                        DialogInterface.OnClickListener positiveButtonClick,
+                                        DialogInterface.OnClickListener negativeButtonClick) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title)
+                .setMessage(message)
+                .setCancelable(isCancelable)
+                .setPositiveButton(positiveStr, positiveButtonClick)
+                .setNegativeButton(negativeStr, negativeButtonClick);
+        builder.show();
+    }
+
+    public static void showCommonDialog(Context context,
+                                        String title,
+                                        String message,
+                                        boolean isCancelable,
+                                        DialogInterface.OnClickListener positiveButtonClick,
+                                        DialogInterface.OnClickListener negativeButtonClick) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title)
+                .setMessage(message)
+                .setCancelable(isCancelable)
+                .setPositiveButton("确定", positiveButtonClick)
+                .setNegativeButton("取消", negativeButtonClick);
+        builder.show();
+    }
+
+    public static void showCommonDialog(Context context,
+                                        String title,
+                                        String message,
+                                        DialogInterface.OnClickListener positiveButtonClick,
+                                        DialogInterface.OnClickListener negativeButtonClick) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("确定", positiveButtonClick)
+                .setNegativeButton("取消", negativeButtonClick);
+        builder.show();
     }
 
 }

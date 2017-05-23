@@ -4,6 +4,10 @@
     <color name="colorPrimaryDark">#FF9800</color>
     <color name="colorAccent">#FFB74D</color>
 
+    <color name="color_ffb851">#ffb851</color>
+    <color name="color_fba300">#fba300</color>
+
+
 
 
     <!-- SwipeToLoadLayout -->

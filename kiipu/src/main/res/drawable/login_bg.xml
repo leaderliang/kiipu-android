@@ -1,0 +1,9 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="rectangle">
+    <!-- startColor 矩形 下面的颜色 -->
+    <gradient
+            android:startColor="@color/color_fba300"
+            android:endColor="@color/color_ffb851"
+            android:type="linear"
+            android:angle="90"/>
+</shape>

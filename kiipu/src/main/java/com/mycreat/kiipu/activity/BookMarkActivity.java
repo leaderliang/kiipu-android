@@ -13,9 +13,9 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.*;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.ListPopupWindow;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -182,7 +182,7 @@ public class BookMarkActivity extends BaseActivity
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 viewMarginTop = view.getTop() + getResources().getDimensionPixelOffset(R.dimen.abc_action_bar_default_height_material);
-                Toast.makeText(mContext, "position " + position + " viewMarginTop " + viewMarginTop, Toast.LENGTH_SHORT).show();
+                ToastUtil.showToastShort("position " + position + " viewMarginTop " + viewMarginTop);
             }
         });
 
@@ -211,25 +211,18 @@ public class BookMarkActivity extends BaseActivity
                         .setAction("Action", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                // Perform anything for the action selected
-                                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                                builder.setTitle("Hello Dialog")
-//                                      .setIcon(R.drawable.ic_menu_camera)
-                                        .setCancelable(false)
-                                        .setMessage("Is this material design?")
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                DialogUtil.showCommonDialog(BookMarkActivity.this, "Hello Dialog", "Is this material design?",
+                                        new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
 
                                             }
-                                        })
-                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        }, new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
 
                                             }
                                         });
-                                builder.show();
                             }
                         })
                         .setActionTextColor(Color.parseColor("#0097A7"))
@@ -369,57 +362,7 @@ public class BookMarkActivity extends BaseActivity
             public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
                 mCollectionList = response.body();
                 if(!CollectionUtils.isEmpty(mCollectionList)){
-//                  navigationView.setItemIconTintList(null);//此处是设置menu图标的颜色为图标本身的颜色 设置后图标恢复黑色
-//                  navigationView.getMenu().findItem(R.id.nav_share).setTitle(mCollectionList.get(0).collectionName);
-                    navigationView.getMenu().clear();
-                    for (int i = 0; i < mCollectionList.size(); i++) {
-                        navigationView.getMenu().add(0, R.id.item_collection, i, mCollectionList.get(i).collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
-                    }
-                    // 添加书签按钮
-                    navigationView.getMenu().add(0, R.id.item_collection, mCollectionList.size(), "添加书签")
-                            .setIcon(getDrawable(R.drawable.ic_add))
-                            .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                                @Override
-                                public boolean onMenuItemClick(MenuItem item) {
-                                    //@return Return true to consume this click and prevent others from executing
-                                    DialogUtil.showEditDialog(BookMarkActivity.this, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            createCollection(inputName);
-                                        }
-                                    }, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    }, new TextWatcher() {
-                                        @Override
-                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                                        }
-
-                                        @Override
-                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                        }
-
-                                        @Override
-                                        public void afterTextChanged(Editable s) {
-                                            inputName = s.toString().trim();
-                                            if (inputName.isEmpty()) {
-                                                finalButton.setEnabled(false);
-                                            } else {
-                                                finalButton.setEnabled(true);
-                                            }
-                                        }
-                                    }, new DialogUtil.ButtonCallBack() {
-                                        @Override
-                                        public void buttonCallBack(Button btn) {
-                                            finalButton = btn;
-                                            finalButton.setEnabled(false);
-                                        }
-                                    });
-                                    return false;
-                                }
-                            });
-
+                    addLeftMenu(mCollectionList,true);
                 }
             }
 
@@ -430,6 +373,25 @@ public class BookMarkActivity extends BaseActivity
                         .show();
             }
         });
+    }
+
+    private void addLeftMenu(List<Collections> mCollectionList, boolean isRequestMenu) {
+        navigationView.getMenu().findItem(R.id.item_collection).setTitle("收藏夹");
+        // the first menu view
+        navigationView.getMenu().findItem(R.id.nav_share).setTitle(mCollectionList.get(0).collectionName);
+        if(isRequestMenu) {
+            for (int i = 1; i < mCollectionList.size(); i++) {
+                navigationView.getMenu().add(0, i, i, mCollectionList.get(i).collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
+            }
+        }else{// 调用调价按钮后，重新设置之前menu的 name
+            for (int i = 1; i < mCollectionList.size(); i++) {
+                navigationView.getMenu().findItem(i).setTitle(mCollectionList.get(i).collectionName).setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
+            }
+        }
+        // 添加书签按钮事件操作
+        navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), "添加书签")
+                .setIcon(getDrawable(R.drawable.ic_add))
+                .setOnMenuItemClickListener(new OnMenuItemClickListener());
     }
 
     /**
@@ -463,16 +425,20 @@ public class BookMarkActivity extends BaseActivity
 
     }
 
+    /**
+     * 创建书签
+     * @param collectionName
+     */
     private void createCollection(String collectionName){
         Call<Collections> call = mKiipuApplication.mRetrofitService.creatCollection(userAccessToken, collectionName);
         call.enqueue(new Callback<Collections>() {
             @Override
             public void onResponse(Call<Collections> call, Response<Collections> response) {
                 if(response.body() != null){
-//                    Collections collection = response.body();
-//                    navigationView.getMenu().add(0, R.id.item_collection, 1, collection.collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
-                    ToastUtil.showToastShort("创建成功");
-                    getCollectionList();
+                    ToastUtil.showToastShort("创建书签成功~");
+                    Collections collection = response.body();
+                    mCollectionList.add(0,collection);
+                    addLeftMenu(mCollectionList,false);
                 }
             }
 
@@ -592,5 +558,45 @@ public class BookMarkActivity extends BaseActivity
     }
 
 
+    private class OnMenuItemClickListener implements MenuItem.OnMenuItemClickListener {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            //@return Return true to consume this click and prevent others from executing
+            DialogUtil.showEditDialog(BookMarkActivity.this, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    createCollection(inputName);
+                }
+            }, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            }, new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    inputName = s.toString().trim();
+                    if (inputName.isEmpty()) {
+                        finalButton.setEnabled(false);
+                    } else {
+                        finalButton.setEnabled(true);
+                    }
+                }
+            }, new DialogUtil.ButtonCallBack() {
+                @Override
+                public void buttonCallBack(Button btn) {
+                    finalButton = btn;
+                    finalButton.setEnabled(false);
+                }
+            });
+            return false;
+        }
+    }
 }

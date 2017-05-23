@@ -3,7 +3,6 @@ package com.mycreat.kiipu.view;
 import android.content.Context;
 import android.text.Layout;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -15,7 +14,7 @@ import com.mycreat.kiipu.R;
 /**
  * Created by liangyanqiao on 2017/5/22.
  */
-public class LeftIvTextView extends RelativeLayout{
+public class LeftIvTextView extends RelativeLayout {
     private Context mContext;
     private ImageView mImageView;
     private TextView mTextView_1;
@@ -59,8 +58,8 @@ public class LeftIvTextView extends RelativeLayout{
             public void onGlobalLayout() {
                 Layout layout = mTextView_1.getLayout();
                 int index = layout.getLineEnd(0);
-                String str1 = string.substring(0, index>string.length() ? string.length() : index);
-                String str2 = string.substring(index>string.length() ? string.length() : index, string.length());
+                String str1 = string.substring(0, index > string.length() ? string.length() : index);
+                String str2 = string.substring(index > string.length() ? string.length() : index, string.length());
                 mTextView_1.setText(str1);
                 mTextView_2.setText(str2);
             }
