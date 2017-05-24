@@ -108,3 +108,7 @@ LayoutInflater inflater =  (LayoutInflater)context.getSystemService
 android:background="?android:attr/selectableItemBackground"> // 波纹有边界
 android:background="?android:attr/selectableItemBackgroundBorderless"> // 波纹超出边界，就是一个圆型
 ```
+
+## Manifest 小属性
+> 设置为true后,当用户按了“最近任务列表”时候,该Task不会出现在最近任务列表中,可达到隐藏应用的目的。
+> android:excludeFromRecents="true" 
