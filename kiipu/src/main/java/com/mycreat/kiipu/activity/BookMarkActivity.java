@@ -3,6 +3,8 @@ package com.mycreat.kiipu.activity;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -40,7 +42,8 @@ import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.CustomAnimation;
 import com.mycreat.kiipu.view.MyBottomSheetDialog;
 import com.mycreat.kiipu.view.RoundImageView;
-import okhttp3.RequestBody;
+import com.mycreat.kiipu.view.customtab.CustomTabActivityHelper;
+import com.mycreat.kiipu.view.customtab.WebViewFallback;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -184,24 +187,19 @@ public class BookMarkActivity extends BaseActivity
         recyclerView.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                viewMarginTop = view.getTop() + getResources().getDimensionPixelOffset(R.dimen.abc_action_bar_default_height_material);
-//                ToastUtil.showToastShort("position " + position + " viewMarginTop " + viewMarginTop);
 
-                // Use a CustomTabsIntent.Builder to configure CustomTabsIntent.
-                // Once ready, call CustomTabsIntent.Builder.build() to create a CustomTabsIntent
-                // and launch the desired Url with CustomTabsIntent.launchUrl()
                 String url = requestData.get(position).getInfo().getUrl();
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                CustomTabsIntent customTabsIntent = builder.build();
-                customTabsIntent.launchUrl(BookMarkActivity.this, Uri.parse(url));
-                // Changes the background color for the omnibox. colorInt is an int
-                // that specifies a Color.
-
-                builder.setToolbarColor(Color.parseColor("#FFB74D"));
+//                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+//                builder.setToolbarColor(Color.parseColor("#FFB74D"));
+//                CustomTabsIntent customTabsIntent = builder.build();
+//                customTabsIntent.launchUrl(BookMarkActivity.this, Uri.parse(url));
+                CustomTabsUtils.showCustomTabsView(BookMarkActivity.this, url);
             }
         });
-
     }
+
+
+
 
     public void initListener() {
         setOnClick(mFloatingActionButton);

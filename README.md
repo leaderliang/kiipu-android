@@ -135,3 +135,6 @@ android:background="?android:attr/selectableItemBackgroundBorderless"> // 波纹
                                                      at com.android.server.ServiceThread.run(ServiceThread.java:46)
 05-25 18:17:20.607 31975-31975/? W/System: ClassLoader referenced unknown path: /data/app/com.mycreat.kiipu-1/lib/arm
 ```
+
+## Android 开发小工具之：Custom Tabs
+> http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0914/3451.html
