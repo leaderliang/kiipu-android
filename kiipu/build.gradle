@@ -92,4 +92,6 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
 
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.15'
+    // Chrome Custom Tabs
+    compile 'com.android.support:customtabs:25.3.1'
 }

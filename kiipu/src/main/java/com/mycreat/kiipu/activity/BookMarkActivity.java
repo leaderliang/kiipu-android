@@ -4,8 +4,10 @@ import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -182,8 +184,20 @@ public class BookMarkActivity extends BaseActivity
         recyclerView.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-                viewMarginTop = view.getTop() + getResources().getDimensionPixelOffset(R.dimen.abc_action_bar_default_height_material);
-                ToastUtil.showToastShort("position " + position + " viewMarginTop " + viewMarginTop);
+//                viewMarginTop = view.getTop() + getResources().getDimensionPixelOffset(R.dimen.abc_action_bar_default_height_material);
+//                ToastUtil.showToastShort("position " + position + " viewMarginTop " + viewMarginTop);
+
+                // Use a CustomTabsIntent.Builder to configure CustomTabsIntent.
+                // Once ready, call CustomTabsIntent.Builder.build() to create a CustomTabsIntent
+                // and launch the desired Url with CustomTabsIntent.launchUrl()
+                String url = requestData.get(position).getInfo().getUrl();
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.launchUrl(BookMarkActivity.this, Uri.parse(url));
+                // Changes the background color for the omnibox. colorInt is an int
+                // that specifies a Color.
+
+                builder.setToolbarColor(Color.parseColor("#FFB74D"));
             }
         });
 
