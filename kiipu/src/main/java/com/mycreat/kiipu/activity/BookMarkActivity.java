@@ -336,6 +336,10 @@ public class BookMarkActivity extends BaseActivity
                             adapter.loadMoreEnd(false);
                         }
                     }
+                }else {
+                    swipeToLoadLayout.setRefreshing(false);
+                    adapter.loadMoreComplete();
+                    adapter.loadMoreEnd(false);
                 }
                 mProgress.setVisibility(View.GONE);
 //              Snackbar.make(mFloatingActionButton, "response success", Snackbar.LENGTH_LONG).setDuration(3000).show();
