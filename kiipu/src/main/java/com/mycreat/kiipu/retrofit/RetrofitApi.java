@@ -33,21 +33,30 @@ public class RetrofitApi {
      * collections
      * 获取用户书签夹
      * 参数：
-     * header（access_token）
+     *      header（access_token）
      */
     public static final String COLLECTION_LIST = BASE_URL + "/collections";
     /**
      * 创建书签
      * 参数：
-     * name
-     * header（access_token）
+     *      name
+     *      header（access_token）
      */
-    public static final String CREAT_COLLECTION = BASE_URL + "/collections";
+    public static final String CREATE_COLLECTION = BASE_URL + "/collections";
     /**
      * user
-     * 参数：header : access_token
+     * 参数：
+     *      header : access_token
      */
     public static final String USER_INFO = BASE_URL + "/user";
+
+    /**
+     * move bookmarks
+     * 参数：
+     *      header : access_token
+     *      collection_id : value
+     */
+    public static final String MOVE_BOOKMARK = BASE_URL + "/bookmarks/";
 
 
 }

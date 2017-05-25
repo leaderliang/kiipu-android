@@ -1,12 +1,9 @@
 package com.mycreat.kiipu.retrofit;
 
-import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.Collections;
 import com.mycreat.kiipu.model.LoginInfo;
 import com.mycreat.kiipu.model.UserInfo;
-import com.mycreat.kiipu.utils.Constants;
-import com.mycreat.kiipu.utils.SharedPreferencesUtil;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -25,7 +22,8 @@ public interface RetrofitService {
                                          @Query("since_id") String id);
 
     @DELETE(RetrofitApi.DELETE_BOOK_MARKS+"{id}")
-    Call<Bookmark> deleteBookmark(@Header("Authorization") String value, @Path("id") String id);
+    Call<Bookmark> deleteBookmark(@Header("Authorization") String value,
+                                  @Path("id") String id);
 
     /**
      * 当POST请求时，@FormUrlEncoded和@Field简单的表单键值对。两个需要结合使用，否则会报错
@@ -43,11 +41,17 @@ public interface RetrofitService {
     Call<List<Collections>> getCollectionList(@Header("Authorization") String value);
 
     @FormUrlEncoded
-    @POST(RetrofitApi.CREAT_COLLECTION)
+    @POST(RetrofitApi.CREATE_COLLECTION)
     Call<Collections> creatCollection(@Header("Authorization") String value,
                                       @Field("name") String collectionName);
 
     @GET(RetrofitApi.USER_INFO)
     Call<UserInfo> getUserInfo(@Header("Authorization") String value);
+
+    @FormUrlEncoded
+    @PATCH(RetrofitApi.MOVE_BOOKMARK+"{bookmark_id}")
+    Call<Bookmark> moveBookmark(@Header("Authorization") String value,
+                                @Path("bookmark_id") String id,
+                                @Field("collection_id") String collectionId);
 
 }

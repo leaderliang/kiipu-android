@@ -3,13 +3,9 @@ package com.mycreat.kiipu.activity;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -17,9 +13,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.*;
 import android.support.v7.widget.ListPopupWindow;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,6 +27,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.BookMarkAdapter;
+import com.mycreat.kiipu.adapter.CollectionListAdapter;
 import com.mycreat.kiipu.core.AppManager;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.model.Bookmark;
@@ -42,8 +38,6 @@ import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.CustomAnimation;
 import com.mycreat.kiipu.view.MyBottomSheetDialog;
 import com.mycreat.kiipu.view.RoundImageView;
-import com.mycreat.kiipu.view.customtab.CustomTabActivityHelper;
-import com.mycreat.kiipu.view.customtab.WebViewFallback;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,8 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * 主书签界面
+ *
  * @author leaderliang
  */
 public class BookMarkActivity extends BaseActivity
@@ -199,8 +193,6 @@ public class BookMarkActivity extends BaseActivity
     }
 
 
-
-
     public void initListener() {
         setOnClick(mFloatingActionButton);
         // 左侧菜单显示隐藏事件监听，左侧菜单点击选中 selector
@@ -333,7 +325,7 @@ public class BookMarkActivity extends BaseActivity
         call.enqueue(new Callback<List<Bookmark>>() {
             @Override
             public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
-                if(!CollectionUtils.isEmpty(response.body())) {
+                if (!CollectionUtils.isEmpty(response.body())) {
                     mBookmarkList = response.body();
                     if (REFRESH_TYPE == 0) {
                         requestData.clear();
@@ -348,7 +340,7 @@ public class BookMarkActivity extends BaseActivity
                             adapter.loadMoreEnd(false);
                         }
                     }
-                }else {
+                } else {
                     swipeToLoadLayout.setRefreshing(false);
                     adapter.loadMoreComplete();
                     adapter.loadMoreEnd(false);
@@ -378,8 +370,8 @@ public class BookMarkActivity extends BaseActivity
             @Override
             public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
                 mCollectionList = response.body();
-                if(!CollectionUtils.isEmpty(mCollectionList)){
-                    addLeftMenu(mCollectionList,true);
+                if (!CollectionUtils.isEmpty(mCollectionList)) {
+                    addLeftMenu(mCollectionList, true);
                 }
             }
 
@@ -398,13 +390,13 @@ public class BookMarkActivity extends BaseActivity
      */
     private void getUserInfo() {
         Call<UserInfo> call = mKiipuApplication.mRetrofitService.getUserInfo(userAccessToken);
-        Log.e("getUserInfo","userAccessToken "+userAccessToken);
+        Log.e("getUserInfo", "userAccessToken " + userAccessToken);
         call.enqueue(new Callback<UserInfo>() {
             @Override
             public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
                 mUserInfo = response.body();
 //                mIvUserHeader  mTvUserName
-                if(mUserInfo != null){
+                if (mUserInfo != null) {
                     Glide.with(mContext)
                             .load(mUserInfo.avatarUrl)
                             .placeholder(R.drawable.ic_launcher) // 占位图
@@ -426,18 +418,19 @@ public class BookMarkActivity extends BaseActivity
 
     /**
      * 创建书签
+     *
      * @param collectionName
      */
-    private void createCollection(String collectionName){
+    private void createCollection(String collectionName) {
         Call<Collections> call = mKiipuApplication.mRetrofitService.creatCollection(userAccessToken, collectionName);
         call.enqueue(new Callback<Collections>() {
             @Override
             public void onResponse(Call<Collections> call, Response<Collections> response) {
-                if(response.body() != null){
+                if (response.body() != null) {
                     ToastUtil.showToastShort("创建书签成功~");
                     Collections collection = response.body();
-                    mCollectionList.add(0,collection);
-                    addLeftMenu(mCollectionList,false);
+                    mCollectionList.add(0, collection);
+                    addLeftMenu(mCollectionList, false);
                 }
             }
 
@@ -471,17 +464,44 @@ public class BookMarkActivity extends BaseActivity
         });
     }
 
+    /**
+     * move bookmark
+     */
+    private void requestMoveBookmark(final String bookmarkId, final int collectionId) {
+        Call<Bookmark> call = mKiipuApplication.mRetrofitService.moveBookmark(userAccessToken, bookmarkId, mCollectionList.get(collectionId).collectionId);
+        call.enqueue(new Callback<Bookmark>() {
+            @Override
+            public void onResponse(Call<Bookmark> call, Response<Bookmark> response) {
+                Snackbar.make(mFloatingActionButton, "移动书签到 " + mCollectionList.get(collectionId).collectionName + " 成功", Snackbar.LENGTH_LONG)
+                        .setDuration(2500)
+                        .show();
+            }
+
+            @Override
+            public void onFailure(Call<Bookmark> call, Throwable t) {
+                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
+                        .setDuration(2500)
+                        .show();
+            }
+        });
+    }
 
 
+    /**
+     * 动态添加左侧菜单
+     *
+     * @param mCollectionList
+     * @param isRequestMenu
+     */
     private void addLeftMenu(List<Collections> mCollectionList, boolean isRequestMenu) {
         navigationView.getMenu().findItem(R.id.item_collection).setTitle("收藏夹");
         // the first menu view
         navigationView.getMenu().findItem(R.id.nav_share).setTitle(mCollectionList.get(0).collectionName);
-        if(isRequestMenu) {
+        if (isRequestMenu) {
             for (int i = 1; i < mCollectionList.size(); i++) {
                 navigationView.getMenu().add(0, i, i, mCollectionList.get(i).collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
             }
-        }else{// 调用调价按钮后，重新设置之前menu的 name
+        } else {// 调用调价按钮后，重新设置之前menu的 name
             for (int i = 1; i < mCollectionList.size(); i++) {
                 navigationView.getMenu().findItem(i).setTitle(mCollectionList.get(i).collectionName).setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
             }
@@ -505,7 +525,7 @@ public class BookMarkActivity extends BaseActivity
     }
 
 
-    private void showBottomSheetDialog(int position) {
+    private void showBookmarkDetailDialog(int position) {
         BookmarksInfo mBookmarksInfo = requestData.get(position).getInfo();
         final MyBottomSheetDialog dialog = new MyBottomSheetDialog(BookMarkActivity.this);
         View view = LayoutInflater.from(this).inflate(R.layout.view_bottom_sheet, null);
@@ -554,12 +574,13 @@ public class BookMarkActivity extends BaseActivity
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
                 listPopupWindow.dismiss();
-                switch (position){
+                switch (position) {
                     case 0:
-                        showBottomSheetDialog(dataPosition);
+                        showBookmarkDetailDialog(dataPosition);
                         break;
                     case 1:
-                        ToastUtil.showToastShort("移动功能正在后期筹备中...");
+//                        ToastUtil.showToastShort("移动功能正在后期筹备中...");
+                        showRemoveBookmarkDialog(dataPosition);
                         break;
                     case 2:
                         requestDeleteItem(dataPosition);
@@ -590,6 +611,26 @@ public class BookMarkActivity extends BaseActivity
         listPopupWindow.show();
     }
 
+    private void showRemoveBookmarkDialog(final int dataPosition) {
+        final MyBottomSheetDialog dialog = new MyBottomSheetDialog(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_layout, null);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        CollectionListAdapter adapter = new CollectionListAdapter(this);
+        adapter.addData(mCollectionList);
+        recyclerView.setAdapter(adapter);
+        recyclerView.addOnItemTouchListener(new OnItemClickListener() {
+            @Override
+            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
+                dialog.dismiss();
+                requestMoveBookmark(requestData.get(dataPosition).id, position);
+            }
+        });
+        dialog.setContentView(view);
+        dialog.show();
+
+    }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -598,10 +639,10 @@ public class BookMarkActivity extends BaseActivity
                 Toast.makeText(this, "再按一次退出程序并清空登录信息", Toast.LENGTH_SHORT).show();
                 nowTime = System.currentTimeMillis();
             } else {
-               SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
-               SharedPreferencesUtil.removeKey(mContext,Constants.USER_ID);
-               finish();
-               AppManager.getAppManager().appExit(this);
+                SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
+                SharedPreferencesUtil.removeKey(mContext, Constants.USER_ID);
+                finish();
+                AppManager.getAppManager().appExit(this);
 
             }
             return true;

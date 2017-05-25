@@ -13,7 +13,7 @@ import com.google.gson.annotations.SerializedName;
 public class UserInfo {
 
     @Expose
-    @SerializedName("_id")
+    @SerializedName("id")
     public String userId;
     @Expose
     @SerializedName("username")

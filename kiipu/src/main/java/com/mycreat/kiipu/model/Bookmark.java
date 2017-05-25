@@ -25,6 +25,9 @@ public class Bookmark {
     @SerializedName("data")
     public BookmarksInfo info;
     @Expose
+    @SerializedName("collection_id")
+    public String collectionId;
+    @Expose
     @SerializedName("create_time")
     public String createOn;
     @Expose
@@ -54,6 +57,14 @@ public class Bookmark {
 
     public void setInfo(BookmarksInfo info) {
         this.info = info;
+    }
+
+    public String getCollectionId() {
+        return collectionId;
+    }
+
+    public void setCollectionId(String collectionId) {
+        this.collectionId = collectionId;
     }
 
     public String getCreateOn() {

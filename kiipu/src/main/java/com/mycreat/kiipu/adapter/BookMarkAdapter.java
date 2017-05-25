@@ -40,11 +40,11 @@ public class BookMarkAdapter extends BaseQuickAdapter<Bookmark, com.mycreat.kiip
                 public void callback(ImageView imageView) {
                     Glide.with(mContext)
                             .load(mBookmarksInfo.getImg())
-                            .placeholder(R.drawable.ic_launcher) // 占位图
+                            .placeholder(R.drawable.error) // 占位图
                             .error(R.drawable.error) // 加载失败占位图
 //                          .diskCacheStrategy(DiskCacheStrategy.NONE)// 禁用掉Glide的缓存功能,默认是打开的
                             .centerCrop() // 取图片的中间区域
-//                          .fitCenter()
+//                            .fitCenter()
                             .into(imageView);
                 }
             });

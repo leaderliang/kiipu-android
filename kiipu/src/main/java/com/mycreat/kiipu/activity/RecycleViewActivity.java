@@ -62,7 +62,7 @@ public class RecycleViewActivity extends BaseActivity {
     private void showBSDialog() {
         final BottomSheetDialog dialog = new BottomSheetDialog(this);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_layout, null);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.bs_rv);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         SimpleStringRecyclerViewAdapter adapter = new SimpleStringRecyclerViewAdapter(this);
         adapter.setItemClickListener(new SimpleStringRecyclerViewAdapter.ItemClickListener() {
@@ -94,13 +94,11 @@ public class RecycleViewActivity extends BaseActivity {
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
 
-            public final ImageView mImageView;
             public final TextView mTextView;
 
             public ViewHolder(View view) {
                 super(view);
-                mImageView = (ImageView) view.findViewById(R.id.avatar);
-                mTextView = (TextView) view.findViewById(R.id.tv);
+                mTextView = (TextView) view.findViewById(R.id.tv_collection_name);
             }
 
 

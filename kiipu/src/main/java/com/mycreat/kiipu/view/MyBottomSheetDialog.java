@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.ViewGroup;
 
 /**
+ * 解决黑色背景通知栏问题
  * Created by leaderliang on 2017/5/16.
  */
 public class MyBottomSheetDialog extends BottomSheetDialog {

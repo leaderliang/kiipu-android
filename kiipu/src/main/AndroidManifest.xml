@@ -44,7 +44,7 @@
         <activity android:name=".activity.RecycleViewActivity"
                   android:theme="@style/AppTheme"/>
         <activity android:name=".activity.WebViewActivity"
-                  />
+        />
 
         <!-- 友盟 -->
         <meta-data
