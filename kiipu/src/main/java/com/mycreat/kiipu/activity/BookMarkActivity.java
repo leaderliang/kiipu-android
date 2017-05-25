@@ -38,6 +38,7 @@ import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.CustomAnimation;
 import com.mycreat.kiipu.view.MyBottomSheetDialog;
 import com.mycreat.kiipu.view.RoundImageView;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -375,24 +376,6 @@ public class BookMarkActivity extends BaseActivity
         });
     }
 
-    private void addLeftMenu(List<Collections> mCollectionList, boolean isRequestMenu) {
-        navigationView.getMenu().findItem(R.id.item_collection).setTitle("收藏夹");
-        // the first menu view
-        navigationView.getMenu().findItem(R.id.nav_share).setTitle(mCollectionList.get(0).collectionName);
-        if(isRequestMenu) {
-            for (int i = 1; i < mCollectionList.size(); i++) {
-                navigationView.getMenu().add(0, i, i, mCollectionList.get(i).collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
-            }
-        }else{// 调用调价按钮后，重新设置之前menu的 name
-            for (int i = 1; i < mCollectionList.size(); i++) {
-                navigationView.getMenu().findItem(i).setTitle(mCollectionList.get(i).collectionName).setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
-            }
-        }
-        // 添加书签按钮事件操作
-        navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), "添加书签")
-                .setIcon(getDrawable(R.drawable.ic_add))
-                .setOnMenuItemClickListener(new OnMenuItemClickListener());
-    }
 
     /**
      * 获取用户信息
@@ -449,8 +432,50 @@ public class BookMarkActivity extends BaseActivity
                         .show();
             }
         });
-
     }
+
+    /**
+     * delete item
+     */
+    private void requestDeleteItem(final int position) {
+        Call<Bookmark> call = mKiipuApplication.mRetrofitService.deleteBookmark(userAccessToken, requestData.get(position).id);
+        call.enqueue(new Callback<Bookmark>() {
+            @Override
+            public void onResponse(Call<Bookmark> call, Response<Bookmark> response) {
+                requestData.remove(position);
+                adapter.remove(position);
+            }
+
+            @Override
+            public void onFailure(Call<Bookmark> call, Throwable t) {
+                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
+                        .setDuration(2500)
+                        .show();
+            }
+        });
+    }
+
+
+
+    private void addLeftMenu(List<Collections> mCollectionList, boolean isRequestMenu) {
+        navigationView.getMenu().findItem(R.id.item_collection).setTitle("收藏夹");
+        // the first menu view
+        navigationView.getMenu().findItem(R.id.nav_share).setTitle(mCollectionList.get(0).collectionName);
+        if(isRequestMenu) {
+            for (int i = 1; i < mCollectionList.size(); i++) {
+                navigationView.getMenu().add(0, i, i, mCollectionList.get(i).collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
+            }
+        }else{// 调用调价按钮后，重新设置之前menu的 name
+            for (int i = 1; i < mCollectionList.size(); i++) {
+                navigationView.getMenu().findItem(i).setTitle(mCollectionList.get(i).collectionName).setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
+            }
+        }
+        // 添加书签按钮事件操作
+        navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), "添加书签")
+                .setIcon(getDrawable(R.drawable.ic_add))
+                .setOnMenuItemClickListener(new OnMenuItemClickListener());
+    }
+
     private class OnItemChildClickListener implements BaseQuickAdapter.OnItemChildClickListener {
 
         @Override
@@ -501,7 +526,7 @@ public class BookMarkActivity extends BaseActivity
     }
 
 
-    public void showListPopupWindow(View view, final int position) {
+    public void showListPopupWindow(View view, final int dataPosition) {
         final ListPopupWindow listPopupWindow = new ListPopupWindow(mContext);
 
         // ListView适配器
@@ -511,9 +536,22 @@ public class BookMarkActivity extends BaseActivity
         listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(final AdapterView<?> parent, View view, int pos, long id) {
+            public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
                 listPopupWindow.dismiss();
-                showBottomSheetDialog(position);
+                switch (position){
+                    case 0:
+                        showBottomSheetDialog(dataPosition);
+                        break;
+                    case 1:
+                        ToastUtil.showToastShort("移动功能正在后期筹备中...");
+                        break;
+                    case 2:
+                        requestDeleteItem(dataPosition);
+                        break;
+                    case 3:
+                        ToastUtil.showToastShort("分享功能正在后期筹备中...");
+                        break;
+                }
             }
         });
 
@@ -535,8 +573,6 @@ public class BookMarkActivity extends BaseActivity
 
         listPopupWindow.show();
     }
-
-
 
 
     @Override

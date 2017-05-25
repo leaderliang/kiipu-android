@@ -8,6 +8,8 @@ import android.view.Display;
 import android.view.WindowManager;
 import com.mycreat.kiipu.retrofit.RetrofitClient;
 import com.mycreat.kiipu.retrofit.RetrofitService;
+import com.mycreat.kiipu.utils.Constants;
+import com.mycreat.kiipu.utils.SharedPreferencesUtil;
 import com.umeng.socialize.Config;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.common.QueuedWork;
@@ -33,6 +35,7 @@ public class KiipuApplication extends MultiDexApplication {
     private static int DIMEN_DPI = -1;
 
     public static RetrofitService mRetrofitService;
+
 
     //各个平台的配置，建议放在全局Application或者程序入口
     {
