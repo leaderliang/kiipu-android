@@ -13,12 +13,13 @@ import com.mycreat.kiipu.view.customtab.WebViewFallback;
 
 public class CustomTabsUtils {
 
-    public static void showCustomTabsView(Activity context, String url) {
+    public static void showCustomTabsView(Activity context, String url, String viewTheme) {
         CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
         // 修改 ActionBar 的颜色
-        intentBuilder.setToolbarColor(Color.parseColor("#FFB74D"));
+        intentBuilder.setToolbarColor(Color.parseColor("#" + viewTheme));
         // 自定义bottom bar 颜色
         intentBuilder.setSecondaryToolbarColor(Color.parseColor("#d32f2f"));
+
         // 添加一个分享按钮
         String shareLabel = "分享";
         Bitmap icon = BitmapFactory.decodeResource(context.getResources(), android.R.drawable.ic_menu_share);

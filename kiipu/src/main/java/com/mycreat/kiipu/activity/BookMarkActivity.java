@@ -95,7 +95,7 @@ public class BookMarkActivity extends BaseActivity
 
     public Button finalButton;
 
-    private String inputName, collectionId = Constants.ALL_COLLECTION;
+    private String inputName, collectionId = Constants.ALL_COLLECTION, viewTheme = "FFB74D";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,13 +177,14 @@ public class BookMarkActivity extends BaseActivity
         recyclerView.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-
-                String url = requestData.get(position).getInfo().getUrl();
+                Bookmark bookmark = requestData.get(position);
+                viewTheme = bookmark.viewTheme;
+                String url = bookmark.info.getUrl();
 //                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
 //                builder.setToolbarColor(Color.parseColor("#FFB74D"));
 //                CustomTabsIntent customTabsIntent = builder.build();
 //                customTabsIntent.launchUrl(BookMarkActivity.this, Uri.parse(url));
-                CustomTabsUtils.showCustomTabsView(BookMarkActivity.this, url);
+                CustomTabsUtils.showCustomTabsView(BookMarkActivity.this, url, viewTheme);
             }
         });
     }
@@ -320,7 +321,7 @@ public class BookMarkActivity extends BaseActivity
      * 获取书签
      */
     private void getBookmarkList() {
-        String lastItemId = mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).getId() : "";
+        String lastItemId = mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).id : "";
         itemId = REFRESH_TYPE == 0 ? "" : lastItemId;
         Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(userAccessToken, PAGE_SIZE, itemId, collectionId);
         call.enqueue(new Callback<List<Bookmark>>() {
@@ -538,7 +539,7 @@ public class BookMarkActivity extends BaseActivity
 
 
     private void showBookmarkDetailDialog(int position) {
-        BookmarksInfo mBookmarksInfo = requestData.get(position).getInfo();
+        BookmarksInfo mBookmarksInfo = requestData.get(position).info;
         final MyBottomSheetDialog dialog = new MyBottomSheetDialog(BookMarkActivity.this);
         View view = LayoutInflater.from(this).inflate(R.layout.view_bottom_sheet, null);
         mIvClose = (ImageView) view.findViewById(R.id.iv_close);

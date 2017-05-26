@@ -74,7 +74,6 @@ public class LoginActivity extends BaseActivity {
         String accessToken = (String) SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN, "");
         String userId = (String) SharedPreferencesUtil.getData(mContext, Constants.USER_ID, "");
         if (!TextUtils.isEmpty(accessToken) && !TextUtils.isEmpty(userId)) {
-            ToastUtil.showToastLong(this, "自动登录中，请稍后...");
             SocializeUtils.safeShowDialog(dialog);
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -82,7 +81,7 @@ public class LoginActivity extends BaseActivity {
                     SocializeUtils.safeCloseDialog(dialog);
                     startActivity(new Intent(mContext, BookMarkActivity.class));
                 }
-            }, 3000);
+            }, 300);
         }
 
     }

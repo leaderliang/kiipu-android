@@ -28,6 +28,9 @@ public class Bookmark {
     @SerializedName("collection_id")
     public String collectionId;
     @Expose
+    @SerializedName("theme")
+    public String viewTheme;
+    @Expose
     @SerializedName("create_time")
     public String createOn;
     @Expose
@@ -35,51 +38,4 @@ public class Bookmark {
     public String updateOn;
 
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public BookmarksInfo getInfo() {
-        return info;
-    }
-
-    public void setInfo(BookmarksInfo info) {
-        this.info = info;
-    }
-
-    public String getCollectionId() {
-        return collectionId;
-    }
-
-    public void setCollectionId(String collectionId) {
-        this.collectionId = collectionId;
-    }
-
-    public String getCreateOn() {
-        return createOn;
-    }
-
-    public void setCreateOn(String createOn) {
-        this.createOn = createOn;
-    }
-
-    public String getUpdateOn() {
-        return updateOn;
-    }
-
-    public void setUpdateOn(String updateOn) {
-        this.updateOn = updateOn;
-    }
 }

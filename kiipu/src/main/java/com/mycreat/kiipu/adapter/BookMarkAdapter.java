@@ -32,8 +32,8 @@ public class BookMarkAdapter extends BaseQuickAdapter<Bookmark, com.mycreat.kiip
 
     @Override
     protected void convert(com.mycreat.kiipu.utils.BaseViewHolder holder, Bookmark bookmark) {
-        final BookmarksInfo mBookmarksInfo = bookmark.getInfo();
-        if(bookmark.getType().equals("1")) {
+        final BookmarksInfo mBookmarksInfo = bookmark.info;
+        if(bookmark.type.equals("1")) {
             holder.getView(R.id.iv_item_header).setVisibility(View.VISIBLE);
             holder.getView(R.id.iv_cover).setVisibility(View.VISIBLE);
             holder.getView(R.id.tv_introduce).setVisibility(View.GONE);
