@@ -349,11 +349,10 @@ public class BookMarkActivity extends BaseActivity
                         requestData.clear();
                         mBookmarkList.clear();
                         adapter.setNewData(mBookmarkList);
-                        Snackbar.make(mFloatingActionButton, "暂时还没有书签哦~", Snackbar.LENGTH_LONG).setDuration(3000).show();
+                        Snackbar.make(mFloatingActionButton, "暂时还没有书签呦~", Snackbar.LENGTH_LONG).setDuration(3000).show();
                     }
                 }
                 mProgress.setVisibility(View.GONE);
-//              Snackbar.make(mFloatingActionButton, "response success", Snackbar.LENGTH_LONG).setDuration(3000).show();
             }
 
             @Override
