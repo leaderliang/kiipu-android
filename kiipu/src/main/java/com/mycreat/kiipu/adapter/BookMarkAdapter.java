@@ -1,7 +1,9 @@
 package com.mycreat.kiipu.adapter;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.mycreat.kiipu.R;
@@ -45,6 +47,7 @@ public class BookMarkAdapter extends BaseQuickAdapter<Bookmark, com.mycreat.kiip
 //                          .diskCacheStrategy(DiskCacheStrategy.NONE)// 禁用掉Glide的缓存功能,默认是打开的
                             .centerCrop() // 取图片的中间区域
 //                            .fitCenter()
+                            .dontAnimate()//停止动画，解决加载图片变小问题
                             .into(imageView);
                 }
             });
@@ -55,17 +58,6 @@ public class BookMarkAdapter extends BaseQuickAdapter<Bookmark, com.mycreat.kiip
             holder.setText(R.id.tv_introduce,mBookmarksInfo.getIntroduce());
         }
 
-//        holder.setImage(R.id.iv_icon, new ImageCallback() {
-//            @Override
-//            public void callback(ImageView imageView) {
-//                Glide.with(mContext)
-//                        .load(mBookmarksInfo.getIcon())
-//                        .placeholder(R.mipmap.ic_launcher) // 占位图
-//                        .error(R.drawable.error) // 加载失败占位图
-//                        .into(imageView);
-//            }
-//        });
-//        holder.setText(R.id.tv_title, mBookmarksInfo.getTitle());
         LeftIvTextView mLeftIvTextView = holder.getView(R.id.card_view_title);
         mLeftIvTextView.loadImage(mBookmarksInfo.getIcon());
         mLeftIvTextView.setText(mBookmarksInfo.getTitle());
