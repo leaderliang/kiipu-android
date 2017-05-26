@@ -288,6 +288,8 @@ public class BookMarkActivity extends BaseActivity
         } else if (id == R.id.nav_inbox) {/* all bookmarks  传0  或者不传 collection_id */
             collectionId = Constants.INBOX;
             getBookmarkList();
+        }else{
+            swipeToLoadLayout.setRefreshing(false);
         }
 //        else if (id == R.id.nav_slideshow) {
 //        } else if (id == R.id.nav_manage) {
@@ -347,6 +349,7 @@ public class BookMarkActivity extends BaseActivity
                         requestData.clear();
                         mBookmarkList.clear();
                         adapter.setNewData(mBookmarkList);
+                        Snackbar.make(mFloatingActionButton, "暂时还没有书签哦~", Snackbar.LENGTH_LONG).setDuration(3000).show();
                     }
                 }
                 mProgress.setVisibility(View.GONE);
