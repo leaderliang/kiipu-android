@@ -3,11 +3,11 @@
     <!-- single 设定一组菜单项为至多只有一个可被选中 -->
     <group android:checkableBehavior="single">
         <item
-                android:id="@+id/nav_camera"
+                android:id="@+id/nav_all_bookmark"
                 android:icon="@drawable/ic_menu_camera"
                 android:title="@string/all"/>
         <item
-                android:id="@+id/nav_gallery"
+                android:id="@+id/nav_inbox"
                 android:icon="@drawable/ic_menu_gallery"
                 android:title="@string/inbox"/>
 

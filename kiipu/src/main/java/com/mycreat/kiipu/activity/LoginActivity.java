@@ -106,13 +106,13 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void onStart(SHARE_MEDIA platform) {
             SocializeUtils.safeShowDialog(dialog);
-            Toast.makeText(LoginActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
+//            ToastUtil.showToastShort("授权开始");
         }
 
         @Override
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
             SocializeUtils.safeCloseDialog(dialog);
-            Toast.makeText(LoginActivity.this, "授权成功", Toast.LENGTH_LONG).show();
+//            ToastUtil.showToastShort("授权成功");
             Log.e(TAG, "onComplete data" + data);
             if (!isUseClient) {
                 access_token = data.get("access_token");
@@ -124,13 +124,13 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void onError(SHARE_MEDIA platform, int action, Throwable t) {
             SocializeUtils.safeCloseDialog(dialog);
-            Toast.makeText(LoginActivity.this, "授权失败：" + t.getMessage(), Toast.LENGTH_LONG).show();
+            ToastUtil.showToastShort("授权失败：" + t.getMessage());
         }
 
         @Override
         public void onCancel(SHARE_MEDIA platform, int action) {
             SocializeUtils.safeCloseDialog(dialog);
-            Toast.makeText(LoginActivity.this, "授权取消", Toast.LENGTH_LONG).show();
+            ToastUtil.showToastShort("授权取消");
         }
     };
 

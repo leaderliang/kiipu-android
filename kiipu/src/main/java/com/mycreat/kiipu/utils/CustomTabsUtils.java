@@ -32,8 +32,8 @@ public class CustomTabsUtils {
         intentBuilder.setCloseButtonIcon(BitmapFactory.decodeResource(
                 context.getResources(), R.drawable.ic_arrow_back));
         //自定义 Activity 转场 动画
-        intentBuilder.setStartAnimations(context, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-        intentBuilder.setExitAnimations(context, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        intentBuilder.setStartAnimations(context, android.R.anim.fade_in, android.R.anim.fade_out);
+        intentBuilder.setExitAnimations(context, android.R.anim.fade_in, android.R.anim.fade_out);
         // 最后调用助手类 CustomTabActivityHelper 的 openCustomTab 函数来打开一个网址
         CustomTabActivityHelper.openCustomTab(context, intentBuilder.build(), Uri.parse(url), new
                 WebViewFallback());

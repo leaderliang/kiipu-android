@@ -1,10 +1,7 @@
 package com.mycreat.kiipu.activity;
 
-import android.app.ActivityOptions;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -18,7 +15,6 @@ import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.transition.Explode;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -101,7 +97,7 @@ public class BookMarkActivity extends BaseActivity
 
     public Button finalButton;
 
-    private String inputName;
+    private String inputName, collectionId = Constants.ALL_COLLECTION;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,9 +110,9 @@ public class BookMarkActivity extends BaseActivity
     }
 
     public void initViews() {
-        // main layout
+        /*  main layout*/
         drawer = initViewById(R.id.drawer_layout);
-        // left menu
+        /* left menu */
         navigationView = initViewById(R.id.nav_view);
 
         headerView = navigationView.getHeaderView(0);
@@ -136,6 +132,8 @@ public class BookMarkActivity extends BaseActivity
         recyclerView = initViewById(R.id.recyclerView);
 
         swipeToLoadLayout.setColorSchemeColors(Color.parseColor("#FFB74D"));
+
+        swipeToLoadLayout.setRefreshing(true);
 
         setSupportActionBar(toolbar);
 
@@ -202,7 +200,7 @@ public class BookMarkActivity extends BaseActivity
 
     public void initData() {
         //showProgressDialog(this);
-        getBookmarkList();
+        onRefresh();
         getCollectionList();
         getUserInfo();
     }
@@ -273,27 +271,28 @@ public class BookMarkActivity extends BaseActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
+//        mProgress.setVisibility(View.VISIBLE);
+        swipeToLoadLayout.setRefreshing(true);
+        adapter.setEnableLoadMore(false);
+        REFRESH_TYPE = 0;
+        if (id == R.id.nav_all_bookmark) { /* all bookmarks  传0  或者不传 collection_id */
             // Handle the camera action
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().setExitTransition(new Explode());
-                startActivity(new Intent(this, RecycleViewActivity.class),
-                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
-            } else {
-                startActivity(new Intent(this, RecycleViewActivity.class));
-            }
-        } else if (id == R.id.nav_gallery) {
-
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                getWindow().setExitTransition(new Explode());
+//                startActivity(new Intent(this, RecycleViewActivity.class), ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+//            } else {
+//                startActivity(new Intent(this, RecycleViewActivity.class));
+//            }
+            collectionId = Constants.ALL_COLLECTION;
+            getBookmarkList();
+        } else if (id == R.id.nav_inbox) {/* all bookmarks  传0  或者不传 collection_id */
+            collectionId = Constants.INBOX;
+            getBookmarkList();
         }
 //        else if (id == R.id.nav_slideshow) {
-//
 //        } else if (id == R.id.nav_manage) {
-//
 //        } else if (id == R.id.nav_share) {
-//
 //        } else if (id == R.id.nav_send) {
-//
 //        }
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -321,7 +320,7 @@ public class BookMarkActivity extends BaseActivity
     private void getBookmarkList() {
         String lastItemId = mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).getId() : "";
         itemId = REFRESH_TYPE == 0 ? "" : lastItemId;
-        Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(userAccessToken, PAGE_SIZE, itemId);
+        Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(userAccessToken, PAGE_SIZE, itemId, collectionId);
         call.enqueue(new Callback<List<Bookmark>>() {
             @Override
             public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
@@ -344,6 +343,11 @@ public class BookMarkActivity extends BaseActivity
                     swipeToLoadLayout.setRefreshing(false);
                     adapter.loadMoreComplete();
                     adapter.loadMoreEnd(false);
+                    if (REFRESH_TYPE == 0) {// when refresh
+                        requestData.clear();
+                        mBookmarkList.clear();
+                        adapter.setNewData(mBookmarkList);
+                    }
                 }
                 mProgress.setVisibility(View.GONE);
 //              Snackbar.make(mFloatingActionButton, "response success", Snackbar.LENGTH_LONG).setDuration(3000).show();
@@ -362,7 +366,7 @@ public class BookMarkActivity extends BaseActivity
     }
 
     /**
-     * 获取书签列表
+     * 获取收藏夹列表
      */
     private void getCollectionList() {
         Call<List<Collections>> call = mKiipuApplication.mRetrofitService.getCollectionList(userAccessToken);
@@ -496,20 +500,26 @@ public class BookMarkActivity extends BaseActivity
     private void addLeftMenu(List<Collections> mCollectionList, boolean isRequestMenu) {
         navigationView.getMenu().findItem(R.id.item_collection).setTitle("收藏夹");
         // the first menu view
-        navigationView.getMenu().findItem(R.id.nav_share).setTitle(mCollectionList.get(0).collectionName);
+        navigationView.getMenu().findItem(R.id.nav_share)
+                .setTitle(mCollectionList.get(0).collectionName)
+                .setOnMenuItemClickListener(new OnMenuItemClickListener());
         if (isRequestMenu) {
             for (int i = 1; i < mCollectionList.size(); i++) {
-                navigationView.getMenu().add(0, i, i, mCollectionList.get(i).collectionName + "").setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
+                navigationView.getMenu().add(0, i, i, mCollectionList.get(i).collectionName + "")
+                        .setIcon(getDrawable(R.drawable.ic_menu_share))//动态添加menu
+                        .setOnMenuItemClickListener(new OnMenuItemClickListener());
             }
-        } else {// 调用调价按钮后，重新设置之前menu的 name
+        } else {// 调用添加按钮后，重新设置之前menu的 name
             for (int i = 1; i < mCollectionList.size(); i++) {
-                navigationView.getMenu().findItem(i).setTitle(mCollectionList.get(i).collectionName).setIcon(getDrawable(R.drawable.ic_menu_share));//动态添加menu
+                navigationView.getMenu().findItem(i).setTitle(mCollectionList.get(i).collectionName)
+                        .setIcon(getDrawable(R.drawable.ic_menu_share))//动态添加menu
+                        .setOnMenuItemClickListener(new OnMenuItemClickListener());
             }
         }
         // 添加书签按钮事件操作
         navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), "添加书签")
                 .setIcon(getDrawable(R.drawable.ic_add))
-                .setOnMenuItemClickListener(new OnMenuItemClickListener());
+                .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
     }
 
     private class OnItemChildClickListener implements BaseQuickAdapter.OnItemChildClickListener {
@@ -579,7 +589,6 @@ public class BookMarkActivity extends BaseActivity
                         showBookmarkDetailDialog(dataPosition);
                         break;
                     case 1:
-//                        ToastUtil.showToastShort("移动功能正在后期筹备中...");
                         showRemoveBookmarkDialog(dataPosition);
                         break;
                     case 2:
@@ -651,7 +660,7 @@ public class BookMarkActivity extends BaseActivity
     }
 
 
-    private class OnMenuItemClickListener implements MenuItem.OnMenuItemClickListener {
+    private class OnAddMenuItemClickListener implements MenuItem.OnMenuItemClickListener {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             //@return Return true to consume this click and prevent others from executing
@@ -689,6 +698,24 @@ public class BookMarkActivity extends BaseActivity
                     finalButton.setEnabled(false);
                 }
             });
+            return false;
+        }
+    }
+
+    /**
+     * 2131493098 为 item（nav_share）在 R 文件中 id
+     * leftMenu clickListener
+     */
+    private class OnMenuItemClickListener implements MenuItem.OnMenuItemClickListener {
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            collectionId = (item.getItemId() == 2131493098) ? mCollectionList.get(0).collectionId : mCollectionList.get(item.getItemId()).collectionId;
+            swipeToLoadLayout.setRefreshing(true);
+            adapter.setEnableLoadMore(false);
+            REFRESH_TYPE = 0;
+            getBookmarkList();
+
             return false;
         }
     }

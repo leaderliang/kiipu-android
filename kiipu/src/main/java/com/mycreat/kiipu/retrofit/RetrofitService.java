@@ -19,7 +19,8 @@ public interface RetrofitService {
     @GET(RetrofitApi.BOOK_MARKS_LIST)
     Call<List<Bookmark>> getBookmarkList(@Header("Authorization") String value,
                                          @Query("count") Integer number,
-                                         @Query("since_id") String id);
+                                         @Query("since_id") String id,
+                                         @Query("collection_id") String collectionId);
 
     @DELETE(RetrofitApi.DELETE_BOOK_MARKS+"{id}")
     Call<Bookmark> deleteBookmark(@Header("Authorization") String value,
