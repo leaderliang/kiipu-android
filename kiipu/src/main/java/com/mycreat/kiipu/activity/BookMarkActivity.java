@@ -73,8 +73,6 @@ public class BookMarkActivity extends BaseActivity
 
     private RecyclerView recyclerView;
 
-    private int viewMarginTop;
-
     private ImageView mIvClose, mIvIcon, mIvDetail;
 
     private RoundImageView mIvUserHeader;
@@ -712,6 +710,8 @@ public class BookMarkActivity extends BaseActivity
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
+            item.setCheckable(true);
+            item.setChecked(true);
             collectionId = (item.getItemId() == 2131493098) ? mCollectionList.get(0).collectionId : mCollectionList.get(item.getItemId()).collectionId;
             swipeToLoadLayout.setRefreshing(true);
             adapter.setEnableLoadMore(false);
