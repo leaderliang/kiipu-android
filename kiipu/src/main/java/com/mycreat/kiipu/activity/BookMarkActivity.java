@@ -14,6 +14,7 @@ import android.support.v7.widget.*;
 import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.*;
@@ -95,7 +96,7 @@ public class BookMarkActivity extends BaseActivity
 
     public Button finalButton;
 
-    private String inputName, collectionId = Constants.ALL_COLLECTION, viewTheme = "FFB74D";
+    private String inputName, collectionId = Constants.ALL_COLLECTION, viewTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,7 +179,7 @@ public class BookMarkActivity extends BaseActivity
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Bookmark bookmark = requestData.get(position);
-                viewTheme = bookmark.viewTheme;
+                viewTheme = TextUtils.isEmpty(bookmark.viewTheme) ? "FFB74D" : bookmark.viewTheme;
                 String url = bookmark.info.getUrl();
 //                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
 //                builder.setToolbarColor(Color.parseColor("#FFB74D"));
@@ -716,7 +717,7 @@ public class BookMarkActivity extends BaseActivity
             item.setCheckable(true);
             item.setChecked(true);
             toolbar.setTitle(item.getTitle());
-            collectionId = (item.getItemId() == 2131493098) ? mCollectionList.get(0).collectionId : mCollectionList.get(item.getItemId()).collectionId;
+            collectionId = (item.getItemId() == R.id.nav_share) ? mCollectionList.get(0).collectionId : mCollectionList.get(item.getItemId()).collectionId;
             swipeToLoadLayout.setRefreshing(true);
             adapter.setEnableLoadMore(false);
             REFRESH_TYPE = 0;
