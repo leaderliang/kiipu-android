@@ -282,9 +282,11 @@ public class BookMarkActivity extends BaseActivity
 //                startActivity(new Intent(this, RecycleViewActivity.class));
 //            }
             collectionId = Constants.ALL_COLLECTION;
+            toolbar.setTitle(getString(R.string.all));
             getBookmarkList();
         } else if (id == R.id.nav_inbox) {/* all bookmarks  传0  或者不传 collection_id */
             collectionId = Constants.INBOX;
+            toolbar.setTitle(getString(R.string.inbox));
             getBookmarkList();
         }else{
             swipeToLoadLayout.setRefreshing(false);
@@ -712,6 +714,7 @@ public class BookMarkActivity extends BaseActivity
         public boolean onMenuItemClick(MenuItem item) {
             item.setCheckable(true);
             item.setChecked(true);
+            toolbar.setTitle(item.getTitle());
             collectionId = (item.getItemId() == 2131493098) ? mCollectionList.get(0).collectionId : mCollectionList.get(item.getItemId()).collectionId;
             swipeToLoadLayout.setRefreshing(true);
             adapter.setEnableLoadMore(false);
