@@ -113,6 +113,10 @@ android:background="?android:attr/selectableItemBackgroundBorderless"> // 波纹
 > 设置为true后,当用户按了“最近任务列表”时候,该Task不会出现在最近任务列表中,可达到隐藏应用的目的。
 > android:excludeFromRecents="true" 
 
+## 布局中的小属性
+> android:clipToPadding="false"
+> 常常用于paddingTop，假设 内部有个属性设置了PaddingTop但是滑动的时候就忽视paddingTop的 则使用该属性 
+
 ## Bug 专区
 ```
  W/WindowAnimator: Failed to dispatch window animation state change.
@@ -138,3 +142,12 @@ android:background="?android:attr/selectableItemBackgroundBorderless"> // 波纹
 
 ## Android 开发小工具之：Custom Tabs
 > http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0914/3451.html
+
+
+## 后期待研究系统 view
+```
+android.support.v7.widget.AppCompatImageView
+android.support.v7.widget.AppCompatTextView
+
+```
+

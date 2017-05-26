@@ -10,6 +10,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <!-- progress refresh..-->
         <item name="colorAccent">@color/colorAccent</item>
+        <!-- Dialog theme  Theme.AppCompat.Light.Dialog.Alert.Self -->
         <item name="alertDialogTheme">@style/Theme.AppCompat.Light.Dialog.Alert.Self</item>
         <!-- 虚拟键透明，这个虚拟键就是返回和菜单键等 -->
         <item name="android:windowTranslucentNavigation">false</item>
@@ -36,8 +37,8 @@
 
 
     <style name="Theme.AppCompat.Light.Dialog.Alert.Self" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
-        <!--修改AlertDialog按钮的颜色-->
-        <item name="colorAccent">@color/accent_material_light</item>
+        <!--修改AlertDialog按钮的颜色  @color/accent_material_light google 蓝色 -->
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <!-- Application theme. -->

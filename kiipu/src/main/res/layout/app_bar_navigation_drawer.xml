@@ -37,41 +37,6 @@
                     android:layout_height="match_parent"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     >
-        <!--<include-->
-        <!--layout="@layout/layout_recycle_view"-->
-        <!--/>-->
-
-        <!--<com.aspsine.swipetoloadlayout.SwipeToLoadLayout-->
-        <!--android:id="@+id/swipeToLoadLayout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--app:default_to_loading_more_scrolling_duration="500"-->
-        <!--app:load_more_final_drag_offset="@dimen/load_more_final_offset_google"-->
-        <!--app:load_more_trigger_offset="@dimen/load_more_trigger_offset_google"-->
-        <!--app:refresh_final_drag_offset="@dimen/refresh_final_offset_google"-->
-        <!--app:refresh_trigger_offset="@dimen/refresh_trigger_offset_google"-->
-        <!--app:load_more_complete_delay_duration="0"-->
-        <!--app:swipe_style="above"-->
-        <!--tools:context=".activity.RecycleViewActivity">-->
-
-        <!--<include-->
-        <!--android:id="@id/swipe_refresh_header"-->
-        <!--layout="@layout/layout_google_hook_header"/>-->
-
-        <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@id/swipe_target"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:scrollbars="vertical"-->
-        <!--android:scrollbarStyle="outsideOverlay"-->
-        <!--android:clipToPadding="false"/>-->
-
-        <!--<include-->
-        <!--android:id="@id/swipe_load_more_footer"-->
-        <!--layout="@layout/layout_google_hook_footer"/>-->
-
-        <!--</com.aspsine.swipetoloadlayout.SwipeToLoadLayout>-->
-
         <android.support.v4.widget.SwipeRefreshLayout
                 android:id="@+id/swipe_refresh_layout"
                 android:layout_width="match_parent"

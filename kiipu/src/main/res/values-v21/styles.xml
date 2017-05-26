@@ -1,8 +1,8 @@
 <resources>
 
     <style name="AppTheme" parent="AppBaseTheme">
-
-        <item name="android:navigationBarColor">@color/accent_material_light</item>
+        <!--  底部虚拟键盘 颜色 -->
+        <item name="android:navigationBarColor">@color/black</item>
     </style>
 
     <style name="NoActionBar" parent="AppBaseTheme">

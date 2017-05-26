@@ -16,6 +16,13 @@ import java.util.Map;
  */
 public interface RetrofitService {
 
+    /**
+     * 该接口适用于主界面菜单点击请求
+     * collection_id
+     * 全部      ：collection_id = 0 或不传 collection_id
+     * 收件箱    ：collection_id = -1
+     * 其他item  ：直接传 collection_id
+     */
     @GET(RetrofitApi.BOOK_MARKS_LIST)
     Call<List<Bookmark>> getBookmarkList(@Header("Authorization") String value,
                                          @Query("count") Integer number,
