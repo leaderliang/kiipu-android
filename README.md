@@ -90,7 +90,7 @@ navigationView.setItemTextColor(csl);
 navigationView.getMenu().getItem(0).setChecked(true); 
 
 /此处是设置menu图标的颜色为图标本身的颜色 设置后图标恢复黑色/
-navigationView.setItemIconTintList(null);
+navigationView.setItemIconTintList(null);// set menu item default color
 navigationView.getMenu().removeItem(R.id.item_collection);
 
 
@@ -150,4 +150,36 @@ android.support.v7.widget.AppCompatImageView
 android.support.v7.widget.AppCompatTextView
 
 ```
+
+## RecyclerView 相关布局
+
+> 创建线性布局
+  LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
+  mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+  mRecyclerView.setLayoutManager(mLinearLayoutManager);
+
+参数解析：
+spanCount: 每列或者每行的item个数，设置为1，就是列表样式  该构造函数默认是竖直方向的网格样式,每列或者每行的item个数，设置为1，就是列表样式网格样式的方向，水平（OrientationHelper.HORIZONTAL）或者竖直（OrientationHelper.VERTICAL）
+reverseLayout: 是否逆向，true：布局逆向展示，false：布局正向显示
+
+GridLayoutManager mGirdLayoutManager = new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false);
+recyclerView.setLayoutManager(mGirdLayoutManager);
+
+// 创建 瀑布流
+StaggeredGridLayoutManager staggeredGridLayoutManager=new StaggeredGridLayoutManager(SPAN_COUNT,OrientationHelper.VERTICAL);
+mRecyclerView.setLayoutManager(staggeredGridLayoutManager);
+
+// StaggeredGridLayoutManager 管理 RecyclerView的布局  瀑布流   http://blog.csdn.net/zhangphil/article/details/47604581
+RecyclerView.LayoutManager mLayoutManager;
+StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(SPAN_COUNT, StaggeredGridLayoutManager.VERTICAL);
+mRecyclerView.setLayoutManager(mLayoutManager);
+
+
+
+
+
+
+
+
+
 

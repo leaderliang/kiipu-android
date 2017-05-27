@@ -1,10 +1,7 @@
 package com.mycreat.kiipu.activity;
 
-import android.app.ActivityOptions;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -19,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.transition.Explode;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -38,7 +34,6 @@ import com.mycreat.kiipu.model.UserInfo;
 import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.CustomAnimation;
 import com.mycreat.kiipu.view.MyBottomSheetDialog;
-import com.mycreat.kiipu.view.RequestErrorLayout;
 import com.mycreat.kiipu.view.RoundImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,12 +48,10 @@ import java.util.List;
  * @author leaderliang
  */
 public class BookMarkActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener, BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
 
-    private final int SPAN_COUNT = 2;
-    /**
-     * 0 pull; 1 load more
-     */
+    /* 0 pull; 1 load more */
     private int REFRESH_TYPE = 0;
 
     private FloatingActionButton mFloatingActionButton;
@@ -66,7 +59,7 @@ public class BookMarkActivity extends BaseActivity
     private Toolbar toolbar;
 
     private DrawerLayout drawer;
-    //  left menu
+    /* left menu */
     private NavigationView navigationView;
 
     private String itemId = "";
@@ -85,14 +78,6 @@ public class BookMarkActivity extends BaseActivity
 
     private TextView mTvTitle, mTvUrl, mTvUserName;
 
-    private final int PAGE_SIZE = 10;
-
-    private List<Bookmark> mBookmarkList = new ArrayList<>();
-
-    private List<Bookmark> requestData = new ArrayList<>();
-
-    private List<Collections> mCollectionList = new ArrayList<>();
-
     private UserInfo mUserInfo;
 
     private View headerView;
@@ -102,6 +87,14 @@ public class BookMarkActivity extends BaseActivity
     public Button finalButton;
 
     private String inputName, collectionId = Constants.ALL_COLLECTION, viewTheme;
+
+    private MenuItem menuAllItem;
+
+    private List<Bookmark> mBookmarkList = new ArrayList<>();
+
+    private List<Bookmark> requestData = new ArrayList<>();
+
+    private List<Collections> mCollectionList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +115,8 @@ public class BookMarkActivity extends BaseActivity
 
         headerView = navigationView.getHeaderView(0);
 
+        menuAllItem = navigationView.getMenu().findItem(R.id.nav_all_bookmark);
+
         mIvUserHeader = (RoundImageView) headerView.findViewById(R.id.iv_user_icon);
 
         mTvUserName = (TextView) headerView.findViewById(R.id.tv_user_name);
@@ -136,13 +131,13 @@ public class BookMarkActivity extends BaseActivity
 
         recyclerView = initViewById(R.id.recyclerView);
 
-        swipeToLoadLayout.setColorSchemeColors(Color.parseColor("#FFB74D"));
+        swipeToLoadLayout.setColorSchemeColors(Color.parseColor(Constants.DEFAULT_COLOR));
 
         swipeToLoadLayout.setRefreshing(true);
 
         setSupportActionBar(toolbar);
-
-//        navigationView.setItemIconTintList(null);// set menu item default color
+        /*set item all checked default*/
+        menuAllItem.setChecked(true);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -152,27 +147,9 @@ public class BookMarkActivity extends BaseActivity
         toggle.syncState();
         //如果可以确定每个item的高度是固定的，设置这个选项可以提高性能
         recyclerView.setHasFixedSize(true);
-        // 创建线性布局
-        //LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
-        //mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        //mRecyclerView.setLayoutManager(mLinearLayoutManager);
 
-        /**
-         * spanCount，每列或者每行的item个数，设置为1，就是列表样式  该构造函数默认是竖直方向的网格样式,每列或者每行的item个数，设置为1，就是列表样式
-         * 网格样式的方向，水平（OrientationHelper.HORIZONTAL）或者竖直（OrientationHelper.VERTICAL）
-         * reverseLayout，是否逆向，true：布局逆向展示，false：布局正向显示
-         * GirdLayoutManage other style
-         * */
-        GridLayoutManager mGirdLayoutManager = new GridLayoutManager(this, SPAN_COUNT, GridLayoutManager.VERTICAL, false);
+        GridLayoutManager mGirdLayoutManager = new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(mGirdLayoutManager);
-        // 创建 瀑布流
-        //StaggeredGridLayoutManager staggeredGridLayoutManager=new StaggeredGridLayoutManager(SPAN_COUNT,OrientationHelper.VERTICAL);
-        //mRecyclerView.setLayoutManager(staggeredGridLayoutManager);
-
-        // StaggeredGridLayoutManager 管理 RecyclerView的布局  瀑布流   http://blog.csdn.net/zhangphil/article/details/47604581
-        //RecyclerView.LayoutManager mLayoutManager;
-        //StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(SPAN_COUNT, StaggeredGridLayoutManager.VERTICAL);
-        //mRecyclerView.setLayoutManager(mLayoutManager);
 
         adapter = new BookMarkAdapter(this);
         adapter.setOnLoadMoreListener(BookMarkActivity.this, recyclerView);
@@ -185,7 +162,7 @@ public class BookMarkActivity extends BaseActivity
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Bookmark bookmark = requestData.get(position);
-                viewTheme = TextUtils.isEmpty(bookmark.viewTheme) ? "FFB74D" : bookmark.viewTheme;
+                viewTheme = TextUtils.isEmpty(bookmark.viewTheme) ? Constants.DEFAULT_COLOR_VALUE : bookmark.viewTheme;
                 String url = bookmark.info.getUrl();
 //                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
 //                builder.setToolbarColor(Color.parseColor("#FFB74D"));
@@ -285,13 +262,10 @@ public class BookMarkActivity extends BaseActivity
             // Handle the camera action
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                getWindow().setExitTransition(new Explode());
-//                startActivity(new Intent(this, RecycleViewActivity.class),
-//                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
-//            } else {
-//                startActivity(new Intent(this, RecycleViewActivity.class));
-//            }
+//                startActivity(new Intent(this, RecycleViewActivity.class), ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+//            } else { startActivity(new Intent(this, RecycleViewActivity.class));}
             collectionId = Constants.ALL_COLLECTION;
-            toolbar.setTitle(getString(R.string.all));
+            toolbar.setTitle(getString(R.string.app_name));
             getBookmarkList();
         } else if (id == R.id.nav_inbox) {/* all bookmarks  传0  或者不传 collection_id */
             collectionId = Constants.INBOX;
@@ -331,7 +305,7 @@ public class BookMarkActivity extends BaseActivity
     private void getBookmarkList() {
         String lastItemId = mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).id : "";
         itemId = REFRESH_TYPE == 0 ? "" : lastItemId;
-        Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(userAccessToken, PAGE_SIZE, itemId, collectionId);
+        Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(userAccessToken, Constants.PAGE_SIZE, itemId, collectionId);
         call.enqueue(new Callback<List<Bookmark>>() {
             @Override
             public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
@@ -346,7 +320,7 @@ public class BookMarkActivity extends BaseActivity
                         requestData.addAll(mBookmarkList);
                         adapter.addData(mBookmarkList);
                         adapter.loadMoreComplete();// 数据加载完成
-                        if (mBookmarkList.size() < PAGE_SIZE) {// 没有更多数据
+                        if (mBookmarkList.size() < Constants.PAGE_SIZE) {// 没有更多数据
                             adapter.loadMoreEnd(false);
                         }
                     }

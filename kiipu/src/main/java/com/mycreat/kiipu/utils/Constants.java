@@ -17,5 +17,12 @@ public class Constants {
 
     public static final String USER_ID = "userId";
 
+    public static final int PAGE_SIZE  = 10;
+
+    public static final String DEFAULT_COLOR_VALUE = "FFB74D";
+
+    public static final String DEFAULT_COLOR = "#FFB74D";
+
+    public static final int SPAN_COUNT = 2;
 
 }
