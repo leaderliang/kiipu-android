@@ -14,8 +14,6 @@
             android:layout_width="match_parent"
             android:theme="@style/AppTheme.AppBarOverlay"
     >
-
-
         <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:layout_scrollFlags="scroll|enterAlways" 配置 scrollFlags，就可以在RecyclerView滚动事件发生的时候被触发
         -->
@@ -25,12 +23,8 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
-
         >
-
         </android.support.v7.widget.Toolbar>
-
-
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout android:layout_width="match_parent"

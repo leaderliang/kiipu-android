@@ -21,11 +21,6 @@ public class RecycleViewActivity extends BaseActivity {
             "微信", "QQ", "空间", "微博", "GitHub", "CJJ测试\nRecyclerView自适应", "微信朋友圈", "短信", "推特", "遇见", "微信朋友圈", "短信", "推特", "遇见"
     };
 
-    @Override
-    public int getLayoutId() {
-        return R.layout.bottom_sheet;
-    }
-
 
     @Override
     public void onViewClick(View v) {
@@ -53,8 +48,8 @@ public class RecycleViewActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(getLayoutId());
-//        initViews();
+        setContentView(R.layout.bottom_sheet);
+        initViews();
 
 
     }

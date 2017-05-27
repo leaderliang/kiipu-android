@@ -1,7 +1,10 @@
 package com.mycreat.kiipu.activity;
 
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -16,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -34,6 +38,7 @@ import com.mycreat.kiipu.model.UserInfo;
 import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.CustomAnimation;
 import com.mycreat.kiipu.view.MyBottomSheetDialog;
+import com.mycreat.kiipu.view.RequestErrorLayout;
 import com.mycreat.kiipu.view.RoundImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -100,13 +105,14 @@ public class BookMarkActivity extends BaseActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        useBaseLayout = false;
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_navigation_drawer);
+        initViews();
+        initData();
+        initListener();
     }
 
-    @Override
-    public int getLayoutId() {
-        return R.layout.activity_navigation_drawer;
-    }
 
     public void initViews() {
         /*  main layout*/
@@ -279,7 +285,8 @@ public class BookMarkActivity extends BaseActivity
             // Handle the camera action
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                getWindow().setExitTransition(new Explode());
-//                startActivity(new Intent(this, RecycleViewActivity.class), ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+//                startActivity(new Intent(this, RecycleViewActivity.class),
+//                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
 //            } else {
 //                startActivity(new Intent(this, RecycleViewActivity.class));
 //            }
@@ -351,7 +358,8 @@ public class BookMarkActivity extends BaseActivity
                         requestData.clear();
                         mBookmarkList.clear();
                         adapter.setNewData(mBookmarkList);
-                        Snackbar.make(mFloatingActionButton, "暂时还没有书签呦~", Snackbar.LENGTH_LONG).setDuration(3000).show();
+                        mRequestErrorLayout.setErrorText("暂时还没有书签呦~");
+                        adapter.setEmptyView(mRequestErrorLayout);
                     }
                 }
                 mProgress.setVisibility(View.GONE);
@@ -724,6 +732,16 @@ public class BookMarkActivity extends BaseActivity
             getBookmarkList();
 
             return false;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String clipStr = ClipboardUtils.get(this);
+        if(!TextUtils.isEmpty(clipStr)){
+//            ToastUtil.showToastShort(this, "粘贴板有数据哦~");
+
         }
     }
 }

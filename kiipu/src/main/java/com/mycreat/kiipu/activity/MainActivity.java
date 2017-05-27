@@ -10,16 +10,12 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_toolbar);
 //        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 //        User user = new User("YanQiao", "Liang");
 //        binding.setUser(user);
     }
 
-    @Override
-    public int getLayoutId() {
-        return R.layout.layout_toolbar;
- //        return R.layout.view_loding_progress;
-    }
 
 
     @Override

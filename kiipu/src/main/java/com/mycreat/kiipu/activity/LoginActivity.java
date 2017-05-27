@@ -50,13 +50,16 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        useBaseLayout = false;
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.activity_login);
+        initViews();
+        initData();
     }
 
     @Override
     protected void initViews() {
-        super.initViews();
+
         mRlSinaAuth = (RelativeLayout) findViewById(R.id.rl_sina_auth);
 
         dialog = new ProgressDialog(this);
@@ -84,11 +87,6 @@ public class LoginActivity extends BaseActivity {
             }, 300);
         }
 
-    }
-
-    @Override
-    protected int getLayoutId() {
-        return R.layout.activity_login;
     }
 
     @Override
