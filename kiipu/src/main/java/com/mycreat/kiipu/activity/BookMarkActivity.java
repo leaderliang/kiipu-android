@@ -1,9 +1,12 @@
 package com.mycreat.kiipu.activity;
 
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -16,12 +19,15 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.*;
+import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.github.clans.fab.FloatingActionButton;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.BookMarkAdapter;
 import com.mycreat.kiipu.adapter.CollectionListAdapter;
@@ -96,6 +102,8 @@ public class BookMarkActivity extends BaseActivity
 
     private List<Collections> mCollectionList = new ArrayList<>();
 
+    private int mScrollThreshold;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         useBaseLayout = false;
@@ -104,6 +112,7 @@ public class BookMarkActivity extends BaseActivity
         initViews();
         initData();
         initListener();
+
     }
 
 
@@ -123,13 +132,40 @@ public class BookMarkActivity extends BaseActivity
 
         toolbar = initViewById(R.id.toolbar);
 
-        mFloatingActionButton = initViewById(R.id.floating_action_bt);
-
         mProgress = initViewById(R.id.pb_view);
 
         swipeToLoadLayout = initViewById(R.id.swipe_refresh_layout);
 
         recyclerView = initViewById(R.id.recyclerView);
+
+        mFloatingActionButton = initViewById(R.id.floating_action_bt);
+
+        mFloatingActionButton.hide(false);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mFloatingActionButton.show(true);
+                mFloatingActionButton.setShowAnimation(AnimationUtils.loadAnimation(BookMarkActivity.this, R.anim.show_from_bottom));
+                mFloatingActionButton.setHideAnimation(AnimationUtils.loadAnimation(BookMarkActivity.this, R.anim.hide_to_bottom));
+            }
+        }, 300);
+        mScrollThreshold = getResources().getDimensionPixelOffset(R.dimen.fab_scroll_threshold);
+
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                boolean isSignificantDelta = Math.abs(dy) > mScrollThreshold;
+                if (isSignificantDelta) {
+                    if (dy > 0) {
+                        mFloatingActionButton.hide(true);
+                    } else {
+                        mFloatingActionButton.show(true);
+                    }
+                }
+            }
+        });
 
         swipeToLoadLayout.setColorSchemeColors(Color.parseColor(Constants.DEFAULT_COLOR));
 
@@ -145,6 +181,7 @@ public class BookMarkActivity extends BaseActivity
         drawer.setDrawerListener(toggle);
 
         toggle.syncState();
+
         //如果可以确定每个item的高度是固定的，设置这个选项可以提高性能
         recyclerView.setHasFixedSize(true);
 
@@ -240,10 +277,14 @@ public class BookMarkActivity extends BaseActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()){
+            case R.id.action_add:
+                ToastUtil.showToastShort(this,"添加书签");
+                return true;
+            case R.id.action_search:
+                ToastUtil.showToastShort(this,"搜索书签");
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

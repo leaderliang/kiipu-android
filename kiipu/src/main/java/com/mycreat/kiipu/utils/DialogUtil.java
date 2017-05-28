@@ -13,8 +13,8 @@ import com.mycreat.kiipu.R;
 
 /**
  * DialogUtil
- *
  * @author leaderliang
+ * dialog 详细介绍可参考 http://www.jianshu.com/p/6caffdbcd5db
  */
 public class DialogUtil {
 

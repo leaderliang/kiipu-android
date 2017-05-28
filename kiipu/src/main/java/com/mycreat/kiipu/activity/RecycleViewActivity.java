@@ -36,6 +36,8 @@ public class RecycleViewActivity extends BaseActivity {
                 showBSDialog();
             }
         });
+        setBackBtn();
+        setTitle("Kiipu");
     }
 
     @Override
@@ -48,6 +50,7 @@ public class RecycleViewActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        useBaseLayout = true;
         setContentView(R.layout.bottom_sheet);
         initViews();
 

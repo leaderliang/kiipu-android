@@ -174,6 +174,124 @@ RecyclerView.LayoutManager mLayoutManager;
 StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(SPAN_COUNT, StaggeredGridLayoutManager.VERTICAL);
 mRecyclerView.setLayoutManager(mLayoutManager);
 
+## FloatingActionButton
+```
+Github地址：https://github.com/Clans/FloatingActionButton
+项目中：FloatingActionButton FloatingActionMenu 的所有属性
+需要在 xml 文件中添加依赖 xmlns:fab="http://schemas.android.com/apk/res-auto"
+Floating action button
+Here are all the FloatingActionButton's xml attributes with their default values which means that you don't have to set all of them:
+<com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/your_icon_drawable"
+        app:fab_colorNormal="#DA4336"
+        app:fab_colorPressed="#E75043"
+        app:fab_colorRipple="#99FFFFFF"
+        app:fab_showShadow="true"
+        app:fab_shadowColor="#66000000"
+        app:fab_shadowRadius="4dp"
+        app:fab_shadowXOffset="1dp"
+        app:fab_shadowYOffset="3dp"
+        app:fab_size="normal"
+        app:fab_showAnimation="@anim/fab_scale_up"
+        app:fab_hideAnimation="@anim/fab_scale_down"
+        app:fab_label=""
+        app:fab_progress_color="#FF009688"
+        app:fab_progress_backgroundColor="#4D000000"
+        app:fab_progress_indeterminate="false"
+        app:fab_progress_max="100"
+        app:fab_progress="0"
+        app:fab_progress_showBackground="true"/>
+        
+Floating action menu
+Here are all the FloatingActionMenu's xml attributes with their default values which means that you don't have to set all of them:
+     
+        <com.github.clans.fab.FloatingActionMenu
+                android:id="@+id/menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                fab:menu_fab_size="normal"
+                fab:menu_showShadow="true"
+                fab:menu_shadowColor="#66000000"
+                fab:menu_shadowRadius="4dp"
+                fab:menu_shadowXOffset="1dp"
+                fab:menu_shadowYOffset="3dp"
+                fab:menu_colorNormal="#DA4336"
+                fab:menu_colorPressed="#E75043"
+                fab:menu_colorRipple="#99FFFFFF"
+                fab:menu_animationDelayPerItem="50"
+                fab:menu_icon="@drawable/fab_add"
+                fab:menu_buttonSpacing="0dp"
+                fab:menu_labels_margin="0dp"
+                fab:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
+                fab:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
+                fab:menu_labels_paddingTop="4dp"
+                fab:menu_labels_paddingRight="8dp"
+                fab:menu_labels_paddingBottom="4dp"
+                fab:menu_labels_paddingLeft="8dp"
+                fab:menu_labels_padding="8dp"
+                fab:menu_labels_textColor="#FFFFFF"
+                fab:menu_labels_textSize="14sp"
+                fab:menu_labels_cornerRadius="3dp"
+                fab:menu_labels_colorNormal="#333333"
+                fab:menu_labels_colorPressed="#444444"
+                fab:menu_labels_colorRipple="#66FFFFFF"
+                fab:menu_labels_showShadow="true"
+                fab:menu_labels_singleLine="false"
+                fab:menu_labels_ellipsize="none"
+                fab:menu_labels_maxLines="-1"
+                fab:menu_labels_style="@style/YourCustomLabelsStyle"
+                fab:menu_labels_position="left"
+                fab:menu_openDirection="up"
+                fab:menu_backgroundColor="@android:color/transparent"
+                fab:menu_fab_label="your_label_here"
+                fab:menu_fab_show_animation="@anim/my_show_animation"
+                fab:menu_fab_hide_animation="@anim/my_hide_animation">
+        
+                <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/menu_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_star"
+                    fab:fab_size="mini"
+                    fab:fab_label="Menu item 1" />
+        
+            </com.github.clans.fab.FloatingActionMenu>
+```
+## ActionBar (更详细的介绍 http://blog.csdn.net/liu149339750/article/details/8282471)
+setHomeButtonEnabled这个小于4.0版本的默认值为true的。但是在4.0及其以上是false，该方法的作用：决定左上角的图标是否可以点击。没有向左的小图标。 true 图标可以点击  false 不可以点击。
+
+actionBar.setDisplayHomeAsUpEnabled(true)    // 给左上角图标的左边加上一个返回的图标 。对应ActionBar.DISPLAY_HOME_AS_UP
+
+actionBar.setDisplayShowHomeEnabled(true)   //使左上角图标是否显示，如果设成false，则没有程序图标，仅仅就个标题，否则，显示应用程序图标，对应id为Android.R.id.home，对应ActionBar.DISPLAY_SHOW_HOME
+
+actionBar.setDisplayShowCustomEnabled(true)  // 使自定义的普通View能在title栏显示，即actionBar.setCustomView能起作用，对应ActionBar.DISPLAY_SHOW_CUSTOM
+
+actionBar.setDisplayShowTitleEnabled(true)   //对应ActionBar.DISPLAY_SHOW_TITLE。
+其中setHomeButtonEnabled和setDisplayShowHomeEnabled共同起作用，如果setHomeButtonEnabled设成false，即使setDisplayShowHomeEnabled设成true，图标也不能点击
+
+最后，如果希望点击图标左侧箭头返回上一页，需要加载选项菜单后，对于菜单项的点击事件调用如下方法：
+ public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // TODO Auto-generated method stub
+      //Android.R.id.home对应应用程序图标的id
+        if(item.getItemId() == android.R.id.home)
+        {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
 

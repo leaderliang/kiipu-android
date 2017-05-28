@@ -4,17 +4,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseArray;
 import android.view.*;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import com.github.clans.fab.FloatingActionButton;
 import com.mycreat.kiipu.R;
+import com.mycreat.kiipu.activity.BookMarkActivity;
 import com.mycreat.kiipu.utils.Constants;
 import com.mycreat.kiipu.utils.LogUtil;
 import com.mycreat.kiipu.utils.SharedPreferencesUtil;
@@ -43,13 +47,15 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     public String userAccessToken;
 
-    private CoordinatorLayout rootLayout;
+    private LinearLayout includeLayout;
 
     protected Toolbar toolbar;
 
     protected boolean useBaseLayout = true;
 
     protected RequestErrorLayout mRequestErrorLayout;
+
+    protected FloatingActionButton mFloatingActionButton;
 
     protected void initViews() {
     }
@@ -96,6 +102,18 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     private void initBaseView() {
         mRequestErrorLayout = (RequestErrorLayout) getLayoutInflater().inflate(R.layout.view_empty, null);
+        mFloatingActionButton = initViewById(R.id.floating_action_bt);
+
+        // 在 baseLayout 上展示
+        mFloatingActionButton.hide(false);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mFloatingActionButton.show(true);
+                mFloatingActionButton.setShowAnimation(AnimationUtils.loadAnimation(BaseActivity.this, R.anim.show_from_bottom));
+                mFloatingActionButton.setHideAnimation(AnimationUtils.loadAnimation(BaseActivity.this, R.anim.hide_to_bottom));
+            }
+        }, 300);
     }
 
     private void initToolbar() {
@@ -129,18 +147,18 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void setContentView(int layoutId) {
-        if(useBaseLayout) {
+        if (useBaseLayout) {
             setContentView(View.inflate(this, layoutId, null));
-        }else{
+        } else {
             super.setContentView(layoutId);
         }
     }
 
     @Override
     public void setContentView(View view) {
-        rootLayout = (CoordinatorLayout) findViewById(R.id.root_layout);
-        if (rootLayout == null) return;
-        rootLayout.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        includeLayout = (LinearLayout) findViewById(R.id.include_layout);
+        if (includeLayout == null) return;
+        includeLayout.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         initToolbar();
     }
 
@@ -159,7 +177,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    finish();
+                    onBackPressed();
                 }
             });
         } else {
@@ -181,18 +199,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         view.setOnClickListener(this);
     }
 
-
-    protected void setToolBar(Toolbar toolbar, String title) {
-        toolbar.setTitle(title);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     @Override

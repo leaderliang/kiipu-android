@@ -14,8 +14,28 @@
     <!--android:layout_height="match_parent"-->
     <!--android:fitsSystemWindows="true"-->
     <!--android:orientation="vertical">-->
-
-    <include layout="@layout/toolbar_layout"/>
-
     <!--</LinearLayout>-->
+    <include layout="@layout/toolbar_layout"/>
+    <LinearLayout android:id="@+id/include_layout"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical"
+                  app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+    </LinearLayout>
+
+
+    <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/floating_action_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            app:fab_colorNormal="@color/colorAccent"
+            app:fab_colorPressed="@color/colorPrimaryDark"
+            app:fab_colorRipple="@color/colorPrimaryDark"
+            android:src="@drawable/ic_add"
+            app:fab_elevationCompat="4dp"
+            app:borderWidth="10dp"/>
 </android.support.design.widget.CoordinatorLayout>

@@ -22,4 +22,5 @@
 
     <!-- view UI-->
     <dimen name="recycle_card_Elevation">5dp</dimen>
+    <dimen name="fab_scroll_threshold">0dp</dimen>
 </resources>
