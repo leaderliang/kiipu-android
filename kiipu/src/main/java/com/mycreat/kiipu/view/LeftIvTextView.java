@@ -1,6 +1,7 @@
 package com.mycreat.kiipu.view;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.View;

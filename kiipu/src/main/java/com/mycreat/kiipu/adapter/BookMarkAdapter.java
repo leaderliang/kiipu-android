@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.activity.BookMarkActivity;
@@ -44,7 +45,7 @@ public class BookMarkAdapter extends BaseQuickAdapter<Bookmark, com.mycreat.kiip
                             .load(mBookmarksInfo.getImg())
                             .placeholder(R.drawable.error) // 占位图
                             .error(R.drawable.error) // 加载失败占位图
-//                          .diskCacheStrategy(DiskCacheStrategy.NONE)// 禁用掉Glide的缓存功能,默认是打开的
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)// 禁用掉Glide的缓存功能,默认是打开的
                             .centerCrop() // 取图片的中间区域
 //                            .fitCenter()
                             .dontAnimate()//停止动画，解决加载图片变小问题

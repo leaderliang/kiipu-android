@@ -1,0 +1,38 @@
+
+OutOfMemoryError
+java.util.concurrent.ExecutionException: java.lang.OutOfMemoryError: 
+
+Failed to allocate a 753676 byte allocation with 541680 free bytes and 528KB until OOM
+at java.util.concurrent.FutureTask.report(FutureTask.java:94)
+at java.util.concurrent.FutureTask.get(FutureTask.java:164)
+at com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor.afterExecute(FifoPriorityThreadPoolExecutor.java:96)
+at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1121)
+at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:588)
+at java.lang.Thread.run(Thread.java:818)
+at com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor$DefaultThreadFactory$1.run(FifoPriorityThreadPoolExecutor.java:118)
+Caused by: java.lang.OutOfMemoryError: Failed to allocate a 753676 byte allocation with 541680 free bytes and 528KB until OOM
+at java.io.ByteArrayOutputStream.expand(ByteArrayOutputStream.java:91)
+at java.io.ByteArrayOutputStream.write(ByteArrayOutputStream.java:201)
+at com.bumptech.glide.load.resource.gif.GifResourceDecoder.inputStreamToBytes(GifResourceDecoder.java:106)
+at com.bumptech.glide.load.resource.gif.GifResourceDecoder.decode(GifResourceDecoder.java:57)
+at com.bumptech.glide.load.resource.gif.GifResourceDecoder.decode(GifResourceDecoder.java:26)
+at com.bumptech.glide.load.resource.gifbitmap.GifBitmapWrapperResourceDecoder.decodeGifWrapper(GifBitmapWrapperResourceDecoder.java:101)
+at com.bumptech.glide.load.resource.gifbitmap.GifBitmapWrapperResourceDecoder.decodeStream(GifBitmapWrapperResourceDecoder.java:87)
+at com.bumptech.glide.load.resource.gifbitmap.GifBitmapWrapperResourceDecoder.decode(GifBitmapWrapperResourceDecoder.java:71)
+at com.bumptech.glide.load.resource.gifbitmap.GifBitmapWrapperResourceDecoder.decode(GifBitmapWrapperResourceDecoder.java:61)
+at com.bumptech.glide.load.resource.gifbitmap.GifBitmapWrapperResourceDecoder.decode(GifBitmapWrapperResourceDecoder.java:22)
+at com.bumptech.glide.load.resource.gifbitmap.GifBitmapWrapperStreamResourceDecoder.decode(GifBitmapWrapperStreamResourceDecoder.java:24)
+at com.bumptech.glide.load.resource.gifbitmap.GifBitmapWrapperStreamResourceDecoder.decode(GifBitmapWrapperStreamResourceDecoder.java:14)
+at com.bumptech.glide.load.resource.file.FileToStreamDecoder.decode(FileToStreamDecoder.java:39)
+at com.bumptech.glide.load.resource.file.FileToStreamDecoder.decode(FileToStreamDecoder.java:17)
+at com.bumptech.glide.load.engine.DecodeJob.loadFromCache(DecodeJob.java:222)
+at com.bumptech.glide.load.engine.DecodeJob.decodeResultFromCache(DecodeJob.java:85)
+at com.bumptech.glide.load.engine.EngineRunnable.decodeFromCache(EngineRunnable.java:108)
+at com.bumptech.glide.load.engine.EngineRunnable.decode(EngineRunnable.java:99)
+at com.bumptech.glide.load.engine.EngineRunnable.run(EngineRunnable.java:58)
+at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:423)
+at java.util.concurrent.FutureTask.run(FutureTask.java:237)
+at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1113)
+at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:588) 
+at java.lang.Thread.run(Thread.java:818) 
+at com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor$DefaultThreadFactory$1.run(FifoPriorityThreadPoolExecutor.java:118) 

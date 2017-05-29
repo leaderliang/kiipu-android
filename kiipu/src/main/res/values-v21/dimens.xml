@@ -21,6 +21,6 @@
     <dimen name="load_more_drawable_size_google">36dp</dimen>
 
     <!-- view UI-->
-    <dimen name="recycle_card_Elevation">5dp</dimen>
+    <dimen name="recycle_card_Elevation">0dp</dimen>
     <dimen name="fab_scroll_threshold">0dp</dimen>
 </resources>

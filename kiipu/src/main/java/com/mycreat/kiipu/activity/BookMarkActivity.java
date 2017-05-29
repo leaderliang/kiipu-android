@@ -171,6 +171,10 @@ public class BookMarkActivity extends BaseActivity
 
         swipeToLoadLayout.setRefreshing(true);
 
+        toolbar.setLogo(R.drawable.login_logo_text);
+
+        toolbar.setTitle("");// default null
+
         setSupportActionBar(toolbar);
         /*set item all checked default*/
         menuAllItem.setChecked(true);
@@ -298,6 +302,7 @@ public class BookMarkActivity extends BaseActivity
 //        mProgress.setVisibility(View.VISIBLE);
         swipeToLoadLayout.setRefreshing(true);
         adapter.setEnableLoadMore(false);
+        toolbar.setLogo(null);
         REFRESH_TYPE = 0;
         if (id == R.id.nav_all_bookmark) { /* all bookmarks  传0  或者不传 collection_id */
             // Handle the camera action
@@ -306,7 +311,8 @@ public class BookMarkActivity extends BaseActivity
 //                startActivity(new Intent(this, RecycleViewActivity.class), ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
 //            } else { startActivity(new Intent(this, RecycleViewActivity.class));}
             collectionId = Constants.ALL_COLLECTION;
-            toolbar.setTitle(getString(R.string.app_name));
+            toolbar.setTitle(null);
+            toolbar.setLogo(R.drawable.login_logo_text);
             getBookmarkList();
         } else if (id == R.id.nav_inbox) {/* all bookmarks  传0  或者不传 collection_id */
             collectionId = Constants.INBOX;
