@@ -498,11 +498,14 @@ public class BookMarkActivity extends BaseActivity
     /**
      * move bookmark
      */
-    private void requestMoveBookmark(final String bookmarkId, final int collectionId) {
+    private void requestMoveBookmark(final int dataPosition, final int collectionId) {
+        String bookmarkId = requestData.get(dataPosition).id;
         Call<Bookmark> call = mKiipuApplication.mRetrofitService.moveBookmark(userAccessToken, bookmarkId, mCollectionList.get(collectionId).collectionId);
         call.enqueue(new Callback<Bookmark>() {
             @Override
             public void onResponse(Call<Bookmark> call, Response<Bookmark> response) {
+                requestData.remove(dataPosition);
+                adapter.remove(dataPosition);
                 Snackbar.make(mFloatingActionButton, "移动书签到 " + mCollectionList.get(collectionId).collectionName + " 成功", Snackbar.LENGTH_LONG)
                         .setDuration(2500)
                         .show();
@@ -616,7 +619,7 @@ public class BookMarkActivity extends BaseActivity
                         showBookmarkDetailDialog(dataPosition);
                         break;
                     case 1:
-                        showRemoveBookmarkDialog(dataPosition);
+                        showMoveBookmarkDialog(dataPosition);
                         break;
                     case 2:
                         requestDeleteItem(dataPosition);
@@ -647,7 +650,7 @@ public class BookMarkActivity extends BaseActivity
         listPopupWindow.show();
     }
 
-    private void showRemoveBookmarkDialog(final int dataPosition) {
+    private void showMoveBookmarkDialog(final int dataPosition) {
         final MyBottomSheetDialog dialog = new MyBottomSheetDialog(this);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_layout, null);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
@@ -659,7 +662,7 @@ public class BookMarkActivity extends BaseActivity
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 dialog.dismiss();
-                requestMoveBookmark(requestData.get(dataPosition).id, position);
+                requestMoveBookmark(dataPosition, position);
             }
         });
         dialog.setContentView(view);
@@ -677,6 +680,7 @@ public class BookMarkActivity extends BaseActivity
             } else {
                 SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
                 SharedPreferencesUtil.removeKey(mContext, Constants.USER_ID);
+                LogUtil.e("ACCESS_TOKEN " + SharedPreferencesUtil.getData(mContext,Constants.ACCESS_TOKEN,""));
                 finish();
                 AppManager.getAppManager().appExit(this);
 
