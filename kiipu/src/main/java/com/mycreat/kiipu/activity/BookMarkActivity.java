@@ -1,36 +1,37 @@
 package com.mycreat.kiipu.activity;
 
-import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.*;
-import android.support.v7.widget.ListPopupWindow;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.transition.Explode;
 import android.util.Log;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.*;
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.cocosw.bottomsheet.BottomSheet;
 import com.github.clans.fab.FloatingActionButton;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.BookMarkAdapter;
-import com.mycreat.kiipu.adapter.CollectionListAdapter;
 import com.mycreat.kiipu.core.AppManager;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.model.Bookmark;
@@ -39,7 +40,7 @@ import com.mycreat.kiipu.model.Collections;
 import com.mycreat.kiipu.model.UserInfo;
 import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.CustomAnimation;
-import com.mycreat.kiipu.view.MyBottomSheetDialog;
+import com.mycreat.kiipu.view.KiipuRecyclerView;
 import com.mycreat.kiipu.view.RoundImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -76,13 +77,13 @@ public class BookMarkActivity extends BaseActivity
 
     private SwipeRefreshLayout swipeToLoadLayout;
 
-    private RecyclerView recyclerView;
+    private KiipuRecyclerView recyclerView;
 
     private ImageView mIvClose, mIvIcon, mIvDetail;
 
     private RoundImageView mIvUserHeader;
 
-    private TextView mTvTitle, mTvUrl, mTvUserName;
+    private TextView mTvTitle, mTvUrl, mTvUserName, mTvIntroduce;
 
     private UserInfo mUserInfo;
 
@@ -140,6 +141,7 @@ public class BookMarkActivity extends BaseActivity
 
         mFloatingActionButton = initViewById(R.id.floating_action_bt);
 
+
         mFloatingActionButton.hide(false);
 
         new Handler().postDelayed(new Runnable() {
@@ -150,6 +152,7 @@ public class BookMarkActivity extends BaseActivity
                 mFloatingActionButton.setHideAnimation(AnimationUtils.loadAnimation(BookMarkActivity.this, R.anim.hide_to_bottom));
             }
         }, 300);
+
         mScrollThreshold = getResources().getDimensionPixelOffset(R.dimen.fab_scroll_threshold);
 
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -164,6 +167,21 @@ public class BookMarkActivity extends BaseActivity
                         mFloatingActionButton.show(true);
                     }
                 }
+            }
+
+            /**
+             *
+             * 第二个参数
+             * SCROLL_STATE_IDLE 停止滑动
+             * SCROLL_STATE_DRAGGING 当屏幕滚动且用户使用的触碰或手指还在屏幕上
+             * SCROLL_STATE_SETTLING 由于用户的操作，屏幕产生惯性滑动
+             * @param recyclerView
+             * @param newState
+             */
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
             }
         });
 
@@ -192,9 +210,10 @@ public class BookMarkActivity extends BaseActivity
         GridLayoutManager mGirdLayoutManager = new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(mGirdLayoutManager);
 
-        adapter = new BookMarkAdapter(this);
+        adapter = new BookMarkAdapter(this, mBookmarkList);
         adapter.setOnLoadMoreListener(BookMarkActivity.this, recyclerView);
-        adapter.openLoadAnimation(new CustomAnimation());
+        adapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
+//        adapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_BOTTOM);
         adapter.setOnItemChildClickListener(new OnItemChildClickListener());
 
         recyclerView.setAdapter(adapter);
@@ -284,10 +303,10 @@ public class BookMarkActivity extends BaseActivity
         //noinspection SimplifiableIfStatement
         switch (item.getItemId()){
             case R.id.action_add:
-                ToastUtil.showToastShort(this,"添加书签");
+                ToastUtil.showToastShort("添加书签");
                 return true;
             case R.id.action_search:
-                ToastUtil.showToastShort(this,"搜索书签");
+                ToastUtil.showToastShort("搜索书签");
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -298,37 +317,34 @@ public class BookMarkActivity extends BaseActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
 //        mProgress.setVisibility(View.VISIBLE);
-        swipeToLoadLayout.setRefreshing(true);
         adapter.setEnableLoadMore(false);
         toolbar.setLogo(null);
         REFRESH_TYPE = 0;
-        if (id == R.id.nav_all_bookmark) { /* all bookmarks  传0  或者不传 collection_id */
-            // Handle the camera action
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                getWindow().setExitTransition(new Explode());
-//                startActivity(new Intent(this, RecycleViewActivity.class), ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
-//            } else { startActivity(new Intent(this, RecycleViewActivity.class));}
-            collectionId = Constants.ALL_COLLECTION;
-            toolbar.setTitle(null);
-            toolbar.setLogo(R.drawable.login_logo_text);
-            getBookmarkList();
-        } else if (id == R.id.nav_inbox) {/* all bookmarks  传0  或者不传 collection_id */
-            collectionId = Constants.INBOX;
-            toolbar.setTitle(getString(R.string.inbox));
-            getBookmarkList();
-        }else{
-            swipeToLoadLayout.setRefreshing(false);
+        switch (item.getItemId()){
+            case R.id.nav_all_bookmark: /* all bookmarks  传0  或者不传 collection_id */
+                // Handle the camera action
+//                startActivity(new Intent(this, RecycleViewActivity.class));
+                swipeToLoadLayout.setRefreshing(true);
+                collectionId = Constants.ALL_COLLECTION;
+                toolbar.setTitle(null);
+                toolbar.setLogo(R.drawable.login_logo_text);
+                getBookmarkList();
+                break;
+            case R.id.nav_inbox: /* all bookmarks  传0  或者不传 collection_id */
+                collectionId = Constants.INBOX;
+                toolbar.setTitle(getString(R.string.inbox));
+                swipeToLoadLayout.setRefreshing(true);
+                getBookmarkList();
+                break;
+            default:
+                swipeToLoadLayout.setRefreshing(false);
+                break;
         }
-//        else if (id == R.id.nav_slideshow) {
-//        } else if (id == R.id.nav_manage) {
-//        } else if (id == R.id.nav_share) {
-//        } else if (id == R.id.nav_send) {
-//        }
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
     @Override
     public void onRefresh() {
@@ -434,11 +450,7 @@ public class BookMarkActivity extends BaseActivity
                 mUserInfo = response.body();
 //                mIvUserHeader  mTvUserName
                 if (mUserInfo != null) {
-                    Glide.with(mContext)
-                            .load(mUserInfo.avatarUrl)
-                            .placeholder(R.drawable.ic_launcher) // 占位图
-                            .error(R.drawable.error) // 加载失败占位图
-                            .into(mIvUserHeader);
+                    GlideUtil.getInstance().loadImage(mIvUserHeader, mUserInfo.avatarUrl,R.drawable.default_header_icon,true);
                     mTvUserName.setText(mUserInfo.nickName);
                 }
             }
@@ -558,13 +570,16 @@ public class BookMarkActivity extends BaseActivity
                 .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
     }
 
+    /**
+     * CardView More
+     */
     private class OnItemChildClickListener implements BaseQuickAdapter.OnItemChildClickListener {
 
         @Override
         public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
             switch (view.getId()) {
                 case R.id.img_more_info:
-                    showListPopupWindow(view, position);
+                    showListPopupWindow(position);
                     break;
             }
         }
@@ -572,110 +587,152 @@ public class BookMarkActivity extends BaseActivity
 
 
     private void showBookmarkDetailDialog(int position) {
+        View view = DialogUtil.showCanSetViewDialog(this,
+                R.layout.view_card_detail_dialog,
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
         BookmarksInfo mBookmarksInfo = requestData.get(position).info;
-        final MyBottomSheetDialog dialog = new MyBottomSheetDialog(BookMarkActivity.this);
-        View view = LayoutInflater.from(this).inflate(R.layout.view_bottom_sheet, null);
-        mIvClose = (ImageView) view.findViewById(R.id.iv_close);
         mIvIcon = (ImageView) view.findViewById(R.id.iv_icon);
         mTvTitle = (TextView) view.findViewById(R.id.tv_title);
         mTvUrl = (TextView) view.findViewById(R.id.tv_url);
         mIvDetail = (ImageView) view.findViewById(R.id.iv_detail);
-
-        mIvClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        Glide.with(mContext)
-                .load(mBookmarksInfo.getIcon())
-                .placeholder(R.drawable.ic_launcher) // 占位图
-                .error(R.drawable.error) // 加载失败占位图
-//                .diskCacheStrategy(DiskCacheStrategy.NONE)// 禁用掉Glide的缓存功能,默认是打开的
-                .centerCrop() // 取图片的中间区域
-//                .fitCenter()
-                .into(mIvIcon);
-        Glide.with(mContext)
-                .load(mBookmarksInfo.getImg())
-                .placeholder(R.drawable.ic_launcher)
-                .error(R.drawable.error)
-//                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(mIvDetail);
+        mTvIntroduce = (TextView) view.findViewById(R.id.tv_introduce);
+        GlideUtil.getInstance().loadImage(mIvIcon, mBookmarksInfo.getIcon(), true);
         mTvTitle.setText(mBookmarksInfo.getTitle());
         mTvUrl.setText(mBookmarksInfo.getUrl());
-        dialog.setContentView(view);
-        dialog.show();
+        if (requestData.get(position).type.equals("1")) {
+            mIvDetail.setVisibility(View.VISIBLE);
+            mTvIntroduce.setVisibility(View.GONE);
+            GlideUtil.getInstance().loadImage(mIvDetail, mBookmarksInfo.getImg(), true);
+        } else {
+            mIvDetail.setVisibility(View.GONE);
+            mTvIntroduce.setVisibility(View.VISIBLE);
+            mTvIntroduce.setText(mBookmarksInfo.getIntroduce());
+        }
     }
 
 
-    public void showListPopupWindow(View view, final int dataPosition) {
-        final ListPopupWindow listPopupWindow = new ListPopupWindow(mContext);
+    public void showListPopupWindow(final int dataPosition) {
 
-        // ListView适配器
-        listPopupWindow.setAdapter(
-                new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, Constants.ITEMS));
-        // 选择item的监听事件
-        listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
+         BottomSheet sheet = new BottomSheet.Builder(this).sheet(R.menu.more_info).listener(new DialogInterface.OnClickListener() {
             @Override
-            public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
-                listPopupWindow.dismiss();
-                switch (position) {
-                    case 0:
-                        showBookmarkDetailDialog(dataPosition);
-                        break;
-                    case 1:
-                        showMoveBookmarkDialog(dataPosition);
-                        break;
-                    case 2:
-                        requestDeleteItem(dataPosition);
-                        break;
-                    case 3:
-                        ToastUtil.showToastShort("分享功能正在后期筹备中...");
-                        break;
-                }
+            public void onClick(DialogInterface dialog, int which) {
+                BookMarkActivity.this.onMoreInfoItemClick(dataPosition, which);
             }
-        });
+        }).build();
+        sheet.show();
 
-        // 对话框的宽高
-        listPopupWindow.setWidth(500);
-        listPopupWindow.setHeight(600);
-
-        // ListPopupWindow 相对的View
-        listPopupWindow.setAnchorView(view);
-
-        // ListPopupWindow 相对按钮横向 和纵向 的距离
-        listPopupWindow.setHorizontalOffset(50);
-        listPopupWindow.setVerticalOffset(1);
-
-        //  Set whether this window should be modal when shown.
-        // If a popup window is modal, it will receive all touch and key input. If the user touches outside the popup window's content area the popup window will be dismissed.
-        // modal boolean: true if the popup window should be modal, false otherwise.
-        listPopupWindow.setModal(false);
-
-        listPopupWindow.show();
+//        final ListPopupWindow listPopupWindow = new ListPopupWindow(mContext);
+//        // ListView适配器
+//        listPopupWindow.setAdapter(
+//                new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, Constants.ITEMS));
+//        // 选择item的监听事件
+//        listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
+//                listPopupWindow.dismiss();
+//                switch (position) {
+//                    case 0:
+//                        showBookmarkDetailDialog(dataPosition);
+//                        break;
+//                    case 1:
+//                        showMoveBookmarkDialog(dataPosition);
+//                        break;
+//                    case 2:
+//                        requestDeleteItem(dataPosition);
+//                        break;
+//                    case 3:
+//                        ToastUtil.showToastShort("分享功能正在后期筹备中...");
+//                        break;
+//                }
+//            }
+//        });
+//
+//        // 对话框的宽高
+//        listPopupWindow.setWidth(500);
+//        listPopupWindow.setHeight(600);
+//
+//        // ListPopupWindow 相对的View
+//        listPopupWindow.setAnchorView(view);
+//
+//        // ListPopupWindow 相对按钮横向 和纵向 的距离
+//        listPopupWindow.setHorizontalOffset(50);
+//        listPopupWindow.setVerticalOffset(1);
+//
+//        //  Set whether this window should be modal when shown.
+//        // If a popup window is modal, it will receive all touch and key input. If the user touches outside the popup window's content area the popup window will be dismissed.
+//        // modal boolean: true if the popup window should be modal, false otherwise.
+//        listPopupWindow.setModal(false);
+//
+//        listPopupWindow.show();
     }
+
+    private void onMoreInfoItemClick(int dataPosition, int which) {
+        switch (which) {
+            case R.id.show_detail:
+                showBookmarkDetailDialog(dataPosition);
+                break;
+            case R.id.move_to:
+                showMoveBookmarkDialog(dataPosition);
+                break;
+            case R.id.delete:
+                requestDeleteItem(dataPosition);
+                break;
+            case R.id.share:
+                ToastUtil.showToastShort("分享功能正在后期筹备中...");
+                break;
+        }
+    }
+
 
     private void showMoveBookmarkDialog(final int dataPosition) {
-        final MyBottomSheetDialog dialog = new MyBottomSheetDialog(this);
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_layout, null);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        CollectionListAdapter adapter = new CollectionListAdapter(this);
-        adapter.addData(mCollectionList);
-        recyclerView.setAdapter(adapter);
-        recyclerView.addOnItemTouchListener(new OnItemClickListener() {
-            @Override
-            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-                dialog.dismiss();
-                requestMoveBookmark(dataPosition, position);
-            }
-        });
-        dialog.setContentView(view);
-        dialog.show();
+            Intent intent = new Intent(this,CollectionActivity.class);
+            intent.putExtra("dataPosition",dataPosition);
+            intent.putExtra("currentBookmarkId", requestData.get(dataPosition).id);
+
+            startActivityForResult(intent,Constants.REQUEST_MOVE_BOOKMARK_CODE);
+
+//        final MyBottomSheetDialog dialog = new MyBottomSheetDialog(this);
+//        View view = LayoutInflater.from(this).inflate(R.layout.dialog_layout, null);
+//        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        CollectionListAdapter adapter = new CollectionListAdapter(this);
+//        adapter.addData(mCollectionList);
+//        recyclerView.setAdapter(adapter);
+//        recyclerView.addOnItemTouchListener(new OnItemClickListener() {
+//            @Override
+//            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
+//                dialog.dismiss();
+//                requestMoveBookmark(dataPosition, position);
+//            }
+//        });
+//        dialog.setContentView(view);
+//        dialog.show();
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode){
+            case Constants.RESULT_MOVE_BOOKMARK_CODE:
+                if(data != null) {
+                    int dataPosition = data.getIntExtra("dataPosition", 0);
+                    String collectionName = data.getStringExtra("collectionName");
+                    requestData.remove(dataPosition);
+                    adapter.remove(dataPosition);
+                    Snackbar.make(mFloatingActionButton, "移动书签到 " + collectionName + " 成功", Snackbar.LENGTH_LONG)
+                            .setDuration(2500)
+                            .show();
+                }
+                break;
+        }
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -740,7 +797,7 @@ public class BookMarkActivity extends BaseActivity
     }
 
     /**
-     * 2131493098 为 item（nav_share）在 R 文件中 id
+     *
      * leftMenu clickListener
      */
     private class OnMenuItemClickListener implements MenuItem.OnMenuItemClickListener {
@@ -769,4 +826,7 @@ public class BookMarkActivity extends BaseActivity
 
         }
     }
+
+
+
 }

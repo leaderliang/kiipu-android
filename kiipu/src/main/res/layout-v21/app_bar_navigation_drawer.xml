@@ -6,6 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
+        android:id="@+id/ll_coordinator"
         tools:context="com.mycreat.kiipu.activity.BookMarkActivity">
 
     <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
@@ -13,10 +14,10 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:theme="@style/AppTheme.AppBarOverlay"
+            app:elevation="0dp"
     >
         <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:layout_scrollFlags="scroll|enterAlways" 配置 scrollFlags，就可以在RecyclerView滚动事件发生的时候被触发
-        去掉状态栏透明后，当 toolbar 划上去后就可以完全隐藏掉了
         -->
         <android.support.v7.widget.Toolbar
                 xmlns:toolbar="http://schemas.android.com/apk/res-auto"
@@ -92,8 +93,9 @@
             app:fab_colorRipple="@color/colorPrimaryDark"
             android:src="@drawable/fab_add"
             app:fab_elevationCompat="4dp"
+            app:fabSize="normal"
             app:borderWidth="0dp"
-    />
+            />
 
 
 </android.support.design.widget.CoordinatorLayout>

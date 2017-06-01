@@ -19,15 +19,30 @@
                   android:orientation="vertical"
                   android:gravity="bottom"
     >
-        <com.mycreat.kiipu.view.RoundImageView
-                android:id="@+id/iv_user_icon"
-                android:layout_width="65dp"
-                android:layout_height="65dp"
-                android:paddingTop="@dimen/nav_header_vertical_spacing"
-                android:scaleType="fitXY"
-                app:srcCompat="@android:drawable/ic_dialog_email"
-                roundImage:mold="circle"/>
+        <RelativeLayout android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+        >
 
+            <com.mycreat.kiipu.view.RoundImageView
+                    android:id="@+id/iv_user_icon"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
+                    android:paddingTop="@dimen/nav_header_vertical_spacing"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@android:drawable/ic_dialog_email"
+                    roundImage:mold="circle"/>
+
+            <Button android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:background="@drawable/login_out_shape"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:textSize="14sp"
+                    android:text="Log out"
+                    android:textColor="@color/white"
+            />
+
+        </RelativeLayout>
         <TextView
                 android:id="@+id/tv_user_name"
                 android:layout_width="match_parent"
@@ -43,16 +58,6 @@
                 android:id="@+id/textView"/>
 
     </LinearLayout>
-
-
-    <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical"
-    />
-
-
 
 
 </LinearLayout>

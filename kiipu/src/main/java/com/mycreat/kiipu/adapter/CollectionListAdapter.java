@@ -3,6 +3,7 @@ package com.mycreat.kiipu.adapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.activity.BookMarkActivity;
+import com.mycreat.kiipu.activity.CollectionActivity;
 import com.mycreat.kiipu.model.Collections;
 
 /**
@@ -13,9 +14,9 @@ import com.mycreat.kiipu.model.Collections;
 public class CollectionListAdapter extends BaseQuickAdapter<Collections, com.mycreat.kiipu.utils.BaseViewHolder> {
 
 
-    private BookMarkActivity mContext;
+    private CollectionActivity mContext;
 
-    public CollectionListAdapter(BookMarkActivity context) {
+    public CollectionListAdapter(CollectionActivity context) {
         super(R.layout.list_item);
         this.mContext = context;
     }

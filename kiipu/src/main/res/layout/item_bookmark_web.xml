@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardUseCompatPadding="false"
+        card_view:cardPreventCornerOverlap="true"
+        card_view:cardBackgroundColor="@android:color/white"
+        card_view:cardCornerRadius="6dp"
+        card_view:cardElevation="@dimen/recycle_card_Elevation"
+        android:clickable="true"
+        android:layout_marginRight="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="12dp"
+>
+
+    <!--
+        card_view:cardUseCompatPadding="true"  // 阴影Padding 让CardView在不同系统中使用相同的padding值
+        card_view:cardPreventCornerOverlap="true" // 圆角覆盖  默认 true
+        card_view:cardCornerRadius="30dp"   //圆角 角度
+        card_view:cardElevation="5dp    // 阴影的大小，值越大间距越大
+    -->
+
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+    >
+
+        <android.support.v7.widget.CardView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/card_view_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                card_view:cardUseCompatPadding="false"
+                card_view:cardPreventCornerOverlap="true"
+                card_view:cardBackgroundColor="@android:color/white"
+                card_view:cardCornerRadius="6dp"
+                card_view:cardElevation="@dimen/recycle_card_Elevation"
+                android:clickable="true"
+                android:layout_marginRight="6dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="12dp"
+        >
+
+            <LinearLayout
+                          android:id="@+id/ll_item_header"
+                          android:layout_width="match_parent"
+                          android:layout_height="100dp"
+                          android:gravity="center"
+
+            >
+                <LinearLayout
+                        xmlns:roundimg="http://schemas.android.com/apk/res-auto"
+                        android:layout_width="78dp"
+                        android:layout_height="78dp"
+                        android:background="@drawable/header_img_bg_shape"
+                        android:layout_centerInParent="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
+                >
+
+                    <com.mycreat.kiipu.view.RoundImageView
+                            android:id="@+id/iv_item_header"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            roundimg:mold="circle"
+                    />
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </android.support.v7.widget.CardView>
+
+        <RelativeLayout
+                android:id="@+id/rl_item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_below="@+id/card_view_header"
+        >
+
+            <com.mycreat.kiipu.view.LeftIvTextView
+                    android:id="@+id/card_view_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"/>
+
+            <TextView
+                    android:id="@+id/tv_introduce"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@+id/card_view_title"
+                    android:visibility="gone"
+                    android:textSize="12sp"
+                    android:textColor="@color/color_4c3b3b"
+                    android:lineSpacingExtra="2dp"
+                    android:ellipsize="end"
+
+            />
+        </RelativeLayout>
+
+
+        <RelativeLayout android:layout_width="match_parent"
+                        android:layout_height="19dp"
+                        android:layout_below="@+id/rl_item_title"
+                        android:layout_marginTop="17dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_alignParentBottom="true">
+
+            <TextView
+                    android:id="@+id/tv_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="www.zhihu.com"
+                    android:textColor="@color/color_c5c5c5"
+                    android:layout_centerVertical="true"
+                    android:textSize="9sp"
+            />
+            <ImageView
+                    android:id="@+id/img_more_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/item_more_info_icon"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:paddingRight="8dp"
+                    android:paddingLeft="5dp"
+            />
+        </RelativeLayout>
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

@@ -21,27 +21,27 @@ import com.umeng.socialize.common.QueuedWork;
  */
 public class KiipuApplication extends MultiDexApplication {
 
+    /*各个平台的配置，建议放在全局Application或者程序入口*/
+    {
+        PlatformConfig.setSinaWeibo("3763012369", "70ca7f8be6f87b1157ced83e67d27a48", "http://sns.whalecloud.com");
 
+    }
     public static KiipuApplication instance;
 
     public static Context appContext;
 
-    private static int SCREEN_WIDTH = -1;
+    public static int SCREEN_WIDTH = -1;
 
-    private static int SCREEN_HEIGHT = -1;
+    public static int SCREEN_HEIGHT = -1;
 
-    private static float DIMEN_RATE = -1.0F;
+    public static float DIMEN_RATE = -1.0F;
 
-    private static int DIMEN_DPI = -1;
+    public static int DIMEN_DPI = -1;
 
     public static RetrofitService mRetrofitService;
 
 
-    //各个平台的配置，建议放在全局Application或者程序入口
-    {
-        PlatformConfig.setSinaWeibo("3763012369", "70ca7f8be6f87b1157ced83e67d27a48","http://sns.whalecloud.com");
 
-    }
 
     public static synchronized KiipuApplication getInstance() {
         return instance;
@@ -50,12 +50,16 @@ public class KiipuApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        initBase();
+    }
+
+    private void initBase() {
         instance = this;
+        appContext = getApplicationContext();
         Config.DEBUG = true;
         QueuedWork.isUseThreadPool = false;
         getScreenSize();
         mRetrofitService = RetrofitClient.getInstance().create(RetrofitService.class);
-
     }
 
     @Override

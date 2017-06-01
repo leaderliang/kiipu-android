@@ -7,6 +7,22 @@ package com.mycreat.kiipu.utils;
  */
 public class Constants {
 
+    public static final int BOOKMARK_TYPE_IMG = 1;
+
+    public static final int BOOKMARK_TYPE_TEXT = 2;
+
+    public static final int BOOKMARK_TYPE_WEB = 3;
+
+    public static final int REQUEST_MOVE_BOOKMARK_CODE = 4;
+
+    public static final int RESULT_MOVE_BOOKMARK_CODE = 5;
+
+    public static final int BLUR_VALUE = 20; //模糊
+
+    public static final int CORNER_RADIUS = 20; //圆角
+
+    public static final float THUMB_SIZE = 0.5f; //0-1之间  10%原图的大小
+
     public static final String ALL_COLLECTION = "0";
 
     public static final String INBOX = "-1";

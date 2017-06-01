@@ -1,5 +1,6 @@
 package com.mycreat.kiipu.model;
 
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -9,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  * tip: @SerializedName("id") 括号里的值必须和返回的字段一一对应
  * TODO
  */
-public class Bookmark {
+public class Bookmark implements MultiItemEntity {
 
     @Expose
     @SerializedName("id")
@@ -17,6 +18,7 @@ public class Bookmark {
     /**
      * type 1 带图片
      * type 2 带文字
+     * type 3 网站
      */
     @Expose
     @SerializedName("type")
@@ -38,4 +40,8 @@ public class Bookmark {
     public String updateOn;
 
 
+    @Override
+    public int getItemType() {
+        return Integer.valueOf(type);
+    }
 }

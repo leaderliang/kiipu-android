@@ -115,3 +115,26 @@ public static final ** CREATOR;
 -keep class com.chad.library.adapter.** {
     *;
  }
+ # bootsheet
+-ignorewarnings
+-renamesourcefileattribute SourceFile
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
+-keepclassmembers enum * { public static **[] values(); public static ** valueOf(java.lang.String); }
+
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.view.View { public <init>(android.content.Context); public <init>(android.content.Context, android.util.AttributeSet); public <init>(android.content.Context, android.util.AttributeSet, int); public void set*(...); }
+
+-keep class com.cocosw.query.**
+-keepclassmembers class com.cocosw.query.** { *; }
+
+-keepclassmembers class * extends android.app.Activity { public void *(android.view.View); }
+-keepclassmembers class android.support.v4.app.Fragment { *** getActivity(); public *** onCreate(); public *** onCreateOptionsMenu(...); }
+
+-keep public class * extends junit.framework.TestCase
+
+# GlideModule
+-keep public class * implements com.bumptech.glide.module.GlideModule

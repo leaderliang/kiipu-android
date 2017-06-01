@@ -12,6 +12,7 @@
                    android:layout_height="12dp"
                    android:layout_marginRight="3dp"
                    android:layout_centerVertical="true"
+                   android:src="@drawable/default_logo_small"
         />
         <TextView android:id="@+id/tv_num1"
                   android:layout_width="match_parent"

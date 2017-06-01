@@ -28,7 +28,7 @@
             app:itemIconTint="@color/nav_menu_text_color"
             app:itemBackground="@drawable/nav_menu_text_selector"
             android:background="@color/white"
-
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             />
 
 </android.support.v4.widget.DrawerLayout>

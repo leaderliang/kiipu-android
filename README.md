@@ -13,8 +13,37 @@ Glide 是 Google 员工基于 Picasso 基础上进行开发的，所以自然各
 
 > https://github.com/bumptech/glide
 
+diskCacheStrategy(DiskCacheStrategy strategy).设置缓存策略。
+DiskCacheStrategy.SOURCE：缓存原始数据，
+DiskCacheStrategy.RESULT：缓存变换(如缩放、裁剪等)后的资源数据，
+DiskCacheStrategy.NONE：什么都不缓存，
+DiskCacheStrategy.ALL：缓存SOURC和RESULT。
+默认采用DiskCacheStrategy.RESULT策略，
+对于download only操作要使用DiskCacheStrategy.SOURCE
+
+### 一些使用技巧
+Glide.with(context).resumeRequests()和 Glide.with(context).pauseRequests()
+
+当列表在滑动的时候，调用pauseRequests()取消请求，滑动停止时，调用resumeRequests()恢复请求。这样是不是会好些呢？
+
+Glide.clear()
+
+当你想清除掉所有的图片加载请求时，这个方法可以帮助到你。
+
+ListPreloader
+
+如果你想让列表预加载的话，不妨试一下ListPreloader这个类
+
+
 如果你的项目需要大量使用图片，比如是类似 Instagram 一类的图片社交 App ，那么推荐使用 Fresco。Fresco 是 Facebook 作品，关于内存的占用优化更好，但是同时包也更大，门槛也更高，初级工程师不建议使用。官方地址：
 
+### 和 Glide 图片加载相关的库
+一个基于Glide的transformation库，拥有裁剪，着色，模糊，滤镜等多种转换效果
+```
+compile 'jp.wasabeef:glide-transformations:2.0.2'
+    // If you want to use the GPU Filters
+compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
+```
 > https://github.com/facebook/fresco
 
 这两款图片加载库，基本算是在 16 年使用最多，被认可最高的两个图片加载库了。
@@ -117,28 +146,14 @@ android:background="?android:attr/selectableItemBackgroundBorderless"> // 波纹
 > android:clipToPadding="false"
 > 常常用于paddingTop，假设 内部有个属性设置了PaddingTop但是滑动的时候就忽视paddingTop的 则使用该属性 
 
-## Bug 专区
-```
- W/WindowAnimator: Failed to dispatch window animation state change.
-                                                 android.os.DeadObjectException
-                                                     at android.os.BinderProxy.transactNative(Native Method)
-                                                     at android.os.BinderProxy.transact(Binder.java:503)
-                                                     at android.view.IWindow$Stub$Proxy.onAnimationStopped(IWindow.java:534)
-                                                     at com.android.server.wm.WindowAnimator.updateWindowsLocked(WindowAnimator.java:286)
-                                                     at com.android.server.wm.WindowAnimator.animateLocked(WindowAnimator.java:678)
-                                                     at com.android.server.wm.WindowAnimator.access$000(WindowAnimator.java:53)
-                                                     at com.android.server.wm.WindowAnimator$1.doFrame(WindowAnimator.java:123)
-                                                     at android.view.Choreographer$CallbackRecord.run(Choreographer.java:856)
-                                                     at android.view.Choreographer.doCallbacks(Choreographer.java:670)
-                                                     at android.view.Choreographer.doFrame(Choreographer.java:603)
-                                                     at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:844)
-                                                     at android.os.Handler.handleCallback(Handler.java:739)
-                                                     at android.os.Handler.dispatchMessage(Handler.java:95)
-                                                     at android.os.Looper.loop(Looper.java:148)
-                                                     at android.os.HandlerThread.run(HandlerThread.java:61)
-                                                     at com.android.server.ServiceThread.run(ServiceThread.java:46)
-05-25 18:17:20.607 31975-31975/? W/System: ClassLoader referenced unknown path: /data/app/com.mycreat.kiipu-1/lib/arm
-```
+## ImageView 设置宽高比
+ImageView 有个属性 android:adjustViewBounds="true" ，意思是图片是否保持宽高比；
+设置完属性后，需要在代码中动态设置 maxWidth、MaxHeight 才会生效
+例如 16 ：9
+imageView.setMaxWidth(screenWidth);  
+imageView.setMaxHeight(screenWidth / (16 / 9));
+
+
 
 ## Android 开发小工具之：Custom Tabs
 > http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0914/3451.html
@@ -293,6 +308,9 @@ actionBar.setDisplayShowTitleEnabled(true)   //对应ActionBar.DISPLAY_SHOW_TITL
         return super.onOptionsItemSelected(item);
     }
 
+# Material Design
+所有组件的阴影去掉方式可使用
+app:elevation="0dp"
 
 
 

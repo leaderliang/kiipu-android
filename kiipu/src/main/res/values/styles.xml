@@ -4,7 +4,7 @@
     <!-- Base application theme. -->
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <!-- actiinbar的属性颜色 -->
+        <!-- actionbar的属性颜色 -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <!-- 状态栏背景-->
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -25,7 +25,6 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
     <style name="AppTheme" parent="AppBaseTheme">
-
     </style>
 
     <style name="NoActionBar" parent="AppBaseTheme">

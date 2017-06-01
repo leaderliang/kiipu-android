@@ -21,6 +21,8 @@
 
     <!-- view UI-->
     <dimen name="recycle_card_Elevation">0dp</dimen>
+    <dimen name="borderRadius">6dp</dimen>
+    <dimen name="cardCornerRadius">6dp</dimen>
 
     <dimen name="icon_margin">15dp</dimen>
     <dimen name="title_view_height">40dp</dimen>

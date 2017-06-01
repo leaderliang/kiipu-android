@@ -16,7 +16,7 @@
                         android:layout_height="45dp"
                         android:orientation="horizontal"
                         android:background="@color/colorAccent"
-                        android:elevation="5dp"
+                        android:elevation="0dp"
         >
 
 

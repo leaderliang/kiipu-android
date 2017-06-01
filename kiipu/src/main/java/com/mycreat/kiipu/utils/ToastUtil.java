@@ -44,19 +44,11 @@ public class ToastUtil {
         showMessage(KiipuApplication.appContext, message, Toast.LENGTH_SHORT);
     }
 
-    public static void showToastShort(Context context, int resId) {
-        showMessage(context, context.getString(resId), Toast.LENGTH_SHORT);
+    public static void showToastLong(int resId) {
+        showMessage(KiipuApplication.appContext, KiipuApplication.appContext.getString(resId), Toast.LENGTH_LONG);
     }
 
-    public static void showToastShort(Context context, String message) {
-        showMessage(context, message, Toast.LENGTH_SHORT);
-    }
-
-    public static void showToastLong(Context context, int resId) {
-        showMessage(context, context.getString(resId), Toast.LENGTH_LONG);
-    }
-
-    public static void showToastLong(Context context, String message) {
-        showMessage(context, message, Toast.LENGTH_LONG);
+    public static void showToastLong(String message) {
+        showMessage(KiipuApplication.appContext, message, Toast.LENGTH_LONG);
     }
 }

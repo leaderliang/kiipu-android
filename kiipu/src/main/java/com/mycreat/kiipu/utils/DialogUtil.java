@@ -40,11 +40,26 @@ public class DialogUtil {
         builder.setView(view);
         AlertDialog dialog = builder.create();
         dialog.show();
-        // 获取PositiveButton 重点在这里
+        // 获取 PositiveButton 重点在这里, 设置没有文字时按钮置灰
         Button btn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         if (callBack != null) {
             callBack.buttonCallBack(btn);
         }
+    }
+
+    public static View showCanSetViewDialog(final Context context,int viewId, DialogInterface.OnClickListener positiveButtonClick){
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(viewId, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        builder.setTitle("详情");
+        builder.setPositiveButton("完成", positiveButtonClick);
+        builder.setCancelable(false);
+        builder.setView(view);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        return view;
     }
 
     public static void showCommonDialog(Context context,

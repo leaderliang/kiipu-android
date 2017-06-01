@@ -21,7 +21,7 @@ public class ClipboardUtils {
         ClipData.Item item;
         //无数据时直接返回
         if (!clipboard.hasPrimaryClip()) {
-            ToastUtil.showToastShort("剪贴板中无数据");
+//            ToastUtil.showToastShort("剪贴板中无数据");
             return "";
         }
 
@@ -32,7 +32,7 @@ public class ClipboardUtils {
             item = cdText.getItemAt(0);
             //此处是TEXT文本信息
             if (item.getText() == null) {
-                ToastUtil.showToastShort("剪贴板中无数据");
+//                ToastUtil.showToastShort("剪贴板中无数据");
                 return "";
             } else {
                 return item.getText().toString();

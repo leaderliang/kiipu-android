@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseArray;
@@ -16,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.github.clans.fab.FloatingActionButton;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.activity.BookMarkActivity;
 import com.mycreat.kiipu.utils.Constants;
@@ -75,11 +76,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
-    public void onClick(View v) {
-        onViewClick(v);
-    }
-
-    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //过渡动画  requestFeature() must be called before adding content
@@ -103,17 +99,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private void initBaseView() {
         mRequestErrorLayout = (RequestErrorLayout) getLayoutInflater().inflate(R.layout.view_empty, null);
         mFloatingActionButton = initViewById(R.id.floating_action_bt);
-
-        // 在 baseLayout 上展示
-        mFloatingActionButton.hide(false);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mFloatingActionButton.show(true);
-                mFloatingActionButton.setShowAnimation(AnimationUtils.loadAnimation(BaseActivity.this, R.anim.show_from_bottom));
-                mFloatingActionButton.setHideAnimation(AnimationUtils.loadAnimation(BaseActivity.this, R.anim.hide_to_bottom));
-            }
-        }, 300);
+        setOnClick(mFloatingActionButton);
     }
 
     private void initToolbar() {
@@ -195,6 +181,22 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     }
 
+    protected void setFloatingVisibile(boolean isVisible) {
+//        mFloatingActionButton.hide(isVisible);
+//        if(isVisible){
+//            // 在 baseLayout 上展示
+//            mFloatingActionButton.hide(false);
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mFloatingActionButton.show(true);
+//                    mFloatingActionButton.setShowAnimation(AnimationUtils.loadAnimation(BaseActivity.this, R.anim.show_from_bottom));
+//                    mFloatingActionButton.setHideAnimation(AnimationUtils.loadAnimation(BaseActivity.this, R.anim.hide_to_bottom));
+//                }
+//            }, 300);
+//        }
+    }
+
     protected <T extends View> void setOnClick(T view) {
         view.setOnClickListener(this);
     }
@@ -227,6 +229,16 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     public void getUserAccessToken() {
         userAccessToken = "Bearer " + SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN, "");
+    }
+
+    @Override
+    public void onClick(View v) {
+        onViewClick(v);
+        switch (v.getId()){
+            case R.id.floating_action_bt:
+                Snackbar.make(mFloatingActionButton,"Replace with your own action",Snackbar.LENGTH_LONG).setDuration(2000).show();
+                break;
+        }
     }
 
 }

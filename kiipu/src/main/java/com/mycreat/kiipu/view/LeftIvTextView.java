@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.mycreat.kiipu.R;
+import com.mycreat.kiipu.utils.GlideUtil;
 
 /**
  * Created by liangyanqiao on 2017/5/22.
@@ -44,11 +45,7 @@ public class LeftIvTextView extends RelativeLayout {
     }
 
     public void loadImage(String url) {
-        Glide.with(mContext)
-                .load(url)
-                .placeholder(R.drawable.ic_launcher) // 占位图
-                .error(R.drawable.error) // 加载失败占位图
-                .into(mImageView);
+        GlideUtil.getInstance().loadImage(mImageView, url, R.drawable.default_logo_small, true);
     }
 
     public void setText(final String string) {

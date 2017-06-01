@@ -3,6 +3,7 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!--  底部虚拟键盘 颜色 -->
         <item name="android:navigationBarColor">@color/black</item>
+        <!--<item name="android:windowContentTransitions">true</item>-->
     </style>
 
     <style name="NoActionBar" parent="AppBaseTheme">
