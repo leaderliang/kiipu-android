@@ -169,10 +169,11 @@ public class GlideUtil {
      * @param imageView
      * @param imgUrl
      */
-    public void loadCircleImage( ImageView imageView, String imgUrl) {
+    public void loadCircleImage( ImageView imageView, String imgUrl, int defaultImg) {
         Glide.with(mContext)
                 .load(imgUrl)
-                .error(R.drawable.default_item_cover)
+                .placeholder(defaultImg)
+                .error(defaultImg)
                 .crossFade()
                 .priority(Priority.NORMAL) //下载的优先级
                 .diskCacheStrategy(DiskCacheStrategy.ALL) //缓存策略

@@ -3,10 +3,8 @@ package com.mycreat.kiipu.activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -41,7 +39,6 @@ import com.mycreat.kiipu.model.UserInfo;
 import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.CustomAnimation;
 import com.mycreat.kiipu.view.KiipuRecyclerView;
-import com.mycreat.kiipu.view.RoundImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -81,7 +78,7 @@ public class BookMarkActivity extends BaseActivity
 
     private ImageView mIvClose, mIvIcon, mIvDetail;
 
-    private RoundImageView mIvUserHeader;
+    private ImageView mIvUserHeader;
 
     private TextView mTvTitle, mTvUrl, mTvUserName, mTvIntroduce;
 
@@ -105,6 +102,8 @@ public class BookMarkActivity extends BaseActivity
 
     private int mScrollThreshold;
 
+    private Button mBtLogOut;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         useBaseLayout = false;
@@ -127,9 +126,11 @@ public class BookMarkActivity extends BaseActivity
 
         menuAllItem = navigationView.getMenu().findItem(R.id.nav_all_bookmark);
 
-        mIvUserHeader = (RoundImageView) headerView.findViewById(R.id.iv_user_icon);
+        mIvUserHeader = (ImageView) headerView.findViewById(R.id.iv_user_icon);
 
         mTvUserName = (TextView) headerView.findViewById(R.id.tv_user_name);
+
+        mBtLogOut = (Button) headerView.findViewById(R.id.bt_log_out);
 
         toolbar = initViewById(R.id.toolbar);
 
@@ -236,6 +237,7 @@ public class BookMarkActivity extends BaseActivity
 
     public void initListener() {
         setOnClick(mFloatingActionButton);
+        setOnClick(mBtLogOut);
         // 左侧菜单显示隐藏事件监听，左侧菜单点击选中 selector
         navigationView.setNavigationItemSelectedListener(this);
         swipeToLoadLayout.setOnRefreshListener(this);
@@ -274,6 +276,14 @@ public class BookMarkActivity extends BaseActivity
                         .setActionTextColor(Color.parseColor("#0097A7"))
                         .setDuration(4000)
                         .show();
+                break;
+            case R.id.bt_log_out:
+                DialogUtil.showCommonDialog(this, null, "退出 Kiipu!", false, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        logOut();
+                    }
+                }, null);
                 break;
         }
     }
@@ -450,7 +460,7 @@ public class BookMarkActivity extends BaseActivity
                 mUserInfo = response.body();
 //                mIvUserHeader  mTvUserName
                 if (mUserInfo != null) {
-                    GlideUtil.getInstance().loadImage(mIvUserHeader, mUserInfo.avatarUrl,R.drawable.default_header_icon,true);
+                    GlideUtil.getInstance().loadCircleImage(mIvUserHeader, mUserInfo.avatarUrl,R.drawable.default_header_icon);
                     mTvUserName.setText(mUserInfo.nickName);
                 }
             }
@@ -741,16 +751,26 @@ public class BookMarkActivity extends BaseActivity
                 Toast.makeText(this, "再按一次退出程序并清空登录信息", Toast.LENGTH_SHORT).show();
                 nowTime = System.currentTimeMillis();
             } else {
-                SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
-                SharedPreferencesUtil.removeKey(mContext, Constants.USER_ID);
-                LogUtil.e("ACCESS_TOKEN " + SharedPreferencesUtil.getData(mContext,Constants.ACCESS_TOKEN,""));
-                finish();
-                AppManager.getAppManager().appExit(this);
-
+                logOutApp();
             }
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    private void logOutApp() {
+        SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
+        SharedPreferencesUtil.removeKey(mContext, Constants.USER_ID);
+        LogUtil.e("when logOutApp ACCESS_TOKEN " + SharedPreferencesUtil.getData(mContext,Constants.ACCESS_TOKEN,""));
+        finish();
+        AppManager.getAppManager().appExit(this);
+    }
+
+    private void logOut(){
+        SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
+        SharedPreferencesUtil.removeKey(mContext, Constants.USER_ID);
+        finish();
+        startActivity(new Intent(this,LoginActivity.class));
     }
 
 

@@ -23,22 +23,23 @@
                         android:layout_height="wrap_content"
         >
 
-            <com.mycreat.kiipu.view.RoundImageView
+            <ImageView
                     android:id="@+id/iv_user_icon"
                     android:layout_width="65dp"
                     android:layout_height="65dp"
-                    android:paddingTop="@dimen/nav_header_vertical_spacing"
-                    android:scaleType="fitXY"
-                    app:srcCompat="@android:drawable/ic_dialog_email"
-                    roundImage:mold="circle"/>
+                    android:scaleType="centerCrop"
+                    android:layout_centerVertical="true"
+                     />
 
-            <Button android:layout_width="wrap_content"
+            <Button
+                    android:id="@+id/bt_log_out"
+                    android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:background="@drawable/login_out_shape"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
-                    android:text="Log out"
+                    android:text="@string/logout"
                     android:textColor="@color/white"
             />
 

@@ -13,6 +13,7 @@ import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.model.LoginInfo;
 import com.mycreat.kiipu.utils.Constants;
+import com.mycreat.kiipu.utils.LogUtil;
 import com.mycreat.kiipu.utils.SharedPreferencesUtil;
 import com.mycreat.kiipu.utils.ToastUtil;
 import com.umeng.socialize.UMAuthListener;
@@ -108,14 +109,17 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
+
             SocializeUtils.safeCloseDialog(dialog);
 //            ToastUtil.showToastShort("授权成功");
             Log.e(TAG, "onComplete data" + data);
             if (!isUseClient) {
+                isUseClient = true;
                 access_token = data.get("access_token");
                 uid = data.get("uid");
                 requestLogin(access_token, uid);
             }
+
         }
 
         @Override
@@ -144,13 +148,15 @@ public class LoginActivity extends BaseActivity {
         Log.e(TAG, "onActivityResult " + data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
         if (data != null) {
-            isUseClient = true;
-            Bundle bundle = data.getExtras();
-            access_token = bundle.getString("access_token");
-            userName = bundle.getString("userName");
-            uid = bundle.getString("uid");
-            Log.e(TAG, "access_token" + access_token + "  userName" + userName + "  uid" + uid);
-            requestLogin(access_token, uid);
+            if(!isUseClient) {
+                isUseClient = true;
+                Bundle bundle = data.getExtras();
+                access_token = bundle.getString("access_token");
+                userName = bundle.getString("userName");
+                uid = bundle.getString("uid");
+                Log.e(TAG, "access_token" + access_token + "  userName" + userName + "  uid" + uid);
+                requestLogin(access_token, uid);
+            }
         }
     }
 
@@ -168,6 +174,7 @@ public class LoginActivity extends BaseActivity {
                 SharedPreferencesUtil.saveData(mContext, Constants.USER_ID, loginInfo.userId);
                 Log.e(TAG, "loginInfo userId " + loginInfo.userId + " token " + loginInfo.accessToken);
                 startActivity(new Intent(mContext, BookMarkActivity.class));
+                finish();
             }
 
             @Override
