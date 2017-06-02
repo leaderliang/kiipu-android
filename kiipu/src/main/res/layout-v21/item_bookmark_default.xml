@@ -4,7 +4,7 @@
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="170dp"
         card_view:cardUseCompatPadding="false"
         card_view:cardPreventCornerOverlap="true"
         card_view:cardBackgroundColor="@android:color/white"
@@ -43,6 +43,7 @@
                     roundimg:borderRadius="@dimen/borderRadius"
                     android:adjustViewBounds="true"
             />
+
         </RelativeLayout>
         <RelativeLayout
                 android:id="@+id/rl_item_title"
@@ -61,7 +62,7 @@
             <TextView
                     android:id="@+id/tv_introduce"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="95dp"
                     android:ellipsize="end"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="5dp"
@@ -75,7 +76,6 @@
         </RelativeLayout>
         <RelativeLayout android:layout_width="match_parent"
                         android:layout_height="19dp"
-                        android:layout_below="@+id/rl_item_title"
                         android:layout_marginTop="17dp"
                         android:layout_marginLeft="8dp"
                         android:layout_alignParentBottom="true">
@@ -84,7 +84,6 @@
                     android:id="@+id/tv_url"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="www.zhihu.com"
                     android:textColor="@color/color_c5c5c5"
                     android:layout_centerVertical="true"
                     android:textSize="9sp"

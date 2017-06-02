@@ -37,7 +37,6 @@ import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.model.Collections;
 import com.mycreat.kiipu.model.UserInfo;
 import com.mycreat.kiipu.utils.*;
-import com.mycreat.kiipu.view.CustomAnimation;
 import com.mycreat.kiipu.view.KiipuRecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -155,7 +154,6 @@ public class BookMarkActivity extends BaseActivity
         }, 300);
 
         mScrollThreshold = getResources().getDimensionPixelOffset(R.dimen.fab_scroll_threshold);
-
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -202,8 +200,8 @@ public class BookMarkActivity extends BaseActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         drawer.setDrawerListener(toggle);
-
-        toggle.syncState();
+        // 注释掉可更换 navigationIcon
+//        toggle.syncState();
 
         //如果可以确定每个item的高度是固定的，设置这个选项可以提高性能
         recyclerView.setHasFixedSize(true);
@@ -213,8 +211,8 @@ public class BookMarkActivity extends BaseActivity
 
         adapter = new BookMarkAdapter(this, mBookmarkList);
         adapter.setOnLoadMoreListener(BookMarkActivity.this, recyclerView);
-        adapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
-//        adapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_BOTTOM);
+//        adapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
+        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemChildClickListener(new OnItemChildClickListener());
 
         recyclerView.setAdapter(adapter);
@@ -635,51 +633,6 @@ public class BookMarkActivity extends BaseActivity
             }
         }).build();
         sheet.show();
-
-//        final ListPopupWindow listPopupWindow = new ListPopupWindow(mContext);
-//        // ListView适配器
-//        listPopupWindow.setAdapter(
-//                new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, Constants.ITEMS));
-//        // 选择item的监听事件
-//        listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
-//                listPopupWindow.dismiss();
-//                switch (position) {
-//                    case 0:
-//                        showBookmarkDetailDialog(dataPosition);
-//                        break;
-//                    case 1:
-//                        showMoveBookmarkDialog(dataPosition);
-//                        break;
-//                    case 2:
-//                        requestDeleteItem(dataPosition);
-//                        break;
-//                    case 3:
-//                        ToastUtil.showToastShort("分享功能正在后期筹备中...");
-//                        break;
-//                }
-//            }
-//        });
-//
-//        // 对话框的宽高
-//        listPopupWindow.setWidth(500);
-//        listPopupWindow.setHeight(600);
-//
-//        // ListPopupWindow 相对的View
-//        listPopupWindow.setAnchorView(view);
-//
-//        // ListPopupWindow 相对按钮横向 和纵向 的距离
-//        listPopupWindow.setHorizontalOffset(50);
-//        listPopupWindow.setVerticalOffset(1);
-//
-//        //  Set whether this window should be modal when shown.
-//        // If a popup window is modal, it will receive all touch and key input. If the user touches outside the popup window's content area the popup window will be dismissed.
-//        // modal boolean: true if the popup window should be modal, false otherwise.
-//        listPopupWindow.setModal(false);
-//
-//        listPopupWindow.show();
     }
 
     private void onMoreInfoItemClick(int dataPosition, int which) {
@@ -704,26 +657,7 @@ public class BookMarkActivity extends BaseActivity
             Intent intent = new Intent(this,CollectionActivity.class);
             intent.putExtra("dataPosition",dataPosition);
             intent.putExtra("currentBookmarkId", requestData.get(dataPosition).id);
-
             startActivityForResult(intent,Constants.REQUEST_MOVE_BOOKMARK_CODE);
-
-//        final MyBottomSheetDialog dialog = new MyBottomSheetDialog(this);
-//        View view = LayoutInflater.from(this).inflate(R.layout.dialog_layout, null);
-//        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        CollectionListAdapter adapter = new CollectionListAdapter(this);
-//        adapter.addData(mCollectionList);
-//        recyclerView.setAdapter(adapter);
-//        recyclerView.addOnItemTouchListener(new OnItemClickListener() {
-//            @Override
-//            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                dialog.dismiss();
-//                requestMoveBookmark(dataPosition, position);
-//            }
-//        });
-//        dialog.setContentView(view);
-//        dialog.show();
-
     }
 
     @Override

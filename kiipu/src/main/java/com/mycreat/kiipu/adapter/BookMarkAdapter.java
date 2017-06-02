@@ -1,12 +1,18 @@
 package com.mycreat.kiipu.adapter;
 
 import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.activity.BookMarkActivity;
+import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.utils.BaseViewHolder;
@@ -42,7 +48,7 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
         final BookmarksInfo mBookmarksInfo = bookmark.info;
         LeftIvTextView mLeftIvTextView = holder.getView(R.id.card_view_title);
         mLeftIvTextView.loadImage(mBookmarksInfo.getIcon());
-        mLeftIvTextView.setText(mBookmarksInfo.getTitle());
+        mLeftIvTextView.setText(mBookmarksInfo.getTitle()+"");
         switch (holder.getItemViewType()){
             case Constants.BOOKMARK_TYPE_IMG:
                 holder.getView(R.id.iv_item_header).setVisibility(View.VISIBLE);
@@ -50,6 +56,8 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
                 holder.setImage(R.id.iv_item_header, new ImageCallback() {
                     @Override
                     public void callback(ImageView imageView) {
+                        imageView.setMaxWidth(KiipuApplication.SCREEN_WIDTH);
+                        imageView.setMaxHeight(KiipuApplication.SCREEN_WIDTH / (16/9));
                         GlideUtil.getInstance().loadImage(imageView, mBookmarksInfo.getImg(),true);
                     }
                 });
@@ -57,13 +65,12 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
             case Constants.BOOKMARK_TYPE_TEXT:
                 holder.getView(R.id.iv_item_header).setVisibility(View.GONE);
                 holder.getView(R.id.tv_introduce).setVisibility(View.VISIBLE);
-                holder.setText(R.id.tv_introduce,mBookmarksInfo.getIntroduce());
+                holder.setText(R.id.tv_introduce,mBookmarksInfo.getIntroduce()+"");
                 break;
             case Constants.BOOKMARK_TYPE_WEB:
                 holder.getView(R.id.iv_item_header).setVisibility(View.VISIBLE);
                 holder.getView(R.id.tv_introduce).setVisibility(View.GONE);
                 holder.getView(R.id.ll_item_header).setBackgroundColor(Color.parseColor(TextUtils.isEmpty(bookmark.viewTheme) ? "#ffffff" : "#" +bookmark.viewTheme));
-                mContext.getResources().getDrawable(R.drawable.header_bg_shape);
                 holder.setImage(R.id.iv_item_header, new ImageCallback() {
                     @Override
                     public void callback(ImageView imageView) {
@@ -73,15 +80,15 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
                 break;
         }
 
-
-
         java.net.URL url = null;
         try {
             url = new java.net.URL(mBookmarksInfo.getUrl());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        holder.setText(R.id.tv_url, url.getHost());
+        if (url != null) {
+            holder.setText(R.id.tv_url, url.getHost());
+        }
         holder.addOnClickListener(R.id.img_more_info);
     }
 

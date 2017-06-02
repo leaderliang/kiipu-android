@@ -170,8 +170,8 @@ public class LoginActivity extends BaseActivity {
                 LoginInfo loginInfo = response.body();
                 String accessToken = loginInfo.accessToken;
                 String userId = loginInfo.userId;
-                SharedPreferencesUtil.saveData(mContext, Constants.ACCESS_TOKEN, loginInfo.accessToken);
-                SharedPreferencesUtil.saveData(mContext, Constants.USER_ID, loginInfo.userId);
+                SharedPreferencesUtil.saveData(mContext, Constants.ACCESS_TOKEN, accessToken);
+                SharedPreferencesUtil.saveData(mContext, Constants.USER_ID, userId);
                 Log.e(TAG, "loginInfo userId " + loginInfo.userId + " token " + loginInfo.accessToken);
                 startActivity(new Intent(mContext, BookMarkActivity.class));
                 finish();

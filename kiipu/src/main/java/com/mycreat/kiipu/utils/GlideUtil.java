@@ -49,8 +49,6 @@ public class GlideUtil {
      */
     public void loadImage(ImageView imageView,
                           String imgUrl, boolean isFade) {
-        imageView.setMaxWidth(KiipuApplication.SCREEN_WIDTH);
-        imageView.setMaxHeight(KiipuApplication.SCREEN_WIDTH / (16/9));
         if (isFade) {
             Glide.with(mContext)
                     .load(imgUrl)

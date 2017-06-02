@@ -40,9 +40,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     protected Activity mContext;
 
-    protected ProgressBar mProgress;
+//    protected ProgressBar mProgress;
 
-    private LinearLayout linearLayout;
+//    private LinearLayout linearLayout;
 
     public KiipuApplication mKiipuApplication;
 
@@ -211,20 +211,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected void onDestroy() {
         super.onDestroy();
         AppManager.getAppManager().finishActivity(this);
-    }
-
-    public void showProgressBar(View view) {
-        if (mProgress == null || !(mProgress.getVisibility() == View.VISIBLE)) {
-            linearLayout = (LinearLayout) view.findViewById(R.layout.view_loading_progress);
-            mProgress = (ProgressBar) view.findViewById(R.id.pb_view);
-            mProgress.setVisibility(View.VISIBLE);
-        }
-    }
-
-    public void disProgressBar(View view) {
-        if (mProgress != null && mProgress.getVisibility() == View.VISIBLE) {
-            linearLayout.setVisibility(View.GONE);
-        }
     }
 
     public void getUserAccessToken() {
