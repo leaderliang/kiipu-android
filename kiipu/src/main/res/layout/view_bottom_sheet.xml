@@ -23,7 +23,7 @@
             <ImageView android:id="@+id/iv_close"
                        android:layout_width="20dp"
                        android:layout_height="20dp"
-                       android:src="@drawable/ic_arrow_back"
+                       android:src="@drawable/icon_back_normal"
                        android:layout_margin="10dp"
 
             />

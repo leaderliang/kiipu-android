@@ -32,7 +32,7 @@ import com.mycreat.kiipu.view.RequestErrorLayout;
  */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private TextView title;
+    protected TextView baseTitle;
 
     private ImageView back;
 
@@ -49,7 +49,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     public String userAccessToken;
 
     private LinearLayout includeLayout;
-
+    /*用了自定义布局，且设置了 getSupportActionBar().setDisplayHomeAsUpEnabled(false); getSupportActionBar().setDisplayShowTitleEnabled(false); 则直接拿 toolbar 对象设置不起作用*/
     protected Toolbar toolbar;
 
     protected boolean useBaseLayout = true;
@@ -82,10 +82,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         mKiipuApplication = KiipuApplication.getInstance();
         // 经测试在代码里直接声明透明状态栏更有效
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+//                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        }
         // 这句很关键，注意是调用父类的方法
         super.setContentView(R.layout.activity_base);
         initToolbar();
@@ -113,7 +113,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
         back = (ImageView) findViewById(R.id.img_back);
-        title = (TextView) findViewById(R.id.title);
+        baseTitle = (TextView) findViewById(R.id.title);
     }
 
 
@@ -148,12 +148,17 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         initToolbar();
     }
 
-    protected void setTitle(String msg) {
-        if (title != null) {
-            title.setText(msg);
+    protected void setBaseTitle(String msg) {
+        if (baseTitle != null) {
+            baseTitle.setText(msg);
         }
     }
 
+    protected void setBaseTitle(int msg) {
+        if (baseTitle != null) {
+            baseTitle.setText(msg);
+        }
+    }
     /**
      * sometime you want to define back event
      */

@@ -12,7 +12,7 @@ public class LogUtil {
         throw new UnsupportedOperationException("cannot be instantiated");
     }
     /* 是否需要打印bug，可以在application的onCreate函数里面初始化 */
-    public static boolean isDebug = true;
+   public static boolean isDebug = true;
 
     private static final String TAG = "Kiipu";
 

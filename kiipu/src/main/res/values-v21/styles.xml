@@ -1,9 +1,28 @@
 <resources>
 
+
     <style name="AppTheme" parent="AppBaseTheme">
+        <item name="android:windowTranslucentStatus">false</item>
+        <!--<item name="android:windowContentTransitions">true</item>-->
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <!-- actionbar的属性颜色 -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!-- 状态栏背景-->
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!-- progress refresh..-->
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Dialog theme  Theme.AppCompat.Light.Dialog.Alert.Self -->
+        <item name="alertDialogTheme">@style/Theme.AppCompat.Light.Dialog.Alert.Self</item>
+        <!-- 虚拟键透明，这个虚拟键就是返回和菜单键等 -->
+        <item name="android:windowTranslucentNavigation">false</item>
+        <!-- 可以拉升到顶部状态栏，并且定义顶部状态栏透明 会有一层黑色阴影 false 不透明-->
+        <item name="android:windowTranslucentStatus">true</item>
         <!--  底部虚拟键盘 颜色 -->
         <item name="android:navigationBarColor">@color/black</item>
-        <!--<item name="android:windowContentTransitions">true</item>-->
     </style>
 
     <style name="NoActionBar" parent="AppBaseTheme">

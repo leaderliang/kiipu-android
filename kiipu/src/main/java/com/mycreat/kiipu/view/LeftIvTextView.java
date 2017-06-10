@@ -1,7 +1,6 @@
 package com.mycreat.kiipu.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.View;
@@ -9,7 +8,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.bumptech.glide.Glide;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.utils.GlideUtil;
 
@@ -57,9 +55,10 @@ public class LeftIvTextView extends RelativeLayout {
                 Layout layout = mTextView_1.getLayout();
                 int index = layout.getLineEnd(0);
                 String str1 = string.substring(0, index > string.length() ? string.length() : index);
-                String str2 = string.substring(index > string.length() ? string.length() : index, string.length());
                 mTextView_1.setText(str1);
+                String str2 = string.substring(index > string.length() ? string.length() : index, string.length());
                 mTextView_2.setText(str2);
+
             }
         });
 

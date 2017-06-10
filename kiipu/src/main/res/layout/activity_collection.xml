@@ -10,9 +10,11 @@
         tools:context="com.mycreat.kiipu.activity.CollectionActivity">
 
     <android.support.v7.widget.RecyclerView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
     />
 
 </LinearLayout>

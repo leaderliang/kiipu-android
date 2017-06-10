@@ -1,5 +1,9 @@
 <resources>
 
+    <!-- Base Activity theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <item name="android:windowTranslucentStatus">false</item>
+    </style>
 
     <!-- Base application theme. -->
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -8,24 +12,24 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <!-- 状态栏背景-->
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <!-- progress refresh..-->
+        <!-- 对应 Progress refreshEditText编辑时、RadioButton、CheckBox等选中时的颜色-->
         <item name="colorAccent">@color/colorAccent</item>
         <!-- Dialog theme  Theme.AppCompat.Light.Dialog.Alert.Self -->
         <item name="alertDialogTheme">@style/Theme.AppCompat.Light.Dialog.Alert.Self</item>
-        <!-- 虚拟键透明，这个虚拟键就是返回和菜单键等 -->
+        <!-- 虚拟键透明，这个虚拟键就是返回和菜单键等 true 透明 -->
         <item name="android:windowTranslucentNavigation">false</item>
         <!-- 可以拉升到顶部状态栏，并且定义顶部状态栏透明 会有一层黑色阴影 -->
         <item name="android:windowTranslucentStatus">true</item>
+        <!--  底部虚拟键盘 颜色 -->
+        <item name="android:navigationBarColor">@color/black</item>
+        <item name="android:windowAnimationStyle">@style/AnimActivity</item>
     </style>
-
 
     <!-- appBar 上文字颜色和样式 ThemeOverlay.AppCompat.Dark.ActionBar-->
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
     <!-- toolbar setting -->
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
-
-    <style name="AppTheme" parent="AppBaseTheme">
-    </style>
 
     <style name="NoActionBar" parent="AppBaseTheme">
         <!-- 在自定义的Theme中设置成false，就没有系统默认的那个菜单选项了-->
@@ -47,5 +51,12 @@
 
     <style name="ColorTranslucentTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="AnimActivity">
+        <item name="android:activityOpenEnterAnimation">@anim/translate_right_to_center</item>
+        <item name="android:activityOpenExitAnimation">@anim/translate_center_to_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/translate_left_to_center</item>
+        <item name="android:activityCloseExitAnimation">@anim/translate_center_to_right</item>
     </style>
 </resources>

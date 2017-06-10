@@ -13,11 +13,22 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<WebView xmlns:android="http://schemas.android.com/apk/res/android"
-         xmlns:tools="http://schemas.android.com/tools"
+<android.support.v4.widget.NestedScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/nested_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:scrollbars="vertical"
+        android:scrollbarStyle="outsideOverlay"
+>
+<WebView
          android:id="@+id/webview"
          android:layout_width="match_parent"
          android:layout_height="match_parent"
-         android:fitsSystemWindows="true"
-         tools:context=".activity.WebViewActivity"/>
+         tools:context=".activity.WebViewActivity"
+         android:fitsSystemWindows="true"/>
 
+</android.support.v4.widget.NestedScrollView>

@@ -1,17 +1,11 @@
 package com.mycreat.kiipu.adapter;
 
 import android.graphics.Color;
-import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.mycreat.kiipu.R;
-import com.mycreat.kiipu.activity.BookMarkActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
@@ -32,11 +26,8 @@ import java.util.List;
 public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseViewHolder> {
 
 
-    private BookMarkActivity mContext;
-
-    public BookMarkAdapter(BookMarkActivity context, List<Bookmark> data) {
+    public BookMarkAdapter(List<Bookmark> data) {
         super(data);
-        this.mContext = context;
         addItemType(Constants.BOOKMARK_TYPE_IMG, R.layout.item_bookmark_default);
         addItemType(Constants.BOOKMARK_TYPE_TEXT, R.layout.item_bookmark_default);
         addItemType(Constants.BOOKMARK_TYPE_WEB, R.layout.item_bookmark_web);
@@ -48,8 +39,8 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
         final BookmarksInfo mBookmarksInfo = bookmark.info;
         LeftIvTextView mLeftIvTextView = holder.getView(R.id.card_view_title);
         mLeftIvTextView.loadImage(mBookmarksInfo.getIcon());
-        mLeftIvTextView.setText(mBookmarksInfo.getTitle()+"");
-        switch (holder.getItemViewType()){
+        mLeftIvTextView.setText(mBookmarksInfo.getTitle() + "");
+        switch (holder.getItemViewType()) {
             case Constants.BOOKMARK_TYPE_IMG:
                 holder.getView(R.id.iv_item_header).setVisibility(View.VISIBLE);
                 holder.getView(R.id.tv_introduce).setVisibility(View.GONE);
@@ -57,20 +48,20 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
                     @Override
                     public void callback(ImageView imageView) {
                         imageView.setMaxWidth(KiipuApplication.SCREEN_WIDTH);
-                        imageView.setMaxHeight(KiipuApplication.SCREEN_WIDTH / (16/9));
-                        GlideUtil.getInstance().loadImage(imageView, mBookmarksInfo.getImg(),true);
+                        imageView.setMaxHeight(KiipuApplication.SCREEN_WIDTH / (16 / 9));
+                        GlideUtil.getInstance().loadImage(imageView, mBookmarksInfo.getImg(), true);
                     }
                 });
                 break;
             case Constants.BOOKMARK_TYPE_TEXT:
                 holder.getView(R.id.iv_item_header).setVisibility(View.GONE);
                 holder.getView(R.id.tv_introduce).setVisibility(View.VISIBLE);
-                holder.setText(R.id.tv_introduce,mBookmarksInfo.getIntroduce()+"");
+                holder.setText(R.id.tv_introduce, mBookmarksInfo.getIntroduce() + "");
                 break;
             case Constants.BOOKMARK_TYPE_WEB:
                 holder.getView(R.id.iv_item_header).setVisibility(View.VISIBLE);
                 holder.getView(R.id.tv_introduce).setVisibility(View.GONE);
-                holder.getView(R.id.ll_item_header).setBackgroundColor(Color.parseColor(TextUtils.isEmpty(bookmark.viewTheme) ? "#ffffff" : "#" +bookmark.viewTheme));
+                holder.getView(R.id.ll_item_header).setBackgroundColor(Color.parseColor(TextUtils.isEmpty(bookmark.viewTheme) ? "#ffffff" : "#" + bookmark.viewTheme));
                 holder.setImage(R.id.iv_item_header, new ImageCallback() {
                     @Override
                     public void callback(ImageView imageView) {

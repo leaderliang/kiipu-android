@@ -10,7 +10,7 @@ public class RetrofitApi {
     /**
      * Base API
      */
-    public static final String BASE_URL = "http://api.kiipu.com";
+    public static final String BASE_URL = "https://api.kiipu.com";
     /**
      * POST
      * Login

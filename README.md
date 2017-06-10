@@ -312,6 +312,10 @@ actionBar.setDisplayShowTitleEnabled(true)   //对应ActionBar.DISPLAY_SHOW_TITL
 所有组件的阴影去掉方式可使用
 app:elevation="0dp"
 
+## 项目中 BootSheetDialog  依赖库相关问题
+显示 shareDialog 时不能全屏需给对应 Activity 配置 Style：
+<item name="android:windowTranslucentNavigation">true</item>
+
 
 
 

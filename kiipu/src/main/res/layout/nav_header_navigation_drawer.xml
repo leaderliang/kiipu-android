@@ -2,8 +2,7 @@
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:roundImage="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
 >
@@ -29,11 +28,11 @@
                     android:layout_height="65dp"
                     android:scaleType="centerCrop"
                     android:layout_centerVertical="true"
-                     />
+                    android:clickable="true"/>
 
             <Button
                     android:id="@+id/bt_log_out"
-                    android:layout_width="wrap_content"
+                    android:layout_width="67dp"
                     android:layout_height="30dp"
                     android:background="@drawable/login_out_shape"
                     android:layout_alignParentRight="true"
@@ -41,7 +40,8 @@
                     android:textSize="14sp"
                     android:text="@string/logout"
                     android:textColor="@color/white"
-            />
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    />
 
         </RelativeLayout>
         <TextView

@@ -20,6 +20,7 @@
             android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:layout_scrollFlags="scroll|enterAlways"
 
     >
         <include layout="@layout/view_title_bar"/>

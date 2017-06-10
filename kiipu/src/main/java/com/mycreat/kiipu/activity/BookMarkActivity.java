@@ -27,6 +27,7 @@ import android.widget.*;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.cocosw.bottomsheet.BottomSheet;
+import com.cocosw.bottomsheet.BottomSheetHelper;
 import com.github.clans.fab.FloatingActionButton;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.BookMarkAdapter;
@@ -57,15 +58,16 @@ public class BookMarkActivity extends BaseActivity
     /* 0 pull; 1 load more */
     private int REFRESH_TYPE = 0;
 
+    private String itemId = "";
+
     private FloatingActionButton mFloatingActionButton;
 
     private Toolbar toolbar;
 
     private DrawerLayout drawer;
+
     /* left menu */
     private NavigationView navigationView;
-
-    private String itemId = "";
 
     private BookMarkAdapter adapter;
 
@@ -141,7 +143,6 @@ public class BookMarkActivity extends BaseActivity
 
         mFloatingActionButton = initViewById(R.id.floating_action_bt);
 
-
         mFloatingActionButton.hide(false);
 
         new Handler().postDelayed(new Runnable() {
@@ -188,9 +189,9 @@ public class BookMarkActivity extends BaseActivity
 
         swipeToLoadLayout.setRefreshing(true);
 
-        toolbar.setLogo(R.drawable.login_logo_text);
-
         toolbar.setTitle("");// default null
+
+        toolbar.setLogo(R.drawable.login_logo_text);
 
         setSupportActionBar(toolbar);
         /*set item all checked default*/
@@ -209,7 +210,7 @@ public class BookMarkActivity extends BaseActivity
         GridLayoutManager mGirdLayoutManager = new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(mGirdLayoutManager);
 
-        adapter = new BookMarkAdapter(this, mBookmarkList);
+        adapter = new BookMarkAdapter(mBookmarkList);
         adapter.setOnLoadMoreListener(BookMarkActivity.this, recyclerView);
 //        adapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
@@ -609,7 +610,7 @@ public class BookMarkActivity extends BaseActivity
         mTvUrl = (TextView) view.findViewById(R.id.tv_url);
         mIvDetail = (ImageView) view.findViewById(R.id.iv_detail);
         mTvIntroduce = (TextView) view.findViewById(R.id.tv_introduce);
-        GlideUtil.getInstance().loadImage(mIvIcon, mBookmarksInfo.getIcon(), true);
+        GlideUtil.getInstance().loadImage(mIvIcon, mBookmarksInfo.getIcon(), R.drawable.default_logo_small,true);
         mTvTitle.setText(mBookmarksInfo.getTitle());
         mTvUrl.setText(mBookmarksInfo.getUrl());
         if (requestData.get(position).type.equals("1")) {
@@ -647,11 +648,22 @@ public class BookMarkActivity extends BaseActivity
                 requestDeleteItem(dataPosition);
                 break;
             case R.id.share:
-                ToastUtil.showToastShort("分享功能正在后期筹备中...");
+                showShareDialog(dataPosition);
                 break;
         }
     }
 
+    private void showShareDialog(int position) {
+        BottomSheet sheet = getShareActions(requestData.get(position).info.getUrl()).title("分享到：").limit(R.integer.no_limit).build();
+        sheet.show();
+    }
+
+    private BottomSheet.Builder getShareActions(String text) {
+        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+        return BottomSheetHelper.shareAction(this, shareIntent);
+    }
 
     private void showMoveBookmarkDialog(final int dataPosition) {
             Intent intent = new Intent(this,CollectionActivity.class);

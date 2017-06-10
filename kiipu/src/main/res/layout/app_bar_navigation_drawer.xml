@@ -5,7 +5,6 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         tools:context="com.mycreat.kiipu.activity.BookMarkActivity">
 
     <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
@@ -78,7 +77,6 @@
             <!--android:src="@drawable/ic_add"-->
             <!--app:borderWidth="0dp"-->
     <!--/>-->
-
 
 
     <com.github.clans.fab.FloatingActionButton

@@ -11,6 +11,7 @@ import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.KiipuApplication;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import jp.wasabeef.glide.transformations.GrayscaleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
@@ -61,6 +62,7 @@ public class GlideUtil {
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)// 缓存策略 禁用掉Glide的缓存功能,默认是打开的
                     .centerCrop() // 取图片的中间区域
 //                    .skipMemoryCache(true)// 跳过内存缓存
+//                    .thumbnail(0.1f) // 用原图的1/10作为缩略图
                     .into(imageView);
         } else {
             Glide.with(mContext)
@@ -95,7 +97,7 @@ public class GlideUtil {
                     .load(imgUrl)
                     .placeholder(defaultImg) // 占位图
                     .error(defaultImg)
-                    .priority(Priority.NORMAL) //下载的优先级
+                    .priority(Priority.NORMAL) // 下载的优先级
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)// 缓存策略 禁用掉Glide的缓存功能,默认是打开的
                     .centerCrop() // 取图片的中间区域
                     .dontAnimate()
@@ -176,6 +178,25 @@ public class GlideUtil {
                 .priority(Priority.NORMAL) //下载的优先级
                 .diskCacheStrategy(DiskCacheStrategy.ALL) //缓存策略
                 .bitmapTransform(new CropCircleTransformation(mContext))
+                .into(imageView);
+    }
+
+    /**
+     * 图片灰度处理
+     *
+     * @param imageView
+     * @param imgUrl
+     * @param defaultImg
+     */
+    public void loadGrayImage( ImageView imageView, String imgUrl, int defaultImg) {
+        Glide.with(mContext)
+                .load(imgUrl)
+                .placeholder(defaultImg)
+                .error(defaultImg)
+                .crossFade()
+                .priority(Priority.NORMAL) //下载的优先级
+                .diskCacheStrategy(DiskCacheStrategy.ALL) //缓存策略
+                .bitmapTransform(new GrayscaleTransformation(mContext)) // 图片灰度处理
                 .into(imageView);
     }
 

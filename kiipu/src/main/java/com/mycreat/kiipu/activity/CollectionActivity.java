@@ -53,7 +53,7 @@ public class CollectionActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
-        setTitle("移动到");
+        setBaseTitle("移动到");
         setBackBtn();
         setFloatingVisibile(false);
         recyclerView = initViewById(R.id.recyclerView);

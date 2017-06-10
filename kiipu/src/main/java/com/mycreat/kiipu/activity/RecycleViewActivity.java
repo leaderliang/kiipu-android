@@ -1,6 +1,7 @@
 package com.mycreat.kiipu.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.cocosw.bottomsheet.BottomSheet;
+import com.cocosw.bottomsheet.BottomSheetHelper;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.view.BottomSheetDialog;
@@ -20,24 +23,24 @@ public class RecycleViewActivity extends BaseActivity {
     private static final String shareStr[] = {
             "微信", "QQ", "空间", "微博", "GitHub", "CJJ测试\nRecyclerView自适应", "微信朋友圈", "短信", "推特", "遇见", "微信朋友圈", "短信", "推特", "遇见"
     };
+    private TextView tv;
 
 
     @Override
     public void onViewClick(View v) {
-
+        switch (v.getId()){
+            case R.id.tv:
+                showBSDialog();
+                break;
+        }
     }
 
     @Override
     public void initViews() {
         super.initViews();
-        findViewById(R.id.tv).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showBSDialog();
-            }
-        });
-        setBackBtn();
+        tv = initViewById(R.id.tv);
         setTitle("Kiipu");
+
     }
 
     @Override
@@ -46,6 +49,12 @@ public class RecycleViewActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void initListener() {
+        super.initListener();
+        setOnClick(tv);
+        setBackBtn();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +62,7 @@ public class RecycleViewActivity extends BaseActivity {
         useBaseLayout = true;
         setContentView(R.layout.bottom_sheet);
         initViews();
+        initListener();
 
 
     }
