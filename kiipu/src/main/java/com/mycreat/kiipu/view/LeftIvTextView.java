@@ -19,8 +19,7 @@ public class LeftIvTextView extends RelativeLayout {
     private ImageView mImageView;
     private TextView mTextView_1;
     private TextView mTextView_2;
-
-
+    private String text;
     public LeftIvTextView(Context context) {
         this(context, null);
     }
@@ -46,21 +45,29 @@ public class LeftIvTextView extends RelativeLayout {
         GlideUtil.getInstance().loadImage(mImageView, url, R.drawable.default_logo_small, true);
     }
 
-    public void setText(final String string) {
-        mTextView_1.setText(string);
+    public void setText(final String text) {
+        mTextView_1.setText(text);
+        this.text = text;
         ViewTreeObserver vto = mTextView_1.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                Layout layout = mTextView_1.getLayout();
-                int index = layout.getLineEnd(0);
-                String str1 = string.substring(0, index > string.length() ? string.length() : index);
-                mTextView_1.setText(str1);
-                String str2 = string.substring(index > string.length() ? string.length() : index, string.length());
-                mTextView_2.setText(str2);
+        vto.addOnGlobalLayoutListener(onGlobalLayoutListener);
+        adjustTextLayout();
+    }
 
-            }
-        });
+    private ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            adjustTextLayout();
+        }
+    };
 
+    public void adjustTextLayout(){
+        int index ;
+        Layout layout = mTextView_1.getLayout();
+        if(layout != null && (index = layout.getLineEnd(0)) > 0) {
+            String str1 = text.substring(0, index > text.length() ? text.length() : index);
+            mTextView_1.setText(str1);
+            String str2 = text.substring(index > text.length() ? text.length() : index, text.length());
+            mTextView_2.setText(str2);
+        }
     }
 }
