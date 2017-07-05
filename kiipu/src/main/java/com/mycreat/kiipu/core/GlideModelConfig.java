@@ -31,10 +31,10 @@ public class GlideModelConfig extends OkHttpGlideModule {
         File cacheDir = context.getExternalCacheDir();//指定的是数据的缓存地址
         int diskCacheSize = 1024 * 1024 * 30;//最多可以缓存多少字节的数据
         //设置磁盘缓存大小
-        builder.setDiskCache(new DiskLruCacheFactory(cacheDir.getPath(), "glide", diskCacheSize));
+        builder.setDiskCache(new DiskLruCacheFactory(cacheDir.getPath(), "kiipuGlide", diskCacheSize));
         // 定义缓存大小和位置
         builder.setDiskCache(new InternalCacheDiskCacheFactory(context, diskSize));  //内存中
-        builder.setDiskCache(new ExternalCacheDiskCacheFactory(context, "cache", diskSize)); //sd卡中
+        builder.setDiskCache(new ExternalCacheDiskCacheFactory(context, "kiipuCache", diskSize)); //sd卡中
         // 定义图片格式
         builder.setDecodeFormat(DecodeFormat.PREFER_RGB_565); // 默认
         // 自定义内存和图片池大小

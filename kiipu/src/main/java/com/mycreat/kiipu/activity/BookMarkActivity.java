@@ -625,7 +625,7 @@ public class BookMarkActivity extends BaseActivity
     }
 
 
-    public void showListPopupWindow(final int dataPosition) {
+    private void showListPopupWindow(final int dataPosition) {
 
          BottomSheet sheet = new BottomSheet.Builder(this).sheet(R.menu.more_info).listener(new DialogInterface.OnClickListener() {
             @Override

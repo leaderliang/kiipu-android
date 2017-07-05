@@ -318,6 +318,18 @@ app:elevation="0dp"
 
 
 
+### 经测试在代码里直接声明透明状态栏更有效
+```
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+  getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+}
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
+    localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
+}
+```
+
+
 
 
 

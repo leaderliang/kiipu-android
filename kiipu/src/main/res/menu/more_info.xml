@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/show_detail" android:icon="@drawable/logo_top_nav" android:title="查看详情" />
-    <item android:id="@+id/move_to" android:icon="@drawable/logo_top_nav" android:title="移动到" />
-    <item android:id="@+id/delete" android:icon="@drawable/logo_top_nav" android:title="删除"/>
-    <item android:id="@+id/share" android:icon="@drawable/logo_top_nav" android:title="分享"/>
+    <item android:id="@+id/show_detail" android:icon="@drawable/show_detail_icon" android:title="查看详情"/>
+    <item android:id="@+id/move_to" android:icon="@drawable/move_to_icon" android:title="移动到" />
+    <item android:id="@+id/share" android:icon="@drawable/share_icon" android:title="分享"/>
+    <item android:id="@+id/delete" android:icon="@drawable/delete_icon" android:title="删除"/>
 </menu>
