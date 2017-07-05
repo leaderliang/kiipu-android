@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -563,19 +564,19 @@ public class BookMarkActivity extends BaseActivity
         if (isRequestMenu) {
             for (int i = 1; i < mCollectionList.size(); i++) {
                 navigationView.getMenu().add(0, i, i, mCollectionList.get(i).collectionName + "")
-                        .setIcon(getDrawable(R.drawable.ic_menu_share))//动态添加menu
+                        .setIcon(ContextCompat.getDrawable(this, R.drawable.ic_menu_share))//动态添加menu
                         .setOnMenuItemClickListener(new OnMenuItemClickListener());
             }
         } else {// 调用添加按钮后，重新设置之前menu的 name
             for (int i = 1; i < mCollectionList.size(); i++) {
                 navigationView.getMenu().findItem(i).setTitle(mCollectionList.get(i).collectionName)
-                        .setIcon(getDrawable(R.drawable.ic_menu_share))//动态添加menu
+                        .setIcon(ContextCompat.getDrawable(this, R.drawable.ic_menu_share))//动态添加menu
                         .setOnMenuItemClickListener(new OnMenuItemClickListener());
             }
         }
         // 添加书签按钮事件操作
         navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), "添加书签")
-                .setIcon(getDrawable(R.drawable.ic_add))
+                .setIcon(ContextCompat.getDrawable(this, R.drawable.ic_add))
                 .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
     }
 
@@ -599,11 +600,11 @@ public class BookMarkActivity extends BaseActivity
         View view = DialogUtil.showCanSetViewDialog(this,
                 R.layout.view_card_detail_dialog,
                 new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
         BookmarksInfo mBookmarksInfo = requestData.get(position).info;
         mIvIcon = (ImageView) view.findViewById(R.id.iv_icon);
         mTvTitle = (TextView) view.findViewById(R.id.tv_title);

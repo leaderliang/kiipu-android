@@ -1,5 +1,6 @@
 package com.mycreat.kiipu.utils;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.util.SparseArray;
 import android.view.View;
@@ -28,6 +29,9 @@ public class ViewUtils {
         return viewUtils != null ? viewUtils:(viewUtils = new ViewUtils());
     }
 
+    public static SparseArray<Field> bindViews(@NonNull Activity activity, @NonNull Object viewVariableOwner ) throws IllegalStateException{
+        return bindViews(activity.getWindow().getDecorView(), viewVariableOwner, null);
+    }
     public static SparseArray<Field> bindViews(@NonNull View view, @NonNull Object viewVariableOwner ) throws IllegalStateException{
         return bindViews(view, viewVariableOwner, null);
     }
@@ -81,11 +85,15 @@ public class ViewUtils {
                 //需判断类型是否匹配
                 if(bindView != null && bindView.getClass().isAssignableFrom(field.getClass())) {
                     field.set(viewVariableOwner, bindView);
+                    if(field.isAnnotationPresent(BindOnclick.class) && viewVariableOwner instanceof View.OnClickListener){
+                        bindView.setOnClickListener((View.OnClickListener) viewVariableOwner);
+                    }else if(field.isAnnotationPresent(BindOnclick.class)){
+                        //如果指定了 BindOnclick 注解, 你的 viewVariableOwner  必须继承 View.OnClickListener
+                        throw new IllegalArgumentException(new Throwable("Your argument viewVariableOwner(" + viewVariableOwner.getClass().getName() +
+                                ") should implements View.OnClickListener, because you have set the BindOnclick annotation to" + field.getName()));
+                    }
                     return id;
                 }else if(bindView != null){
-                    LogUtil.e(new IllegalStateException(new Throwable("Filed type is not match the view type")), "Field named", field.getName(), "(", field.getType().getName(), ")",
-                        "is not matched view with id ", id, "(", bindView.getClass().getName(), ")"
-                    );
                     return 0;
                 }else{
                     return 0;

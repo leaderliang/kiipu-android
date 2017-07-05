@@ -48,7 +48,7 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
                     @Override
                     public void callback(ImageView imageView) {
                         imageView.setMaxWidth(KiipuApplication.SCREEN_WIDTH);
-                        imageView.setMaxHeight(KiipuApplication.SCREEN_WIDTH / (16 / 9));
+                        imageView.setMaxHeight((int) (KiipuApplication.SCREEN_WIDTH / (16 / 9f)));
                         GlideUtil.getInstance().loadImage(imageView, mBookmarksInfo.getImg(), true);
                     }
                 });
@@ -61,7 +61,7 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
             case Constants.BOOKMARK_TYPE_WEB:
                 holder.getView(R.id.iv_item_header).setVisibility(View.VISIBLE);
                 holder.getView(R.id.tv_introduce).setVisibility(View.GONE);
-                holder.getView(R.id.ll_item_header).setBackgroundColor(Color.parseColor(TextUtils.isEmpty(bookmark.viewTheme) ? "#ffffff" : "#" + bookmark.viewTheme));
+                holder.getView(R.id.ll_item_header).setBackgroundColor(Color.parseColor((TextUtils.isEmpty(bookmark.viewTheme) ? "#ffffff" : "#") + bookmark.viewTheme));
                 holder.setImage(R.id.iv_item_header, new ImageCallback() {
                     @Override
                     public void callback(ImageView imageView) {
