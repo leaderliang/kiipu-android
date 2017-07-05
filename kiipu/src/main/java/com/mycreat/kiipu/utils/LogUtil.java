@@ -32,6 +32,17 @@ public class LogUtil {
             Log.e(TAG, msg);
     }
 
+    public static void e(Exception e, Object ...otherMsg) {
+        if (isDebug) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for(Object om: otherMsg){
+                stringBuilder.append(" ").append(om.toString());
+            }
+            Log.e(TAG, stringBuilder.toString());
+            e.printStackTrace();
+        }
+    }
+
     public static void v(String msg) {
         if (isDebug)
             Log.v(TAG, msg);

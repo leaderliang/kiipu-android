@@ -1,5 +1,6 @@
 package com.mycreat.kiipu.utils;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
@@ -58,6 +59,22 @@ public class DialogUtil {
         builder.setView(view);
         AlertDialog dialog = builder.create();
         dialog.show();
+
+        return view;
+    }
+
+    public static View showCanSetViewDialogFragment(final Context context,int viewId, DialogInterface.OnClickListener positiveButtonClick){
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(viewId, null);
+
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+////        builder.setTitle("详情");
+//        builder.setPositiveButton("完成", positiveButtonClick);
+//        builder.setCancelable(false);
+//        builder.setView(view);
+//        AlertDialog dialog = builder.create();
+//        dialog.show();
+
 
         return view;
     }

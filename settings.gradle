@@ -1,1 +1,1 @@
-include ':kiipu'
+include ':kiipu', ':kiipu_db'
