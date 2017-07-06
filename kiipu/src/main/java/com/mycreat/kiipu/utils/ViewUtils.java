@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.mycreat.kiipu.core.KiipuApplication;
 
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 用于简化view查找、view事件绑定操作
  * Created by zhanghaihai on 2017/6/7.
  */
 
@@ -30,7 +32,7 @@ public class ViewUtils {
     }
 
     public static SparseArray<Field> bindViews(@NonNull Activity activity, @NonNull Object viewVariableOwner ) throws IllegalStateException{
-        return bindViews(activity.getWindow().getDecorView(), viewVariableOwner, null);
+        return bindViews(((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0), viewVariableOwner, null);
     }
     public static SparseArray<Field> bindViews(@NonNull View view, @NonNull Object viewVariableOwner ) throws IllegalStateException{
         return bindViews(view, viewVariableOwner, null);
@@ -83,7 +85,7 @@ public class ViewUtils {
             if(id > 0) {
                 View bindView = view.findViewById(id);
                 //需判断类型是否匹配
-                if(bindView != null && bindView.getClass().isAssignableFrom(field.getClass())) {
+                if(bindView != null && field.getType().isAssignableFrom(bindView.getClass())) {
                     field.set(viewVariableOwner, bindView);
                     if(field.isAnnotationPresent(BindOnclick.class) && viewVariableOwner instanceof View.OnClickListener){
                         bindView.setOnClickListener((View.OnClickListener) viewVariableOwner);
@@ -94,13 +96,13 @@ public class ViewUtils {
                     }
                     return id;
                 }else if(bindView != null){
-                    return 0;
+                    throw new IllegalStateException(new Throwable("Filed type is not match the view type"));
                 }else{
-                    return 0;
+                    throw new IllegalStateException(new Throwable("Can not found "+ field.getType() + " with id(" + id + ") in view" ));
                 }
 
             }else{
-                LogUtil.e(" is not bind to view successfully, it may cause java.lang.NullPointException!");
+                LogUtil.e(field.getName() + " is not bind to view successfully, it may cause java.lang.NullPointException!");
                 return 0;
             }
         } catch (IllegalAccessException e) {
