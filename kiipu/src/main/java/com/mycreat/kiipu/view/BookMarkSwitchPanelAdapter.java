@@ -67,20 +67,20 @@ public class BookMarkSwitchPanelAdapter extends RecyclerView.Adapter {
 
 
     private void loadMore(int direct) {
-        if(direct > 0) {
-            Call<List<Bookmark>> call = mRetrofitService.getBookmarkList(userAccessToken, Constants.PAGE_SIZE, mStartId, Constants.ALL_COLLECTION);
-            call.enqueue(new Callback<List<Bookmark>>() {
-                @Override
-                public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
-                    RxBus.Companion.get().post();
-                }
-
-                @Override
-                public void onFailure(Call<List<Bookmark>> call, Throwable t) {
-
-                }
-            });
-        }
+//        if(direct > 0) {
+//            Call<List<Bookmark>> call = mRetrofitService.getBookmarkList(userAccessToken, Constants.PAGE_SIZE, mStartId, Constants.ALL_COLLECTION);
+//            call.enqueue(new Callback<List<Bookmark>>() {
+//                @Override
+//                public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
+//                    //RxBus.Companion.get().post();
+//                }
+//
+//                @Override
+//                public void onFailure(Call<List<Bookmark>> call, Throwable t) {
+//
+//                }
+//            });
+//        }
     }
 
     @Override
