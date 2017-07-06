@@ -215,3 +215,70 @@ at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:85
 at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:737) 
 
 ```
+
+```
+Process: com.mycreat.kiipu, PID: 31741
+java.lang.IllegalArgumentException: A @Path parameter must not come after a @Query. (parameter #3)
+for method RetrofitService.getCardTemplateInfo
+at retrofit2.ServiceMethod$Builder.methodError(ServiceMethod.java:752)
+at retrofit2.ServiceMethod$Builder.methodError(ServiceMethod.java:743)
+at retrofit2.ServiceMethod$Builder.parameterError(ServiceMethod.java:761)
+at retrofit2.ServiceMethod$Builder.parseParameterAnnotation(ServiceMethod.java:387)
+at retrofit2.ServiceMethod$Builder.parseParameter(ServiceMethod.java:336)
+at retrofit2.ServiceMethod$Builder.build(ServiceMethod.java:204)
+at retrofit2.Retrofit.loadServiceMethod(Retrofit.java:170)
+at retrofit2.Retrofit$1.invoke(Retrofit.java:147)
+at java.lang.reflect.Proxy.invoke(Proxy.java:393)
+at $Proxy0.getCardTemplateInfo(Unknown Source)
+at com.mycreat.kiipu.activity.BookMarkActivity.showBookmarkDetailDialog(BookMarkActivity.java:596)
+at com.mycreat.kiipu.activity.BookMarkActivity.onMoreInfoItemClick(BookMarkActivity.java:653)
+at com.mycreat.kiipu.activity.BookMarkActivity.access$2100(BookMarkActivity.java:51)
+at com.mycreat.kiipu.activity.BookMarkActivity$14.onClick(BookMarkActivity.java:644)
+at com.cocosw.bottomsheet.BottomSheet$4.onItemClick(BottomSheet.java:332)
+at android.widget.AdapterView.performItemClick(AdapterView.java:310)
+at android.widget.AbsListView.performItemClick(AbsListView.java:1224)
+at android.widget.AbsListView$PerformClick.run(AbsListView.java:3192)
+at android.widget.AbsListView.onTouchUp(AbsListView.java:4073)
+at android.widget.AbsListView.onTouchEvent(AbsListView.java:3822)
+at android.view.View.dispatchTouchEvent(View.java:9332)
+at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:2576)
+at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2257)
+at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:2582)
+at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2271)
+at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:2582)
+at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2271)
+at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:2582)
+at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2271)
+at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:2582)
+at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2271)
+at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:2582)
+at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2271)
+at com.android.internal.policy.PhoneWindow$DecorView.superDispatchTouchEvent(PhoneWindow.java:2510)
+at com.android.internal.policy.PhoneWindow.superDispatchTouchEvent(PhoneWindow.java:1803)
+at android.app.Dialog.dispatchTouchEvent(Dialog.java:787)
+at com.android.internal.policy.PhoneWindow$DecorView.dispatchTouchEvent(PhoneWindow.java:2469)
+at android.view.View.dispatchPointerEvent(View.java:9564)
+at android.view.ViewRootImpl$ViewPostImeInputStage.processPointerEvent(ViewRootImpl.java:4330)
+at android.view.ViewRootImpl$ViewPostImeInputStage.onProcess(ViewRootImpl.java:4184)
+at android.view.ViewRootImpl$InputStage.deliver(ViewRootImpl.java:3702)
+at android.view.ViewRootImpl$InputStage.onDeliverToNext(ViewRootImpl.java:3768)
+at android.view.ViewRootImpl$InputStage.forward(ViewRootImpl.java:3728)
+at android.view.ViewRootImpl$AsyncInputStage.forward(ViewRootImpl.java:3867)
+at android.view.ViewRootImpl$InputStage.apply(ViewRootImpl.java:3736)
+at android.view.ViewRootImpl$AsyncInputStage.apply(ViewRootImpl.java:3924)
+at android.view.ViewRootImpl$InputStage.deliver(ViewRootImpl.java:3702)
+at android.view.ViewRootImpl$InputStage.onDeliverToNext(ViewRootImpl.java:3768)
+at android.view.ViewRootImpl$InputStage.forward(ViewRootImpl.java:3728)
+at android.view.ViewRootImpl$InputStage.apply(ViewRootImpl.java:3736)
+at android.view.ViewRootImpl$InputStage.deliver(ViewRootImpl.java:3702)
+at android.view.ViewRootImpl.deliverInputEvent(ViewRootImpl.java:6057
+
+这个 bug 是因为在使用 Retrofit 时，参数配置出现的问题：
+eg:
+@GET(RetrofitApi.CARD_TEMPLATE+"{id}")
+Call<CardTemplate> getCardTemplateInfo(@Header("Authorization") String value,
+                                       @Path("id") String id,
+                                       @Query("ext") String defaultExt
+                                           );
+一开始把 "@Path("id") String id" 这行代码放在最后一个参数了，根据 bug 提示，尝试修改，即可修复
+、、、

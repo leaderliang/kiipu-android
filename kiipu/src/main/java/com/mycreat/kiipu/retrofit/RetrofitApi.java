@@ -58,5 +58,10 @@ public class RetrofitApi {
      */
     public static final String MOVE_BOOKMARK = BASE_URL + "/bookmarks/";
 
+    /**
+     * /bookmarks/:id?ext=1&tmpl=1
+     */
+    public static final String CARD_TEMPLATE = BASE_URL + "/bookmarks/";
+
 
 }
