@@ -9,9 +9,9 @@ import com.google.gson.annotations.SerializedName;
 public class TopicsInfo {
     @Expose
     @SerializedName("name")
-    private String name;
+    public String name;
 
     @Expose
     @SerializedName("id")
-    private String id;
+    public String id;
 }

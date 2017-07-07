@@ -16,7 +16,15 @@ public class RetrofitClient {
                 //增加返回值为Gson的支持(以实体类返回)
                 .addConverterFactory(GsonConverterFactory.create())
                 //直接返回String类型需引入
-//                .addConverterFactory(ScalarsConverterFactory.create)
+//                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(new ToStringConverterFactory())
+                .build();
+
+        private static Retrofit retrofitTemplate = new Retrofit.Builder()
+                .baseUrl(RetrofitApi.BASE_TEMPLATE_URL)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                //直接返回String类型需引入
+                .addConverterFactory(new ToStringConverterFactory())
                 .build();
     }
 
@@ -24,6 +32,9 @@ public class RetrofitClient {
         return ClientHolder.retrofit;
     }
 
+    public static Retrofit getTemplateInstance() {
+        return ClientHolder.retrofitTemplate;
+    }
 
 
 }

@@ -32,18 +32,27 @@ public class Bookmark implements MultiItemEntity {
     @Expose
     @SerializedName("theme")
     public String viewTheme;
-    /**
-     * template 标明了该卡片依赖的模板文件名
-     * */
-    @Expose
-    @SerializedName("tmpl")
-    public String template;
+
     @Expose
     @SerializedName("create_time")
     public String createOn;
     @Expose
     @SerializedName("update_time")
     public String updateOn;
+
+    /*卡片详情模板相关*/
+    @Expose
+    @SerializedName("ext")
+    public Object ext;
+    /**
+     * template 标明了该卡片依赖的模板文件名
+     * */
+    @Expose
+    @SerializedName("tmpl")
+    public String tmplName;
+    @Expose
+    @SerializedName("tmpl_ver")
+    public int tmplVersion;
 
 
     @Override

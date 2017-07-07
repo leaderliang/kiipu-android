@@ -12,13 +12,13 @@ public class CardTemplateInfo {
 
     @Expose
     @SerializedName("path")
-    private String templatePath;
+    public String templatePath;
     @Expose
     @SerializedName("version")
-    private String templateVersion;
+    public String templateVersion;
     @Expose
     @SerializedName("name")
-    private String templateName;
+    public String templateName;
 
 
 }

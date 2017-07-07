@@ -29,20 +29,19 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.cocosw.bottomsheet.BottomSheetHelper;
 import com.github.clans.fab.FloatingActionButton;
+import com.google.gson.JsonObject;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.BookMarkAdapter;
 import com.mycreat.kiipu.core.AppManager;
 import com.mycreat.kiipu.core.BaseActivity;
-import com.mycreat.kiipu.model.Bookmark;
-import com.mycreat.kiipu.model.BookmarksInfo;
-import com.mycreat.kiipu.model.Collections;
-import com.mycreat.kiipu.model.UserInfo;
+import com.mycreat.kiipu.model.*;
 import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.KiipuRecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +64,6 @@ public class BookMarkActivity extends BaseActivity
     private Toolbar toolbar;
 
     private DrawerLayout drawer;
-
     /* left menu */
     private NavigationView navigationView;
 
@@ -104,6 +102,8 @@ public class BookMarkActivity extends BaseActivity
     private int mScrollThreshold;
 
     private Button mBtLogOut;
+
+    private boolean isDownloading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -310,7 +310,7 @@ public class BookMarkActivity extends BaseActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         //noinspection SimplifiableIfStatement
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_add:
                 ToastUtil.showToastShort("添加书签");
                 return true;
@@ -330,7 +330,7 @@ public class BookMarkActivity extends BaseActivity
         adapter.setEnableLoadMore(false);
         toolbar.setLogo(null);
         REFRESH_TYPE = 0;
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.nav_all_bookmark: /* all bookmarks  传0  或者不传 collection_id */
                 // Handle the camera action
 //                startActivity(new Intent(this, RecycleViewActivity.class));
@@ -459,7 +459,7 @@ public class BookMarkActivity extends BaseActivity
                 mUserInfo = response.body();
 //                mIvUserHeader  mTvUserName
                 if (mUserInfo != null) {
-                    GlideUtil.getInstance().loadCircleImage(mIvUserHeader, mUserInfo.avatarUrl,R.drawable.default_header_icon);
+                    GlideUtil.getInstance().loadCircleImage(mIvUserHeader, mUserInfo.avatarUrl, R.drawable.default_header_icon);
                     mTvUserName.setText(mUserInfo.nickName);
                 }
             }
@@ -480,7 +480,7 @@ public class BookMarkActivity extends BaseActivity
      * @param collectionName
      */
     private void createCollection(String collectionName) {
-        Call<Collections> call = mKiipuApplication.mRetrofitService.creatCollection(userAccessToken, collectionName);
+        Call<Collections> call = mKiipuApplication.mRetrofitService.createCollection(userAccessToken, collectionName);
         call.enqueue(new Callback<Collections>() {
             @Override
             public void onResponse(Call<Collections> call, Response<Collections> response) {
@@ -596,6 +596,23 @@ public class BookMarkActivity extends BaseActivity
 
 
     private void showBookmarkDetailDialog(int position) {
+        String htmlPath =  requestData.get(position).tmplName +"/"+requestData.get(position).tmplVersion+".html";
+        Call<String> call = mKiipuApplication.mRetrofitTemplateService.requestHtml(htmlPath);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                LogUtil.e("html response.body()----->"+response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
+                        .setDuration(2500)
+                        .show();
+            }
+        });
+
+
         View view = DialogUtil.showCanSetViewDialog(this,
                 R.layout.view_card_detail_dialog,
                 new DialogInterface.OnClickListener() {
@@ -610,7 +627,7 @@ public class BookMarkActivity extends BaseActivity
         mTvUrl = (TextView) view.findViewById(R.id.tv_url);
         mIvDetail = (ImageView) view.findViewById(R.id.iv_detail);
         mTvIntroduce = (TextView) view.findViewById(R.id.tv_introduce);
-        GlideUtil.getInstance().loadImage(mIvIcon, mBookmarksInfo.getIcon(), R.drawable.default_logo_small,true);
+        GlideUtil.getInstance().loadImage(mIvIcon, mBookmarksInfo.getIcon(), R.drawable.default_logo_small, true);
         mTvTitle.setText(mBookmarksInfo.getTitle());
         mTvUrl.setText(mBookmarksInfo.getUrl());
         if (requestData.get(position).type.equals("1")) {
@@ -627,7 +644,7 @@ public class BookMarkActivity extends BaseActivity
 
     private void showListPopupWindow(final int dataPosition) {
 
-         BottomSheet sheet = new BottomSheet.Builder(this).sheet(R.menu.more_info).listener(new DialogInterface.OnClickListener() {
+        BottomSheet sheet = new BottomSheet.Builder(this).sheet(R.menu.more_info).listener(new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 BookMarkActivity.this.onMoreInfoItemClick(dataPosition, which);
@@ -666,18 +683,18 @@ public class BookMarkActivity extends BaseActivity
     }
 
     private void showMoveBookmarkDialog(final int dataPosition) {
-            Intent intent = new Intent(this,CollectionActivity.class);
-            intent.putExtra("dataPosition",dataPosition);
-            intent.putExtra("currentBookmarkId", requestData.get(dataPosition).id);
-            startActivityForResult(intent,Constants.REQUEST_MOVE_BOOKMARK_CODE);
+        Intent intent = new Intent(this, CollectionActivity.class);
+        intent.putExtra("dataPosition", dataPosition);
+        intent.putExtra("currentBookmarkId", requestData.get(dataPosition).id);
+        startActivityForResult(intent, Constants.REQUEST_MOVE_BOOKMARK_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (resultCode){
+        switch (resultCode) {
             case Constants.RESULT_MOVE_BOOKMARK_CODE:
-                if(data != null) {
+                if (data != null) {
                     int dataPosition = data.getIntExtra("dataPosition", 0);
                     String collectionName = data.getStringExtra("collectionName");
                     requestData.remove(dataPosition);
@@ -707,16 +724,16 @@ public class BookMarkActivity extends BaseActivity
     private void logOutApp() {
         SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
         SharedPreferencesUtil.removeKey(mContext, Constants.USER_ID);
-        LogUtil.e("when logOutApp ACCESS_TOKEN " + SharedPreferencesUtil.getData(mContext,Constants.ACCESS_TOKEN,""));
+        LogUtil.e("when logOutApp ACCESS_TOKEN " + SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN, ""));
         finish();
         AppManager.getAppManager().appExit(this);
     }
 
-    private void logOut(){
+    private void logOut() {
         SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
         SharedPreferencesUtil.removeKey(mContext, Constants.USER_ID);
         finish();
-        startActivity(new Intent(this,LoginActivity.class));
+        startActivity(new Intent(this, LoginActivity.class));
     }
 
 
@@ -763,7 +780,6 @@ public class BookMarkActivity extends BaseActivity
     }
 
     /**
-     *
      * leftMenu clickListener
      */
     private class OnMenuItemClickListener implements MenuItem.OnMenuItemClickListener {
@@ -787,11 +803,13 @@ public class BookMarkActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
         String clipStr = ClipboardUtils.get(this);
-        if(!TextUtils.isEmpty(clipStr)){
+        if (!TextUtils.isEmpty(clipStr)) {
 //            ToastUtil.showToastShort(this, "粘贴板有数据哦~");
 
         }
     }
+
+
 
 
 

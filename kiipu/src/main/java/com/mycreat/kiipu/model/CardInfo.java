@@ -12,6 +12,6 @@ public class CardInfo {
 
     @Expose
     @SerializedName("topics")
-    private List<TopicsInfo> cardInfos;
+    public List<TopicsInfo> cardInfos;
 
 }

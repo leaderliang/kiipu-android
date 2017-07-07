@@ -12,13 +12,13 @@ public class CardTemplate {
 
     @Expose
     @SerializedName("id")
-    private String id;
+    public String id;
     @Expose
     @SerializedName("ext")
-    private CardInfo cardinfo;
+    public CardInfo cardinfo;
     @Expose
     @SerializedName("tmplInfo")
-    private CardTemplateInfo cardTemplateInfo;
+    public CardTemplateInfo cardTemplateInfo;
 
 
 }

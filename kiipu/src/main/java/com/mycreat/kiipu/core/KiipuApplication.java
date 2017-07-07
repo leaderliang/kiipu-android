@@ -38,7 +38,7 @@ public class KiipuApplication extends MultiDexApplication {
 
     public static int DIMEN_DPI = -1;
 
-    public static RetrofitService mRetrofitService;
+    public static RetrofitService mRetrofitService, mRetrofitTemplateService;
 
 
 
@@ -60,6 +60,7 @@ public class KiipuApplication extends MultiDexApplication {
         QueuedWork.isUseThreadPool = false;
         getScreenSize();
         mRetrofitService = RetrofitClient.getInstance().create(RetrofitService.class);
+        mRetrofitTemplateService = RetrofitClient.getTemplateInstance().create(RetrofitService.class);
     }
 
     @Override
