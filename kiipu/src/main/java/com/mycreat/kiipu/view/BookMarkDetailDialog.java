@@ -1,6 +1,5 @@
 package com.mycreat.kiipu.view;
 
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatDialogFragment;
@@ -13,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mycreat.kiipu.R;
-import com.mycreat.kiipu.utils.BindView;
+import com.mycreat.kiipu.utils.bind.BindView;
 import com.mycreat.kiipu.utils.ViewUtils;
 
 /**
@@ -21,7 +20,7 @@ import com.mycreat.kiipu.utils.ViewUtils;
  * Created by zhanghaihai on 2017/6/28.
  */
 
-public class BookMarkDetailDialog extends AppCompatDialogFragment implements GestureDetector.OnGestureListener, View.OnTouchListener {
+public class BookmarkDetailDialog extends AppCompatDialogFragment implements GestureDetector.OnGestureListener, View.OnTouchListener {
     @BindView(R.id.recyclerView)
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;

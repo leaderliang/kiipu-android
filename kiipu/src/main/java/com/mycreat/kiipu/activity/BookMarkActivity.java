@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -34,8 +35,10 @@ import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.BookMarkAdapter;
 import com.mycreat.kiipu.core.AppManager;
 import com.mycreat.kiipu.core.BaseActivity;
+import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.*;
 import com.mycreat.kiipu.utils.*;
+import com.mycreat.kiipu.view.BookmarkWebVIew;
 import com.mycreat.kiipu.view.KiipuRecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -76,6 +79,7 @@ public class BookMarkActivity extends BaseActivity
     private KiipuRecyclerView recyclerView;
 
     private ImageView mIvClose, mIvIcon, mIvDetail;
+    private BookmarkWebVIew extDetail;
 
     private ImageView mIvUserHeader;
 
@@ -407,6 +411,7 @@ public class BookMarkActivity extends BaseActivity
                         mRequestErrorLayout.setErrorText("暂时还没有书签呦~");
                         adapter.setEmptyView(mRequestErrorLayout);
                     }
+
                 }
                 mProgress.setVisibility(View.GONE);
             }
@@ -527,7 +532,7 @@ public class BookMarkActivity extends BaseActivity
      */
     private void requestMoveBookmark(final int dataPosition, final int collectionId) {
         String bookmarkId = requestData.get(dataPosition).id;
-        Call<Bookmark> call = mKiipuApplication.mRetrofitService.moveBookmark(userAccessToken, bookmarkId, mCollectionList.get(collectionId).collectionId);
+        Call<Bookmark> call = KiipuApplication.mRetrofitService.moveBookmark(userAccessToken, bookmarkId, mCollectionList.get(collectionId).collectionId);
         call.enqueue(new Callback<Bookmark>() {
             @Override
             public void onResponse(Call<Bookmark> call, Response<Bookmark> response) {
@@ -563,19 +568,19 @@ public class BookMarkActivity extends BaseActivity
         if (isRequestMenu) {
             for (int i = 1; i < mCollectionList.size(); i++) {
                 navigationView.getMenu().add(0, i, i, mCollectionList.get(i).collectionName + "")
-                        .setIcon(getDrawable(R.drawable.ic_menu_share))//动态添加menu
+                        .setIcon(ContextCompat.getDrawable(getBaseContext(),R.drawable.ic_menu_share))//动态添加menu
                         .setOnMenuItemClickListener(new OnMenuItemClickListener());
             }
         } else {// 调用添加按钮后，重新设置之前menu的 name
             for (int i = 1; i < mCollectionList.size(); i++) {
                 navigationView.getMenu().findItem(i).setTitle(mCollectionList.get(i).collectionName)
-                        .setIcon(getDrawable(R.drawable.ic_menu_share))//动态添加menu
+                        .setIcon(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_menu_share))//动态添加menu
                         .setOnMenuItemClickListener(new OnMenuItemClickListener());
             }
         }
         // 添加书签按钮事件操作
         navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), "添加书签")
-                .setIcon(getDrawable(R.drawable.ic_add))
+                .setIcon(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_add))
                 .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
     }
 
@@ -597,7 +602,7 @@ public class BookMarkActivity extends BaseActivity
 
     private void showBookmarkDetailDialog(int position) {
         String htmlPath =  requestData.get(position).tmplName +"/"+requestData.get(position).tmplVersion+".html";
-        Call<String> call = mKiipuApplication.mRetrofitTemplateService.requestHtml(htmlPath);
+        Call<String> call = KiipuApplication.mRetrofitTemplateService.requestHtml(htmlPath);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -622,6 +627,7 @@ public class BookMarkActivity extends BaseActivity
                     }
                 });
         BookmarksInfo mBookmarksInfo = requestData.get(position).info;
+        extDetail = (BookmarkWebVIew) view.findViewById(R.id.wv_ext_detail);
         mIvIcon = (ImageView) view.findViewById(R.id.iv_icon);
         mTvTitle = (TextView) view.findViewById(R.id.tv_title);
         mTvUrl = (TextView) view.findViewById(R.id.tv_url);
@@ -638,6 +644,11 @@ public class BookMarkActivity extends BaseActivity
             mIvDetail.setVisibility(View.GONE);
             mTvIntroduce.setVisibility(View.VISIBLE);
             mTvIntroduce.setText(mBookmarksInfo.getIntroduce());
+        }
+
+        if(requestData.get(position).tmplName != null){
+            extDetail.setBookMark(requestData.get(position));
+            extDetail.loadUrl(requestData.get(position).tmplName);
         }
     }
 

@@ -43,7 +43,7 @@ public class Bookmark implements MultiItemEntity {
     /*卡片详情模板相关*/
     @Expose
     @SerializedName("ext")
-    public Object ext;
+    public BookmarkExt ext;
     /**
      * template 标明了该卡片依赖的模板文件名
      * */

@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mycreat.kiipu.core.KiipuApplication;
+import com.mycreat.kiipu.utils.bind.BindOnclick;
+import com.mycreat.kiipu.utils.bind.BindView;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;

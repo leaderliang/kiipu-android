@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:layout_marginTop="15dp">
+        android:layout_marginTop="15dp"
+        android:layout_alignParentTop="true"
+        >
 
         <ImageView
             android:id="@+id/iv_icon"
@@ -32,22 +34,15 @@
 
     </RelativeLayout>
 
-    <!-- url-->
-    <TextView
-        android:id="@+id/tv_url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="20dp"
-        android:maxLines="2"
 
-        />
 
     <LinearLayout
+        android:id="@+id/introduce"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        >
 
         <TextView
             android:id="@+id/tv_introduce"
@@ -70,4 +65,28 @@
             android:scaleType="fitXY" />
 
     </LinearLayout>
-</LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/introduce"
+        android:layout_below="@id/rl_item_title">
+        <!-- url-->
+        <TextView
+            android:id="@+id/tv_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="20dp"
+            android:maxLines="2"
+            android:visibility="gone"
+            />
+
+        <com.mycreat.kiipu.view.BookmarkWebVIew
+            android:id="@+id/wv_ext_detail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </RelativeLayout>
+</RelativeLayout>
