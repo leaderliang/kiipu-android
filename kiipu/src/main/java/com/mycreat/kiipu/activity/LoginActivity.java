@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.BaseActivity;
+import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.LoginInfo;
 import com.mycreat.kiipu.utils.Constants;
 import com.mycreat.kiipu.utils.LogUtil;
@@ -162,7 +163,7 @@ public class LoginActivity extends BaseActivity {
 
     private void requestLogin(String accessToken, String userId) {
         SocializeUtils.safeShowDialog(dialog);
-        Call<LoginInfo> call = mKiipuApplication.mRetrofitService.loginBookmark(accessToken, userId);
+        Call<LoginInfo> call = KiipuApplication.mRetrofitService.loginBookmark(accessToken, userId);
         call.enqueue(new Callback<LoginInfo>() {
             @Override
             public void onResponse(Call<LoginInfo> call, Response<LoginInfo> response) {

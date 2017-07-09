@@ -18,7 +18,8 @@ public class Collections {
     @Expose
     @SerializedName("name")
     public String collectionName;
-
-
+    @Expose
+    @SerializedName("icon")
+    public String menuIcon;
 
 }

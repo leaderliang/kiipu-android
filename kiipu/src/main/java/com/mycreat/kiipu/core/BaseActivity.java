@@ -39,8 +39,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
 //    private LinearLayout linearLayout;
 
-    public KiipuApplication mKiipuApplication;
-
     public String userAccessToken;
 
     private LinearLayout includeLayout;
@@ -75,7 +73,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         //过渡动画  requestFeature() must be called before adding content
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        mKiipuApplication = KiipuApplication.getInstance();
         // 经测试在代码里直接声明透明状态栏更有效
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 //            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,

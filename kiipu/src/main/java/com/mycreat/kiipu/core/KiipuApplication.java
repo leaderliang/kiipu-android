@@ -42,7 +42,6 @@ public class KiipuApplication extends MultiDexApplication {
 
 
 
-
     public static synchronized KiipuApplication getInstance() {
         return instance;
     }

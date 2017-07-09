@@ -13,6 +13,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.CollectionListAdapter;
 import com.mycreat.kiipu.core.BaseActivity;
+import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.Collections;
 import com.mycreat.kiipu.utils.Constants;
@@ -75,7 +76,7 @@ public class CollectionActivity extends BaseActivity {
      * 获取收藏夹列表
      */
     private void getCollectionList() {
-        Call<List<Collections>> call = mKiipuApplication.mRetrofitService.getCollectionList(userAccessToken);
+        Call<List<Collections>> call = KiipuApplication.mRetrofitService.getCollectionList(userAccessToken);
         call.enqueue(new Callback<List<Collections>>() {
             @Override
             public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
@@ -100,7 +101,7 @@ public class CollectionActivity extends BaseActivity {
             ToastUtil.showToastShort("数据异常，请稍后重试");
             return;
         }
-        Call<Bookmark> call = mKiipuApplication.mRetrofitService.moveBookmark(userAccessToken, bookmarkId, mCollectionList.get(collectionPosition).collectionId);
+        Call<Bookmark> call = KiipuApplication.mRetrofitService.moveBookmark(userAccessToken, bookmarkId, mCollectionList.get(collectionPosition).collectionId);
         call.enqueue(new Callback<Bookmark>() {
             @Override
             public void onResponse(Call<Bookmark> call, Response<Bookmark> response) {

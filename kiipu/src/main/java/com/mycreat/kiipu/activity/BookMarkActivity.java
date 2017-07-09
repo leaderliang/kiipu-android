@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -25,12 +26,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.*;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.cocosw.bottomsheet.BottomSheetHelper;
 import com.github.clans.fab.FloatingActionButton;
-import com.google.gson.JsonObject;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.BookMarkAdapter;
 import com.mycreat.kiipu.core.AppManager;
@@ -47,7 +51,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +85,7 @@ public class BookMarkActivity extends BaseActivity
     private KiipuRecyclerView recyclerView;
 
     private ImageView mIvClose, mIvIcon, mIvDetail;
+
     private BookmarkWebVIew extDetail;
 
     private ImageView mIvUserHeader;
@@ -193,20 +197,14 @@ public class BookMarkActivity extends BaseActivity
         });
 
         swipeToLoadLayout.setColorSchemeColors(Color.parseColor(Constants.DEFAULT_COLOR));
-
         swipeToLoadLayout.setRefreshing(true);
-
         toolbar.setTitle("");// default null
-
         toolbar.setLogo(R.drawable.login_logo_text);
-
         setSupportActionBar(toolbar);
-        /*set item all checked default*/
+        /* set item all checked default */
         menuAllItem.setChecked(true);
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-
         drawer.setDrawerListener(toggle);
         // 注释掉可更换 navigationIcon
 //        toggle.syncState();
@@ -318,6 +316,11 @@ public class BookMarkActivity extends BaseActivity
         // as you specify a parent activity in AndroidManifest.xml.
         //noinspection SimplifiableIfStatement
         switch (item.getItemId()) {
+            case R.id.action_setting:
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//                if(recyclerView.getLayoutManager().)
+//                LogUtil.e("recyclerView.getLayoutManager()"+recyclerView.getLayoutManager());
+                return true;
             case R.id.action_add:
                 ToastUtil.showToastShort("添加书签");
                 return true;
@@ -384,7 +387,7 @@ public class BookMarkActivity extends BaseActivity
     private void getBookmarkList() {
         String lastItemId = mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).id : "";
         itemId = REFRESH_TYPE == 0 ? "" : lastItemId;
-        Call<List<Bookmark>> call = mKiipuApplication.mRetrofitService.getBookmarkList(userAccessToken, Constants.PAGE_SIZE, itemId, collectionId);
+        Call<List<Bookmark>> call = KiipuApplication.mRetrofitService.getBookmarkList(userAccessToken, Constants.PAGE_SIZE, itemId, collectionId);
         call.enqueue(new Callback<List<Bookmark>>() {
             @Override
             public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
@@ -414,7 +417,6 @@ public class BookMarkActivity extends BaseActivity
                         mRequestErrorLayout.setErrorText("暂时还没有书签呦~");
                         adapter.setEmptyView(mRequestErrorLayout);
                     }
-
                 }
                 mProgress.setVisibility(View.GONE);
             }
@@ -435,7 +437,7 @@ public class BookMarkActivity extends BaseActivity
      * 获取收藏夹列表
      */
     private void getCollectionList() {
-        Call<List<Collections>> call = mKiipuApplication.mRetrofitService.getCollectionList(userAccessToken);
+        Call<List<Collections>> call = KiipuApplication.mRetrofitService.getCollectionList(userAccessToken);
         call.enqueue(new Callback<List<Collections>>() {
             @Override
             public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
@@ -459,7 +461,7 @@ public class BookMarkActivity extends BaseActivity
      * 获取用户信息
      */
     private void getUserInfo() {
-        Call<UserInfo> call = mKiipuApplication.mRetrofitService.getUserInfo(userAccessToken);
+        Call<UserInfo> call = KiipuApplication.mRetrofitService.getUserInfo(userAccessToken);
         Log.e("getUserInfo", "userAccessToken " + userAccessToken);
         call.enqueue(new Callback<UserInfo>() {
             @Override
@@ -488,7 +490,7 @@ public class BookMarkActivity extends BaseActivity
      * @param collectionName
      */
     private void createCollection(String collectionName) {
-        Call<Collections> call = mKiipuApplication.mRetrofitService.createCollection(userAccessToken, collectionName);
+        Call<Collections> call = KiipuApplication.mRetrofitService.createCollection(userAccessToken, collectionName);
         call.enqueue(new Callback<Collections>() {
             @Override
             public void onResponse(Call<Collections> call, Response<Collections> response) {
@@ -513,7 +515,7 @@ public class BookMarkActivity extends BaseActivity
      * delete item
      */
     private void requestDeleteItem(final int position) {
-        Call<Bookmark> call = mKiipuApplication.mRetrofitService.deleteBookmark(userAccessToken, requestData.get(position).id);
+        Call<Bookmark> call = KiipuApplication.mRetrofitService.deleteBookmark(userAccessToken, requestData.get(position).id);
         call.enqueue(new Callback<Bookmark>() {
             @Override
             public void onResponse(Call<Bookmark> call, Response<Bookmark> response) {
@@ -564,21 +566,48 @@ public class BookMarkActivity extends BaseActivity
      */
     private void addLeftMenu(List<Collections> mCollectionList, boolean isRequestMenu) {
         navigationView.getMenu().findItem(R.id.item_collection).setTitle("收藏夹");
-        // the first menu view
-        navigationView.getMenu().findItem(R.id.nav_share)
-                .setTitle(mCollectionList.get(0).collectionName)
-                .setOnMenuItemClickListener(new OnMenuItemClickListener());
+
         if (isRequestMenu) {
             for (int i = 1; i < mCollectionList.size(); i++) {
-                navigationView.getMenu().add(0, i, i, mCollectionList.get(i).collectionName + "")
-                        .setIcon(ContextCompat.getDrawable(getBaseContext(),R.drawable.ic_menu_share))//动态添加menu
-                        .setOnMenuItemClickListener(new OnMenuItemClickListener());
+                final String firstName = mCollectionList.get(0).collectionName;
+                final String collectionName = mCollectionList.get(i).collectionName;
+                final int finalI = i;
+                Glide.with(BookMarkActivity.this)
+                        .load(mCollectionList.get(i).menuIcon)
+                        .into(new SimpleTarget<GlideDrawable>() { // 图片加载回调的Target实现类
+                            @Override
+                            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                                // the first menu view
+                                navigationView.getMenu().findItem(R.id.nav_share)
+                                        .setTitle(firstName)
+                                        .setIcon(resource)//动态添加menu
+                                        .setOnMenuItemClickListener(new OnMenuItemClickListener());
+
+                                // 图片加载成功时回调的方法
+                                navigationView.getMenu().add(0, finalI, finalI, collectionName)
+                                        .setIcon(resource)//动态添加menu
+                                        .setOnMenuItemClickListener(new OnMenuItemClickListener());
+                            }
+                        });
+
+
             }
         } else {// 调用添加按钮后，重新设置之前menu的 name
             for (int i = 1; i < mCollectionList.size(); i++) {
-                navigationView.getMenu().findItem(i).setTitle(mCollectionList.get(i).collectionName)
-                        .setIcon(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_menu_share))//动态添加menu
-                        .setOnMenuItemClickListener(new OnMenuItemClickListener());
+                final String collectionName = mCollectionList.get(i).collectionName;
+                final int finalI = i;
+                Glide.with(BookMarkActivity.this)
+                        .load(mCollectionList.get(i).menuIcon)
+                        .into(new SimpleTarget<GlideDrawable>() { // 图片加载回调的Target实现类
+                            @Override
+                            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                                // 图片加载成功时回调的方法
+                                navigationView.getMenu().findItem(finalI).setTitle(collectionName)
+                                        .setIcon(resource)//动态添加menu
+                                        .setOnMenuItemClickListener(new OnMenuItemClickListener());
+                            }
+                        });
+
             }
         }
         // 添加书签按钮事件操作
