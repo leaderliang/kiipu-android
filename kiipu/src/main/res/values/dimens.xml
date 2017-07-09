@@ -29,4 +29,7 @@
     <dimen name="view_height">110dp</dimen>
     <dimen name="fab_scroll_threshold">0dp</dimen>
 
+    <dimen name="card_detail_dialog_h_margin">5dp</dimen>
+    <dimen name="card_detail_dialog_v_margin">8dp</dimen>
+
 </resources>

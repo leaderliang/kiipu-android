@@ -2,9 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/dialog"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
-
 
     <RelativeLayout
         android:id="@+id/rl_item_title"
@@ -35,13 +34,36 @@
     </RelativeLayout>
 
 
+    <RelativeLayout
+        android:id="@+id/ext_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_item_title">
+        <!-- url-->
+        <TextView
+            android:id="@+id/tv_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="20dp"
+            android:maxLines="2"
+            android:visibility="gone"
+            />
+
+        <com.mycreat.kiipu.view.BookmarkWebVIew
+            android:id="@+id/wv_ext_detail"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            />
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/introduce"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/ext_detail"
         >
 
         <TextView
@@ -66,27 +88,5 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/introduce"
-        android:layout_below="@id/rl_item_title">
-        <!-- url-->
-        <TextView
-            android:id="@+id/tv_url"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="20dp"
-            android:maxLines="2"
-            android:visibility="gone"
-            />
 
-        <com.mycreat.kiipu.view.BookmarkWebVIew
-            android:id="@+id/wv_ext_detail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
-    </RelativeLayout>
 </RelativeLayout>

@@ -1,13 +1,17 @@
 package com.mycreat.kiipu.view
 
 import android.content.Context
+import android.os.Build
 import android.support.annotation.RequiresApi
 import android.util.AttributeSet
+import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import com.mycreat.kiipu.core.KiipuApplication
 import com.mycreat.kiipu.model.Bookmark
 import com.mycreat.kiipu.model.BookmarkExt
+import com.mycreat.kiipu.utils.CustomTabsUtils
+import com.mycreat.kiipu.utils.LogUtil
 import com.samskivert.mustache.Mustache
 import java.io.IOException
 import java.nio.charset.Charset
@@ -21,7 +25,9 @@ import java.util.*
  */
 
 class BookmarkWebVIew : WebView {
-    var bookMark: Bookmark? = null
+    val replacePrefix = "http://tmpl_replace.kiipu.com/"
+    var mBookMark: Bookmark? = null
+    var onLinkClickListener:OnLinkClickListener? = null
     constructor(context: Context) : super(context) {
         initialize()
     }
@@ -48,16 +54,40 @@ class BookmarkWebVIew : WebView {
             super.onPageFinished(view, url)
         }
 
+        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                return shouldOverrideUrlLoadingImpl(request?.url.toString())
+            }
+
+            return false
+        }
+
+        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+            return shouldOverrideUrlLoadingImpl(url)
+        }
+
         @RequiresApi(android.os.Build.VERSION_CODES.LOLLIPOP)
         override fun shouldInterceptRequest(view: android.webkit.WebView?, request: android.webkit.WebResourceRequest?): WebResourceResponse? {
-            return interceptRequest(request?.url.toString(), BookmarkExt())
+            return interceptRequest(request?.url.toString())
         }
 
         override fun shouldInterceptRequest(view: android.webkit.WebView?, url: String?): WebResourceResponse? {
-            return interceptRequest(url, BookmarkExt())
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+                return interceptRequest(url)
+            else
+                return null
         }
 
 
+    }
+
+    private fun  shouldOverrideUrlLoadingImpl(url: String?): Boolean {
+        if(url != null && !url.startsWith(replacePrefix) && mBookMark != null){
+            onLinkClickListener?.onClick(url, mBookMark!!)
+            return true
+        }
+
+        return false
     }
 
     private val mWebViewChromeClient = object : android.webkit.WebChromeClient() {
@@ -73,10 +103,11 @@ class BookmarkWebVIew : WebView {
      * @param url 请求地址
      * @param data 用于填充模板的数据
      */
-    fun interceptRequest(url:String?, data: BookmarkExt):WebResourceResponse?{
-        var modifiedHtml = loadTemplate(url)
+    fun interceptRequest(url:String?):WebResourceResponse?{
+
+        var modifiedHtml = loadTemplate(url?.removePrefix(replacePrefix))
         if(modifiedHtml != null ) {
-            modifiedHtml = fillData(modifiedHtml, BookmarkExt())
+            modifiedHtml = fillData(modifiedHtml)
             return WebResourceResponse("text/html", "utf-8", modifiedHtml.byteInputStream(Charset.forName("utf-8")))
         }else{
             return null
@@ -101,33 +132,33 @@ class BookmarkWebVIew : WebView {
     /**
      * 利用mustache填充数据到模板
      */
-    fun fillData(template:String, data: BookmarkExt):String{
-        return Mustache.compiler().withFormatter(object : Mustache.Formatter {
-            val _fmt: DateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            override fun format(value: Any): String {
-                if (value is Date)
-                    return _fmt.format(value)
-                else
-                    return value.toString()
-            }
+    fun fillData(template:String):String{
+        var resultHtml = ""
+        if(mBookMark != null && mBookMark!!.ext != null) {
+            val mTitle = if( mBookMark!!.ext!!.title != null)  mBookMark!!.ext!!.title else mBookMark!!.info.title
+            val mNote = if(mBookMark!!.ext!!.note == null) "" else mBookMark!!.ext!!.note
+            val mUrl = if(mBookMark!!.info == null || mBookMark!!.info!!.url == null) "" else mBookMark!!.info!!.url
+            resultHtml = Mustache.compiler().compile(template).execute(object : Any() {
+                var topics = mBookMark!!.ext!!.topics
+                var title = mTitle
+                var note = mNote
+                var url = mUrl
+            })
 
-        }).compile(template).execute(object : Any() {
-            val topics = bookMark?.ext?.topics
-            val title = bookMark?.ext?.title
-            val note = bookMark?.ext?.note
-        })
+        }
+        LogUtil.d(resultHtml)
+        return resultHtml
 
     }
 
+    fun refresh(bookmark:Bookmark){
+        mBookMark = bookmark
 
-    fun setBookmark( bookMark: Bookmark){
-        this.bookMark = bookMark
-        refresh()
+        loadUrl(replacePrefix + mBookMark!!.tmplName +"/"+ mBookMark!!.tmplVersion+".html")
     }
 
-    fun refresh(){
-        if(bookMark != null)
-            loadUrl(bookMark!!.tmplName)
+    interface OnLinkClickListener{
+        fun onClick(url:String, bookmark:Bookmark)
     }
 
 }

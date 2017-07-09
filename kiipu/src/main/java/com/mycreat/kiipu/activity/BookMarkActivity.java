@@ -40,6 +40,9 @@ import com.mycreat.kiipu.model.*;
 import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.BookmarkWebVIew;
 import com.mycreat.kiipu.view.KiipuRecyclerView;
+
+import org.jetbrains.annotations.NotNull;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -600,7 +603,7 @@ public class BookMarkActivity extends BaseActivity
     }
 
 
-    private void showBookmarkDetailDialog(int position) {
+    private void showBookmarkDetailDialog(final int position) {
         String htmlPath =  requestData.get(position).tmplName +"/"+requestData.get(position).tmplVersion+".html";
         Call<String> call = KiipuApplication.mRetrofitTemplateService.requestHtml(htmlPath);
         call.enqueue(new Callback<String>() {
@@ -633,6 +636,13 @@ public class BookMarkActivity extends BaseActivity
         mTvUrl = (TextView) view.findViewById(R.id.tv_url);
         mIvDetail = (ImageView) view.findViewById(R.id.iv_detail);
         mTvIntroduce = (TextView) view.findViewById(R.id.tv_introduce);
+        extDetail.setOnLinkClickListener(new BookmarkWebVIew.OnLinkClickListener() {
+            @Override
+            public void onClick(@NotNull String url, @NotNull Bookmark bookmark) {
+                String viewTheme = TextUtils.isEmpty(bookmark.viewTheme) ? Constants.DEFAULT_COLOR_VALUE : bookmark.viewTheme;
+                CustomTabsUtils.showCustomTabsView(BookMarkActivity.this, url, viewTheme);
+            }
+        });
         GlideUtil.getInstance().loadImage(mIvIcon, mBookmarksInfo.getIcon(), R.drawable.default_logo_small, true);
         mTvTitle.setText(mBookmarksInfo.getTitle());
         mTvUrl.setText(mBookmarksInfo.getUrl());
@@ -647,8 +657,7 @@ public class BookMarkActivity extends BaseActivity
         }
 
         if(requestData.get(position).tmplName != null){
-            extDetail.setBookMark(requestData.get(position));
-            extDetail.loadUrl(requestData.get(position).tmplName);
+            extDetail.refresh(requestData.get(position));
         }
     }
 
