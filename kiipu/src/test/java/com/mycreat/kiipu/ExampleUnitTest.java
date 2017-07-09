@@ -117,6 +117,12 @@ public class ExampleUnitTest {
             String url = "http://www.kiipu.com";
         });
         Log.d("Test", resultHtml);
+        assertTrue(resultHtml.contains("topic1")
+                && resultHtml.contains("topic2")
+                && resultHtml.contains("http://www.kiipu.com")
+                && resultHtml.contains("topics")
+                && resultHtml.contains("test"));
+
     }
 
     class Topic {
