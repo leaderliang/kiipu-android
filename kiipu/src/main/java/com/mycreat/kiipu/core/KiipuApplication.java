@@ -21,11 +21,11 @@ import com.umeng.socialize.common.QueuedWork;
  */
 public class KiipuApplication extends MultiDexApplication {
 
-    /*各个平台的配置，建议放在全局Application或者程序入口*/
-    {
+    /*各个平台的配置，建议放在全局Application或者程序入口*/ {
         PlatformConfig.setSinaWeibo("3763012369", "70ca7f8be6f87b1157ced83e67d27a48", "http://sns.whalecloud.com");
 
     }
+
     public static KiipuApplication instance;
 
     public static Context appContext;
@@ -40,11 +40,6 @@ public class KiipuApplication extends MultiDexApplication {
 
     public static RetrofitService mRetrofitService, mRetrofitTemplateService;
 
-
-
-    public static synchronized KiipuApplication getInstance() {
-        return instance;
-    }
 
     @Override
     public void onCreate() {
