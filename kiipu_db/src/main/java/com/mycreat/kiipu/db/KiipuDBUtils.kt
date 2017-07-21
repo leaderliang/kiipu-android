@@ -16,7 +16,7 @@ class KiipuDBUtils {
         private var DB_NAME = "kiipu.db"
         private var daoSession:DaoSession? = null
 
-        private fun getSession(context: Context):DaoSession{
+        public fun getSession(context: Context):DaoSession{
             if(daoSession == null){
                 val db = DaoMaster.DevOpenHelper(context, DB_NAME).writableDatabase
                 daoSession = DaoMaster(db).newSession()
@@ -36,7 +36,14 @@ class KiipuDBUtils {
         }
 
         fun saveTemplate(context: Context, template: Template){
-            getSession(context).templateDao.save(template)
+            val tmpls = getSession(context).templateDao.queryBuilder().where(TemplateDao.Properties.Name.eq(template.name)).list()
+            if(tmpls.size > 0) {
+                template.id = tmpls.get(0).id
+                getSession(context).templateDao.update(template)
+            }
+            else {
+                getSession(context).templateDao.insert(template)
+            }
         }
 
         fun updateTemplate(context: Context, template: Template){

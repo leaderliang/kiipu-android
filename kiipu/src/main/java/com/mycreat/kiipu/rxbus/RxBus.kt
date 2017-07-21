@@ -16,7 +16,7 @@ class RxBus {
     private val mBus = PublishSubject.create<Any?>().toSerialized()
 
     private val mStickyEventMap: MutableMap<Class<*>, Any>
-
+    private val subscribeManager = SubscribeManager()
     init {
         mStickyEventMap = ConcurrentHashMap()
     }
@@ -103,17 +103,22 @@ class RxBus {
         }
     }
 
+    fun register(subscribeOwner:Any){
+        val subMethods = subscribeManager.cacheSubscribeMethod(subscribeOwner)
+        subscribeManager.register(subscribeOwner)
+    }
+
+    fun unregister(subscribeOwner:Any){
+        subscribeManager.unRegister(subscribeOwner)
+    }
+
     companion object {
         var mDefaultInstance: RxBus? = null
-        fun get():RxBus? {
+        @Synchronized fun getDefault():RxBus {
             if (mDefaultInstance == null) {
-                synchronized(RxBus::class.java) {
-                    if (mDefaultInstance == null) {
-                        mDefaultInstance = RxBus()
-                    }
-                }
+                mDefaultInstance = RxBus()
             }
-            return mDefaultInstance
+            return mDefaultInstance!!
         }
     }
 }

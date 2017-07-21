@@ -20,7 +20,7 @@ import com.mycreat.kiipu.utils.ViewUtils;
  * Created by zhanghaihai on 2017/6/28.
  */
 
-public class BookmarkExtDialog extends AppCompatDialogFragment implements GestureDetector.OnGestureListener, View.OnTouchListener {
+public class BookmarkDetailDialog extends AppCompatDialogFragment implements GestureDetector.OnGestureListener, View.OnTouchListener {
     @BindView(R.id.recyclerView)
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;

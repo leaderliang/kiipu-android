@@ -42,7 +42,7 @@ import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.*;
 import com.mycreat.kiipu.utils.*;
-import com.mycreat.kiipu.view.BookmarkWebVIew;
+import com.mycreat.kiipu.view.BookmarkTemplateWebVIew;
 import com.mycreat.kiipu.view.KiipuRecyclerView;
 
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +86,7 @@ public class BookMarkActivity extends BaseActivity
 
     private ImageView mIvClose, mIvIcon, mIvDetail;
 
-    private BookmarkWebVIew extDetail;
+    private BookmarkTemplateWebVIew extDetail;
 
     private ImageView mIvUserHeader;
 
@@ -659,13 +659,13 @@ public class BookMarkActivity extends BaseActivity
                     }
                 });
         BookmarksInfo mBookmarksInfo = requestData.get(position).info;
-        extDetail = (BookmarkWebVIew) view.findViewById(R.id.wv_ext_detail);
+        extDetail = (BookmarkTemplateWebVIew) view.findViewById(R.id.wv_ext_detail);
         mIvIcon = (ImageView) view.findViewById(R.id.iv_icon);
         mTvTitle = (TextView) view.findViewById(R.id.tv_title);
         mTvUrl = (TextView) view.findViewById(R.id.tv_url);
         mIvDetail = (ImageView) view.findViewById(R.id.iv_detail);
         mTvIntroduce = (TextView) view.findViewById(R.id.tv_introduce);
-        extDetail.setOnLinkClickListener(new BookmarkWebVIew.OnLinkClickListener() {
+        extDetail.setOnLinkClickListener(new BookmarkTemplateWebVIew.OnLinkClickListener() {
             @Override
             public void onClick(@NotNull String url, @NotNull Bookmark bookmark) {
                 String viewTheme = TextUtils.isEmpty(bookmark.viewTheme) ? Constants.DEFAULT_COLOR_VALUE : bookmark.viewTheme;

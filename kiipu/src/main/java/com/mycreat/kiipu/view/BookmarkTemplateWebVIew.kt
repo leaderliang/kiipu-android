@@ -24,7 +24,7 @@ import java.util.*
  * Created by zhanghaihai on 2017/7/7.
  */
 
-class BookmarkWebVIew : WebView {
+class BookmarkTemplateWebVIew : WebView {
     val replacePrefix = "http://tmpl_replace.kiipu.com/"
     var mBookMark: Bookmark? = null
     var onLinkClickListener:OnLinkClickListener? = null
@@ -122,7 +122,7 @@ class BookmarkWebVIew : WebView {
         if(htmlPath == null) return null
         val call = KiipuApplication.mRetrofitTemplateService.requestHtml(htmlPath)
         try {
-        val rep = call.execute()
+            val rep = call.execute()
             return if(rep.isSuccessful) rep.body().toString() else null
         }catch (e:IOException){
             return null

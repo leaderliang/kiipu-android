@@ -1,6 +1,7 @@
 package com.mycreat.kiipu.core;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.DisplayMetrics;
@@ -8,8 +9,7 @@ import android.view.Display;
 import android.view.WindowManager;
 import com.mycreat.kiipu.retrofit.RetrofitClient;
 import com.mycreat.kiipu.retrofit.RetrofitService;
-import com.mycreat.kiipu.utils.Constants;
-import com.mycreat.kiipu.utils.SharedPreferencesUtil;
+import com.mycreat.kiipu.service.CommonService;
 import com.umeng.socialize.Config;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.common.QueuedWork;
@@ -56,6 +56,7 @@ public class KiipuApplication extends MultiDexApplication {
         getScreenSize();
         mRetrofitService = RetrofitClient.getInstance().create(RetrofitService.class);
         mRetrofitTemplateService = RetrofitClient.getTemplateInstance().create(RetrofitService.class);
+        startService(new Intent(getApplicationContext(), CommonService.class)); //启动公用的线程
     }
 
     @Override

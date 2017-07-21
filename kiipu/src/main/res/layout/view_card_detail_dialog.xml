@@ -51,7 +51,7 @@
             android:visibility="gone"
             />
 
-        <com.mycreat.kiipu.view.BookmarkWebVIew
+        <com.mycreat.kiipu.view.BookmarkTemplateWebVIew
             android:id="@+id/wv_ext_detail"
             android:layout_width="match_parent"
             android:layout_height="200dp"

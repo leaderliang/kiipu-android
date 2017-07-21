@@ -71,6 +71,8 @@
                 android:label="mainActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/NoActionBar"/>
+
+        <service android:name=".service.CommonService" />
     </application>
 
 </manifest>

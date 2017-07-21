@@ -2,6 +2,8 @@ package com.mycreat.kiipu.utils;
 
 import android.content.Context;
 import android.os.Environment;
+import com.android.annotations.Nullable;
+import com.mycreat.kiipu.core.KiipuApplication;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 
@@ -70,6 +72,64 @@ public class FileUtil {
                 }
             }
         }
+    }
+
+    public static int writeToFile(String str, String path) throws IOException {
+        File file = new File(path);
+        //已存在该文件，切不为空，不可删除修改则直接返回失败Code -1
+        if(file.exists() && !file.delete() && file.length() > 0 && !file.canWrite()){
+            return -1;
+        }
+
+        RandomAccessFile rf = new RandomAccessFile(file, "rw");
+        rf.seek(0);//从零开始写
+        rf.write(str.getBytes());
+        rf.close();
+
+        if(file.exists() && file.length() == str.length()){
+            return 0;
+        }else if(file.exists()){
+            return -2;
+        }else{
+            return -3;
+        }
+
+    }
+
+    /**
+     *
+     * @param path
+     * @return
+     */
+    @Nullable
+    public static String readFile(String path){
+        File file = new File(path);
+        if(file.exists() && file.isFile() && file.canRead() && file.length() > 0){
+            RandomAccessFile rf = null;
+            try {
+                rf = new RandomAccessFile(file, "r");
+                return rf.readUTF();
+            } catch (IOException e) {
+                e.printStackTrace();
+                LogUtil.e(e.getMessage());
+                return null;
+            }finally {
+                if(rf != null){
+                    try {
+                        rf.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        LogUtil.e(e.getMessage());
+                    }
+                }
+            }
+        }else{
+            return null;
+        }
+    }
+
+    public static String getTemplateCacheDir(){
+        return KiipuApplication.appContext.getFilesDir().getAbsolutePath() + File.separator + "template";
     }
     public static void prepareDownFile(){
         isGoOn = true;
