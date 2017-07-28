@@ -41,8 +41,10 @@ import com.mycreat.kiipu.core.AppManager;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.*;
+import com.mycreat.kiipu.model.Collections;
 import com.mycreat.kiipu.utils.*;
-import com.mycreat.kiipu.view.BookmarkTemplateWebVIew;
+import com.mycreat.kiipu.view.bookmark.BookmarkDetailDialog;
+import com.mycreat.kiipu.view.bookmark.BookmarkTemplateWebVIew;
 import com.mycreat.kiipu.view.KiipuRecyclerView;
 
 import org.jetbrains.annotations.NotNull;
@@ -51,8 +53,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 主书签界面
@@ -649,45 +650,9 @@ public class BookMarkActivity extends BaseActivity
             }
         });
 
+        BookmarkDetailDialog bookmarkDetailDialog = new BookmarkDetailDialog();
+        bookmarkDetailDialog.show(getSupportFragmentManager(), "bookmark_detail", position,  adapter.getData());
 
-        View view = DialogUtil.showCanSetViewDialog(this,
-                R.layout.view_card_detail_dialog,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        BookmarksInfo mBookmarksInfo = requestData.get(position).info;
-        extDetail = (BookmarkTemplateWebVIew) view.findViewById(R.id.wv_ext_detail);
-        mIvIcon = (ImageView) view.findViewById(R.id.iv_icon);
-        mTvTitle = (TextView) view.findViewById(R.id.tv_title);
-        mTvUrl = (TextView) view.findViewById(R.id.tv_url);
-        mIvDetail = (ImageView) view.findViewById(R.id.iv_detail);
-        mTvIntroduce = (TextView) view.findViewById(R.id.tv_introduce);
-        extDetail.setOnLinkClickListener(new BookmarkTemplateWebVIew.OnLinkClickListener() {
-            @Override
-            public void onClick(@NotNull String url, @NotNull Bookmark bookmark) {
-                String viewTheme = TextUtils.isEmpty(bookmark.viewTheme) ? Constants.DEFAULT_COLOR_VALUE : bookmark.viewTheme;
-                CustomTabsUtils.showCustomTabsView(BookMarkActivity.this, url, viewTheme);
-            }
-        });
-        GlideUtil.getInstance().loadImage(mIvIcon, mBookmarksInfo.getIcon(), R.drawable.default_logo_small, true);
-        mTvTitle.setText(mBookmarksInfo.getTitle());
-        mTvUrl.setText(mBookmarksInfo.getUrl());
-        if (requestData.get(position).type.equals("1")) {
-            mIvDetail.setVisibility(View.VISIBLE);
-            mTvIntroduce.setVisibility(View.GONE);
-            GlideUtil.getInstance().loadImage(mIvDetail, mBookmarksInfo.getImg(), true);
-        } else {
-            mIvDetail.setVisibility(View.GONE);
-            mTvIntroduce.setVisibility(View.VISIBLE);
-            mTvIntroduce.setText(mBookmarksInfo.getIntroduce());
-        }
-
-        if(requestData.get(position).tmplName != null){
-            extDetail.refresh(requestData.get(position));
-        }
     }
 
 

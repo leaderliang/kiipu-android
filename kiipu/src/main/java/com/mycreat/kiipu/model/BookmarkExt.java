@@ -16,12 +16,16 @@ public class BookmarkExt{
     @Expose
     @SerializedName("topics")
     public List<Topic> topics;
+
     @Expose
-    @SerializedName("title")
-    public String title;
+    @SerializedName("userlink")
+    public String userLink;
     @Expose
-    @SerializedName("note")
-    public String note;
+    @SerializedName("username")
+    public String userName;
+    @Expose
+    @SerializedName("avatar")
+    public String avatar;
 
     public class Topic{
         @Expose
@@ -31,4 +35,5 @@ public class BookmarkExt{
         @SerializedName("name")
         public String name;
     }
+
 }

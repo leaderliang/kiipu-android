@@ -18,7 +18,7 @@ class RxBus {
     private val mStickyEventMap: MutableMap<Class<*>, Any>
     private val subscribeManager = SubscribeManager()
     init {
-        mStickyEventMap = ConcurrentHashMap()
+        mStickyEventMap = ConcurrentHashMap<Class<*>, Any>()
     }
 
     /**

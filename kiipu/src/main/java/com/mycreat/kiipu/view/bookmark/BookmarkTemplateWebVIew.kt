@@ -1,4 +1,4 @@
-package com.mycreat.kiipu.view
+package com.mycreat.kiipu.view.bookmark
 
 import android.content.Context
 import android.os.Build
@@ -10,14 +10,11 @@ import android.webkit.WebView
 import com.mycreat.kiipu.core.KiipuApplication
 import com.mycreat.kiipu.model.Bookmark
 import com.mycreat.kiipu.model.BookmarkExt
-import com.mycreat.kiipu.utils.CustomTabsUtils
 import com.mycreat.kiipu.utils.LogUtil
 import com.samskivert.mustache.Mustache
+import com.samskivert.mustache.MustacheException
 import java.io.IOException
 import java.nio.charset.Charset
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  * 显示Bookmark详情数据
@@ -27,7 +24,7 @@ import java.util.*
 class BookmarkTemplateWebVIew : WebView {
     val replacePrefix = "http://tmpl_replace.kiipu.com/"
     var mBookMark: Bookmark? = null
-    var onLinkClickListener:OnLinkClickListener? = null
+    var onLinkClickListener: OnLinkClickListener? = null
     constructor(context: Context) : super(context) {
         initialize()
     }
@@ -135,15 +132,21 @@ class BookmarkTemplateWebVIew : WebView {
     fun fillData(template:String):String{
         var resultHtml = ""
         if(mBookMark != null && mBookMark!!.ext != null) {
-            val mTitle = if( mBookMark!!.ext!!.title != null)  mBookMark!!.ext!!.title else mBookMark!!.info.title
-            val mNote = if(mBookMark!!.ext!!.note == null) "" else mBookMark!!.ext!!.note
-            val mUrl = if(mBookMark!!.info == null || mBookMark!!.info!!.url == null) "" else mBookMark!!.info!!.url
-            resultHtml = Mustache.compiler().compile(template).execute(object : Any() {
-                var topics = mBookMark!!.ext!!.topics
-                var title = mTitle
-                var note = mNote
-                var url = mUrl
-            })
+            try {
+                resultHtml = Mustache.compiler().compile(template).execute(object : Any() {
+                    val topics = if(mBookMark!!.ext?.topics == null) ArrayList<BookmarkExt.Topic>() else mBookMark!!.ext!!.topics
+                    val userlink = if(mBookMark?.ext?.userLink == null) "" else mBookMark!!.ext.userLink
+                    val username= if(mBookMark?.ext?.userName == null) "" else mBookMark!!.ext.userName
+                    val avatar = if(mBookMark?.ext?.avatar == null) "" else mBookMark!!.ext.avatar
+
+                    val title = if( mBookMark!!.info?.title != null)  "" else mBookMark!!.info.title
+                    val note = if(mBookMark!!.info!!.introduce == null) "" else mBookMark!!.info!!.introduce
+                    val url = if(mBookMark?.info?.url == null) "" else mBookMark!!.info!!.url
+                    val img = if(mBookMark?.info?.img == null) "" else mBookMark!!.info!!.img
+                })
+            }catch (e: MustacheException){
+                e.printStackTrace()
+            }
 
         }
         LogUtil.d(resultHtml)

@@ -36,9 +36,6 @@ class CommonService : Service() {
         RxBus.getDefault().unregister(this)
     }
 
-
-
-
     /**
      * 存储模板数据到文件及数据库
      */

@@ -1,1 +1,1 @@
-include ':kiipu', ':kiipu_db'
+include ':kiipu', ':kiipu_db', ':kiipu_web_parser'

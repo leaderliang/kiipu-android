@@ -161,8 +161,8 @@ class SubscribeManager {
                 val controller = registeredSubscribeMap.get(subMethod.event)
                 val disposable = controller?.registerMap?.get(subscribeOwner.toString())?.disposable
                 RxCompositeDisposable.remove(disposable)
+                disposable?.dispose()
                 controller?.registerMap?.remove(subscribeOwner.toString())
-                    throw IllegalArgumentException("You should not unregister ${subscribeOwner.javaClass.name} before you register it!")
             }
             registerLock.unlock() //
         }else{
