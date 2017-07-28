@@ -149,16 +149,21 @@ public class BookmarkDetailDialog extends AppCompatDialogFragment  implements Ge
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if(Math.abs(e1.getX() - e2.getX()) < Math.abs(e1.getY() - e2.getY())) return false;
         if (e1.getX() - e2.getX() > 0 && currentPosition < adapter.getItemCount()) {
             currentPosition++;
+            recyclerView.smoothScrollToPosition(currentPosition);
+            return true;
             // 手向左滑动，下一个bookmark
         } else if (e2.getX() - e1.getX() > 0 && currentPosition > 0) {
             // 向右滑动，上一个bookmark
             currentPosition--;
+            recyclerView.smoothScrollToPosition(currentPosition);
+            return true;
+        }else {
+            return false;
         }
-        recyclerView.smoothScrollToPosition(currentPosition);
 
-        return true;
     }
 
     @Override

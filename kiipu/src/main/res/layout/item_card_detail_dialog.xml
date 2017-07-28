@@ -11,15 +11,13 @@
     android:id="@+id/dialog"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="8dp"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/rl_item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="15dp"
-        android:layout_alignParentTop="true"
         >
 
         <ImageView
@@ -28,6 +26,7 @@
             android:layout_height="16dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
+            android:layout_centerVertical="true"
             app:imageUrl="@{bookmark.info.icon}"
             />
 
@@ -37,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/iv_icon"
+            android:layout_centerVertical="true"
             android:maxLines="2"
             android:text="@{bookmark.info.title}"
             />
@@ -95,11 +95,11 @@
         <ImageView
             android:id="@+id/iv_detail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="20dp"
-            android:scaleType="centerInside"
+            android:scaleType="fitCenter"
             app:imageUrl="@{bookmark.info.img}"
             />
 
