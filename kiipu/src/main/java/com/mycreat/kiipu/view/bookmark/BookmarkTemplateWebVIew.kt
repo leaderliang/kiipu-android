@@ -156,8 +156,9 @@ class BookmarkTemplateWebVIew : WebView {
 
     fun refresh(bookmark:Bookmark){
         mBookMark = bookmark
-
-        loadUrl(replacePrefix + mBookMark!!.tmplName +"/"+ mBookMark!!.tmplVersion+".html")
+        if(bookmark.tmplName != null) {
+            loadUrl(replacePrefix + bookmark.tmplName + "/" + mBookMark!!.tmplVersion + ".html")
+        }
     }
 
     interface OnLinkClickListener{

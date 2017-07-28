@@ -59,6 +59,7 @@ public class BookmarkDetailDialog extends AppCompatDialogFragment  implements Ge
         setStyle(DialogFragment.STYLE_NO_FRAME, 0);
         gestureDetector = new GestureDetector(getContext(), this);
         recyclerView.setOnTouchListener(this);
+        recyclerView.scrollToPosition(currentPosition);
     }
 
     @Nullable
@@ -71,7 +72,7 @@ public class BookmarkDetailDialog extends AppCompatDialogFragment  implements Ge
     public void show(FragmentManager manager, String tag, int firstlyShowingPosition, List<Bookmark> bookmarks) {
         _bookmarks.clear();
         _bookmarks.addAll(bookmarks);
-        recyclerView.scrollToPosition(firstlyShowingPosition);
+        currentPosition = firstlyShowingPosition;
         //sortAdd(firstlyShowingPosition, bookmarks);
         super.show(manager, tag);
     }
