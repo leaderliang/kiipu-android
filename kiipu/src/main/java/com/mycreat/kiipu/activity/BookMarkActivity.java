@@ -312,10 +312,10 @@ public class BookMarkActivity extends BaseActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        //noinspection SimplifiableIfStatement
+        /*Handle action bar item clicks here. The action bar will automatically handle clicks on the Home/Up button, so long
+         * as you specify a parent activity in AndroidManifest.xml.
+         * noinspection SimplifiableIfStatement
+         * */
         switch (item.getItemId()) {
             case R.id.action_setting:
                 recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -498,7 +498,7 @@ public class BookMarkActivity extends BaseActivity
                 if (response.body() != null) {
                     ToastUtil.showToastShort("创建书签成功~");
                     Collections collection = response.body();
-                    mCollectionList.add(0, collection);
+                    mCollectionList.add(mCollectionList.size(), collection);
                     addLeftMenu(mCollectionList, false);
                 }
             }
@@ -595,6 +595,7 @@ public class BookMarkActivity extends BaseActivity
             }
         } else {// 调用添加按钮后，重新设置之前menu的 name
             for (int i = 1; i < mCollectionList.size(); i++) {
+                final String firstName = mCollectionList.get(0).collectionName;
                 final String collectionName = mCollectionList.get(i).collectionName;
                 final int finalI = i;
                 Glide.with(BookMarkActivity.this)
@@ -602,13 +603,18 @@ public class BookMarkActivity extends BaseActivity
                         .into(new SimpleTarget<GlideDrawable>() { // 图片加载回调的Target实现类
                             @Override
                             public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+
+                                navigationView.getMenu().findItem(R.id.nav_share)
+                                        .setTitle(firstName)
+                                        .setIcon(resource)
+                                        .setOnMenuItemClickListener(new OnMenuItemClickListener());
+
                                 // 图片加载成功时回调的方法
                                 navigationView.getMenu().findItem(finalI).setTitle(collectionName)
                                         .setIcon(resource)//动态添加menu
                                         .setOnMenuItemClickListener(new OnMenuItemClickListener());
                             }
                         });
-
             }
         }
         // 添加书签按钮事件操作
