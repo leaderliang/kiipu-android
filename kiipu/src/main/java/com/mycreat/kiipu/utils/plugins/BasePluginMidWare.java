@@ -1,6 +1,6 @@
 package com.mycreat.kiipu.utils.plugins;
 
-/**
+/**BasePluginMidWare
  * Created by zhanghaihai on 2017/7/23.
  */
 public abstract class BasePluginMidWare {

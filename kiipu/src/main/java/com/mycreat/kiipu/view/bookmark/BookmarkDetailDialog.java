@@ -47,19 +47,26 @@ public class BookmarkDetailDialog extends AppCompatDialogFragment  implements Ge
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ViewUtils.bindViews(view, this);
-        adapter = new BookmarkDetailAdapter(getActivity(), _bookmarks);
+
+        //设置左右滑动布局管理
         CardItemTouchHelperCallback<Bookmark> callback = new CardItemTouchHelperCallback<>(adapter, _bookmarks);
         callback.setOnSwipedListener(new MOnSwipeListener());
         callback.setOnSwipedListener(new BookmarkOnSwipeListener());
-        LinearLayoutManager layoutManager = new LinearLayoutManager( getContext());
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        final ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        CardLayoutManager cardLayoutManager = new CardLayoutManager(recyclerView, touchHelper);
+        recyclerView.setLayoutManager( cardLayoutManager);
+        touchHelper.attachToRecyclerView(recyclerView);
+
+//        LinearLayoutManager layoutManager = new LinearLayoutManager( getContext());
+//        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        adapter = new BookmarkDetailAdapter(getActivity(), _bookmarks);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(layoutManager);
+        //recyclerView.setLayoutManager(layoutManager);
         //去除边距
-        setStyle(DialogFragment.STYLE_NO_FRAME, 0);
-        gestureDetector = new GestureDetector(getContext(), this);
-        recyclerView.setOnTouchListener(this);
-        recyclerView.scrollToPosition(currentPosition);
+        //gestureDetector = new GestureDetector(getContext(), this);
+        //recyclerView.setOnTouchListener(this);
+        //recyclerView.scrollToPosition(currentPosition);
+        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
     }
 
     @Nullable
@@ -75,23 +82,6 @@ public class BookmarkDetailDialog extends AppCompatDialogFragment  implements Ge
         currentPosition = firstlyShowingPosition;
         //sortAdd(firstlyShowingPosition, bookmarks);
         super.show(manager, tag);
-    }
-
-    /**
-     * 将要显示的放在第一个
-     * @param firstlyShowingPosition
-     * @param bookmarks
-     */
-    private void sortAdd(int firstlyShowingPosition, List<Bookmark> bookmarks) {
-        int len = bookmarks.size();
-        //_bookmarks.add(bookmarks.get(firstlyShowingPosition));
-        for(int i = firstlyShowingPosition; i < len ;  i ++){
-            _bookmarks.add(bookmarks.get(i));
-        }
-
-        for(int i = 0; i < firstlyShowingPosition ;  i ++){
-            _bookmarks.add(bookmarks.get(i));
-        }
     }
 
     @Override

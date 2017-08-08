@@ -10,7 +10,7 @@
 <RelativeLayout
     android:id="@+id/dialog"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="600dp"
     android:padding="8dp"
     android:orientation="vertical">
 
@@ -48,7 +48,8 @@
         android:id="@+id/ext_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/rl_item_title">
+        android:layout_below="@id/rl_item_title"
+        >
         <!-- url-->
         <TextView
             android:id="@+id/tv_url"
