@@ -30,7 +30,7 @@ android {
         // Enabling multidex support.
         multiDexEnabled true
         versionCode 1
-        versionName "1.0.2.5"
+        versionName "1.0.2.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 

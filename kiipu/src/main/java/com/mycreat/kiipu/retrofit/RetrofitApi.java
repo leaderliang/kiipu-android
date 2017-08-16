@@ -66,5 +66,8 @@ public class RetrofitApi {
      */
     public static final String CARD_TEMPLATE = BASE_URL + "/bookmarks/";
 
-
+    /**
+     * /collections/:id
+     */
+    public static final String MODIFY_COLLECTION_NAME = BASE_URL + "/collections/";
 }

@@ -25,4 +25,8 @@ public class StringUtils {
         return sb.toString();
     }
 
+    public static boolean isEmpty(CharSequence s) {
+        return s == null || s.equals("") || s.equals("null");
+    }
+
 }

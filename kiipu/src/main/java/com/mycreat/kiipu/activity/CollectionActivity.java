@@ -25,6 +25,11 @@ import retrofit2.Response;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 书签界面/移动到
+ *
+ * @author leaderliang
+ */
 public class CollectionActivity extends BaseActivity {
 
     private List<Collections> mCollectionList = new ArrayList<>();

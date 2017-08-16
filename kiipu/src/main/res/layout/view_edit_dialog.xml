@@ -11,6 +11,5 @@
             android:layout_margin="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="输入你要创建的书签名"
     />
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.mycreat.kiipu.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.ArrayMap;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v4.widget.DrawerLayout;
@@ -115,6 +117,8 @@ public class BookMarkActivity extends BaseActivity
     private int mScrollThreshold;
 
     private Button mBtLogOut;
+
+    private MenuItem menuSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -306,6 +310,9 @@ public class BookMarkActivity extends BaseActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.navigation_drawer, menu);
+        menuSetting = menu.findItem(R.id.action_setting);
+        /*set toolbar setting menu default gone */
+        menuSetting.setVisible(false);
         return true;
     }
 
@@ -316,13 +323,13 @@ public class BookMarkActivity extends BaseActivity
          * noinspection SimplifiableIfStatement
          * */
         switch (item.getItemId()) {
-            case R.id.action_setting:
+            case R.id.action_more:
                 recyclerView.setLayoutManager(new LinearLayoutManager(this));
 //                if(recyclerView.getLayoutManager().)
 //                LogUtil.e("recyclerView.getLayoutManager()"+recyclerView.getLayoutManager());
                 return true;
-            case R.id.action_add:
-                ToastUtil.showToastShort("添加书签");
+            case R.id.action_setting:
+                modifyCollectionsName();
                 return true;
             case R.id.action_search:
                 ToastUtil.showToastShort("搜索书签");
@@ -341,7 +348,7 @@ public class BookMarkActivity extends BaseActivity
         toolbar.setLogo(null);
         REFRESH_TYPE = 0;
         switch (item.getItemId()) {
-            case R.id.nav_all_bookmark: /* all bookmarks  传0  或者不传 collection_id */
+            case R.id.nav_all_bookmark:
                 // Handle the camera action
 //                startActivity(new Intent(this, RecycleViewActivity.class));
                 swipeToLoadLayout.setRefreshing(true);
@@ -349,12 +356,16 @@ public class BookMarkActivity extends BaseActivity
                 toolbar.setTitle(null);
                 toolbar.setLogo(R.drawable.login_logo_text);
                 getBookmarkList();
+                // 点击 收件箱 、全部 菜单时隐藏设置按钮
+                menuSetting.setVisible(false);
                 break;
-            case R.id.nav_inbox: /* all bookmarks  传0  或者不传 collection_id */
+            case R.id.nav_inbox:
                 collectionId = Constants.INBOX;
                 toolbar.setTitle(getString(R.string.inbox));
                 swipeToLoadLayout.setRefreshing(true);
                 getBookmarkList();
+                // 点击 收件箱 、全部 菜单时隐藏设置按钮
+                menuSetting.setVisible(false);
                 break;
             default:
                 swipeToLoadLayout.setRefreshing(false);
@@ -383,6 +394,7 @@ public class BookMarkActivity extends BaseActivity
 
     /**
      * 获取书签
+     * all bookmarks  传0  或者不传 collection_id
      */
     private void getBookmarkList() {
         String lastItemId = mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).id : "";
@@ -495,16 +507,18 @@ public class BookMarkActivity extends BaseActivity
             @Override
             public void onResponse(Call<Collections> call, Response<Collections> response) {
                 if (response.body() != null) {
-                    ToastUtil.showToastShort("创建书签成功~");
+                    ToastUtil.showToastShort("创建书签成功啦~");
                     Collections collection = response.body();
                     mCollectionList.add(mCollectionList.size(), collection);
                     addLeftMenu(mCollectionList, false);
+                }else{
+                    ToastUtil.showToastShort("创建书签失败，请稍后重试~");
                 }
             }
 
             @Override
             public void onFailure(Call<Collections> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
+                Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~"+ t.getMessage(), Snackbar.LENGTH_LONG)
                         .setDuration(2500)
                         .show();
             }
@@ -564,62 +578,46 @@ public class BookMarkActivity extends BaseActivity
      * @param mCollectionList
      * @param isRequestMenu
      */
-    private void addLeftMenu(List<Collections> mCollectionList, boolean isRequestMenu) {
+    private void addLeftMenu(List<Collections> mCollectionList, final boolean isRequestMenu) {
         navigationView.getMenu().findItem(R.id.item_collection).setTitle("收藏夹");
-
-        if (isRequestMenu) {
-            for (int i = 1; i < mCollectionList.size(); i++) {
-                final String firstName = mCollectionList.get(0).collectionName;
-                final String collectionName = mCollectionList.get(i).collectionName;
-                final int finalI = i;
-                Glide.with(BookMarkActivity.this)
-                        .load(mCollectionList.get(i).menuIcon)
-                        .into(new SimpleTarget<GlideDrawable>() { // 图片加载回调的Target实现类
-                            @Override
-                            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                                // the first menu view
-                                navigationView.getMenu().findItem(R.id.nav_share)
-                                        .setTitle(firstName)
-                                        .setIcon(resource)//动态添加menu
-                                        .setOnMenuItemClickListener(new OnMenuItemClickListener());
-
-                                // 图片加载成功时回调的方法
+        for (int i = 1; i < mCollectionList.size(); i++) {
+            final String firstName = mCollectionList.get(0).collectionName;
+            final String collectionName = mCollectionList.get(i).collectionName;
+            final int finalI = i;
+            Glide.with(BookMarkActivity.this)
+                    .load(mCollectionList.get(i).menuIcon)
+                    .into(new SimpleTarget<GlideDrawable>() { // 图片加载回调的Target实现类
+                        @Override
+                        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                            // the first menu view
+                            navigationView.getMenu().findItem(R.id.nav_share)
+                                    .setTitle(firstName)
+                                    .setIcon(resource)//动态添加menu
+                                    .setOnMenuItemClickListener(new OnMenuItemClickListener());
+                            // 图片加载成功时回调的方法
+                            if (isRequestMenu) {
                                 navigationView.getMenu().add(0, finalI, finalI, collectionName)
                                         .setIcon(resource)//动态添加menu
                                         .setOnMenuItemClickListener(new OnMenuItemClickListener());
-                            }
-                        });
-
-
-            }
-        } else {// 调用添加按钮后，重新设置之前menu的 name
-            for (int i = 1; i < mCollectionList.size(); i++) {
-                final String firstName = mCollectionList.get(0).collectionName;
-                final String collectionName = mCollectionList.get(i).collectionName;
-                final int finalI = i;
-                Glide.with(BookMarkActivity.this)
-                        .load(mCollectionList.get(i).menuIcon)
-                        .into(new SimpleTarget<GlideDrawable>() { // 图片加载回调的Target实现类
-                            @Override
-                            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-
-                                navigationView.getMenu().findItem(R.id.nav_share)
-                                        .setTitle(firstName)
-                                        .setIcon(resource)
-                                        .setOnMenuItemClickListener(new OnMenuItemClickListener());
-
-                                // 图片加载成功时回调的方法
+                            } else {
                                 navigationView.getMenu().findItem(finalI).setTitle(collectionName)
                                         .setIcon(resource)//动态添加menu
                                         .setOnMenuItemClickListener(new OnMenuItemClickListener());
                             }
-                        });
-            }
+                        }
+                    });
         }
-        // 添加书签按钮事件操作
-        navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), "添加书签")
-                .setIcon(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_add))
-                .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
+        /* 添加书签按钮事件操作*/
+        MenuItem lastMenu = navigationView.getMenu().findItem(mCollectionList.size());
+        if(lastMenu == null){// 因为修改的书签夹时导致的
+            navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), "添加书签")
+                    .setIcon(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_add))
+                    .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
+        }else if(lastMenu != null && !navigationView.getMenu().findItem(mCollectionList.size()).getTitle().equals("添加书签")) {
+            navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), "添加书签")
+                    .setIcon(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_add))
+                    .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
+        }
     }
 
     /**
@@ -655,8 +653,8 @@ public class BookMarkActivity extends BaseActivity
             }
         });
 
-        BookmarkDetailDialog bookmarkDetailDialog = new BookmarkDetailDialog();
-        bookmarkDetailDialog.show(getSupportFragmentManager(), "bookmark_detail", position,  adapter.getData());
+//        BookmarkDetailDialog bookmarkDetailDialog = new BookmarkDetailDialog();
+//        bookmarkDetailDialog.show(getSupportFragmentManager(), "bookmark_detail", position,  adapter.getData());
 
     }
 
@@ -760,40 +758,10 @@ public class BookMarkActivity extends BaseActivity
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             //@return Return true to consume this click and prevent others from executing
-            DialogUtil.showEditDialog(BookMarkActivity.this, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    createCollection(inputName);
-                }
-            }, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            }, new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    inputName = s.toString().trim();
-                    if (inputName.isEmpty()) {
-                        finalButton.setEnabled(false);
-                    } else {
-                        finalButton.setEnabled(true);
-                    }
-                }
-            }, new DialogUtil.ButtonCallBack() {
-                @Override
-                public void buttonCallBack(Button btn) {
-                    finalButton = btn;
-                    finalButton.setEnabled(false);
-                }
-            });
+            ArrayMap<Object, Object> arrayMap = new ArrayMap<>();
+            arrayMap.put("title","名称");
+            arrayMap.put("hint","输入你要创建的书签名");
+            editDialog(Constants.CREATE_COLLECTION, arrayMap);
             return false;
         }
     }
@@ -813,8 +781,105 @@ public class BookMarkActivity extends BaseActivity
             adapter.setEnableLoadMore(false);
             REFRESH_TYPE = 0;
             getBookmarkList();
-
+            /*set toolbar setting menu visible */
+            menuSetting.setVisible(true);
             return false;
+        }
+    }
+
+    protected void editDialog(final int toDoTag, ArrayMap<Object,Object> arrayMap) {
+        DialogUtil.showEditDialog(this,
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        inputName = s.toString().trim();
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        inputName = s.toString().trim();
+                        if (inputName.isEmpty()) {
+                            if (finalButton != null) {
+                                finalButton.setEnabled(false);
+                            }
+                        } else {
+                            if (finalButton != null) {
+                                finalButton.setEnabled(true);
+                            }
+                        }
+                    }
+                }, new DialogUtil.ButtonCallBack() {
+                    @Override
+                    public void buttonCallBack(Button btn) {
+                        finalButton = btn;
+                        if (inputName.isEmpty()) {
+                            finalButton.setEnabled(false);
+                        }
+                        finalButton.setEnabled(true);
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (toDoTag == Constants.CREATE_COLLECTION) {
+                            createCollection(inputName);
+                        } else if (toDoTag == Constants.MODIFY_COLLECTION_NAME) {
+                            modifyCollectionName(inputName);
+                        }
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }, arrayMap);
+    }
+
+    private void modifyCollectionName(String inputName) {
+        Call<Collections> call = KiipuApplication.mRetrofitService.modifyCollection(userAccessToken, collectionId, inputName);
+        call.enqueue(new Callback<Collections>() {
+            @Override
+            public void onResponse(Call<Collections> call, Response<Collections> response) {
+                Collections collections = response.body();
+                if (collections != null) {
+                    toolbar.setTitle(collections.collectionName);
+                    ToastUtil.showToastShort("书签夹名称修改成功啦~");
+                    for (int i = 0; i < mCollectionList.size(); i++) {
+                       if(mCollectionList.get(i).collectionId.equals(collections.collectionId)){
+                           mCollectionList.get(i).collectionName = collections.collectionName;
+                           break;
+                       }
+                    }
+                    // update left sliding menu
+                    addLeftMenu(mCollectionList, false);
+                    return;
+                }
+                ToastUtil.showToastShort("书签夹名称修改失败，请稍后重试~");
+            }
+
+            @Override
+            public void onFailure(Call<Collections> call, Throwable t) {
+                Snackbar.make(mFloatingActionButton, "书签夹名称修改失败，请稍后重试~"+t.getMessage(), Snackbar.LENGTH_LONG)
+                        .setDuration(2500)
+                        .show();
+            }
+        });
+    }
+
+    /**
+     * 修改书签夹名字
+     */
+    private void modifyCollectionsName() {
+        String title = toolbar.getTitle().toString();
+        if(!StringUtils.isEmpty(title)){
+
+            ArrayMap<Object, Object> arrayMap = new ArrayMap<>();
+            arrayMap.put("title","修改书签夹");
+            arrayMap.put("hint","输入你要修改的书签夹名");
+            arrayMap.put("content",title);
+            editDialog(Constants.MODIFY_COLLECTION_NAME, arrayMap);
         }
     }
 

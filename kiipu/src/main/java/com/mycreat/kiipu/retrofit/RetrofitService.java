@@ -64,6 +64,12 @@ public interface RetrofitService {
                                 @Path("bookmark_id") String id,
                                 @Field("collection_id") String collectionId);
 
+    @FormUrlEncoded
+    @PATCH(RetrofitApi.MODIFY_COLLECTION_NAME + "{id}")
+    Call<Collections> modifyCollection(@Header("Authorization") String value,
+                                @Path("id") String id,
+                                @Field("name") String collectionName);
+
     /**
      * @param value
      * @param defaultExt

@@ -3,9 +3,12 @@ package com.mycreat.kiipu.utils;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.v4.util.ArrayMap;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -24,21 +27,29 @@ public class DialogUtil {
     }
 
     public static void showEditDialog(final Context context,
+                                      TextWatcher textWatcher,
+                                      ButtonCallBack callBack,
                                       DialogInterface.OnClickListener positiveButtonClick,
                                       DialogInterface.OnClickListener negativeButtonClick,
-                                      TextWatcher textWatcher,
-                                      ButtonCallBack callBack) {
+                                      ArrayMap<Object, Object> arrayMap) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.view_edit_dialog, null);
         final EditText editText = (EditText) view.findViewById(R.id.et_name);
-        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
+        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(24)});
         editText.addTextChangedListener(textWatcher);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("名称");
+        builder.setTitle((String) arrayMap.get("title"));
         builder.setPositiveButton("确定", positiveButtonClick);
         builder.setNegativeButton("取消", negativeButtonClick);
         builder.setCancelable(false);
         builder.setView(view);
+        String hint = (String) arrayMap.get("hint");
+        String content = (String) arrayMap.get("content");
+        editText.setHint(hint);
+        if(!StringUtils.isEmpty(content)){
+            editText.setText(content);
+            editText.setSelection(content.length());
+        }
         AlertDialog dialog = builder.create();
         dialog.show();
         // 获取 PositiveButton 重点在这里, 设置没有文字时按钮置灰

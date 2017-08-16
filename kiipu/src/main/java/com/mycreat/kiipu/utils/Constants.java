@@ -21,6 +21,10 @@ public class Constants {
 
     public static final int CORNER_RADIUS = 20; //圆角
 
+    public static final int CREATE_COLLECTION = 0x001;
+
+    public static final int MODIFY_COLLECTION_NAME = 0x002;
+
     public static final float THUMB_SIZE = 0.5f; //0-1之间  10%原图的大小
 
     public static final String ALL_COLLECTION = "0";
@@ -35,10 +39,11 @@ public class Constants {
 
     public static final int PAGE_SIZE  = 10;
 
+    public static final int SPAN_COUNT = 2;
+
     public static final String DEFAULT_COLOR_VALUE = "FFB74D";
 
     public static final String DEFAULT_COLOR = "#FFB74D";
 
-    public static final int SPAN_COUNT = 2;
 
 }

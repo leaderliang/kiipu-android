@@ -1,21 +1,29 @@
 package com.mycreat.kiipu.core;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.mycreat.kiipu.R;
+import com.mycreat.kiipu.activity.BookMarkActivity;
 import com.mycreat.kiipu.utils.Constants;
+import com.mycreat.kiipu.utils.DialogUtil;
 import com.mycreat.kiipu.utils.LogUtil;
 import com.mycreat.kiipu.utils.SharedPreferencesUtil;
 import com.mycreat.kiipu.view.RequestErrorLayout;
@@ -97,9 +105,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-        }
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             // Enable the Up button
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -109,6 +115,20 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         baseTitle = (TextView) findViewById(R.id.title);
     }
 
+    /**
+     * scroll，enterAlways，enterAlwaysCollapsed，snap，exitUntilCollapsed
+     * 代码样式 params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+     *
+     * @param flags
+     */
+    protected void setToolbarScrollFlags(int flags){
+        if(toolbar == null){
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+        }
+        AppBarLayout.LayoutParams params =
+                (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
+        params.setScrollFlags(flags);
+    }
 
     protected <T extends View> T initViewById(int id) {
         //return返回view时,加上泛型T
