@@ -1,5 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+>
+    <data class="BookmarkDetailBarBinding">
+        <variable name="bookmark" type="com.mycreat.kiipu.model.Bookmark" />
+    </data>
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <ImageButton
@@ -8,13 +13,19 @@
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_menu_close_clear_cancel"
         />
-    <TextView
-        android:id="@+id/bd_bar_title"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <ImageView android:layout_width="24dp"
+               android:layout_height="24dp"
+               android:layout_centerHorizontal="true"
+               app:imageUrl="@{bookmark.info.icon}"
+    />
+    <!--<TextView-->
+        <!--android:id="@+id/bd_bar_title"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
 
-    <ImageButton
-        android:id="@+id/bd_bar_options_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <!--<ImageButton-->
+        <!--android:id="@+id/bd_bar_options_btn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
 </RelativeLayout>
+</layout>

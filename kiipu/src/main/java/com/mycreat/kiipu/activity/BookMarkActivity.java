@@ -653,8 +653,8 @@ public class BookMarkActivity extends BaseActivity
             }
         });
 
-//        BookmarkDetailDialog bookmarkDetailDialog = new BookmarkDetailDialog();
-//        bookmarkDetailDialog.show(getSupportFragmentManager(), "bookmark_detail", position,  adapter.getData());
+        BookmarkDetailDialog bookmarkDetailDialog = new BookmarkDetailDialog();
+        bookmarkDetailDialog.show(getSupportFragmentManager(), "bookmark_detail", position,  adapter.getData());
 
     }
 
