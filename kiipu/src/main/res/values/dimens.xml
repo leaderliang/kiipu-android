@@ -31,5 +31,9 @@
 
     <dimen name="card_detail_dialog_h_margin">5dp</dimen>
     <dimen name="card_detail_dialog_v_margin">8dp</dimen>
+    <dimen name="icdd_tmpl_height">265dp</dimen>
+    <dimen name="icdd_img_height">100dp</dimen>
+    <dimen name="icdd_icon_size">16dp</dimen>
+    <dimen name="icdd_common_margin">8dp</dimen>
 
 </resources>

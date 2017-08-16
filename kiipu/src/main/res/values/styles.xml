@@ -59,4 +59,18 @@
         <item name="android:activityCloseEnterAnimation">@anim/translate_left_to_center</item>
         <item name="android:activityCloseExitAnimation">@anim/translate_center_to_right</item>
     </style>
+
+    <!-- 无边距DialogFragment-->
+    <style name="DF_NO_PADDING" parent="android:Theme.Dialog" >
+        <!-- Fill the screen -->
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+
+        <!-- No backgrounds, titles or window float -->
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+
+        <item name="android:background">@color/white</item>
+    </style>
 </resources>
