@@ -1,16 +1,14 @@
 package com.mycreat.kiipu.utils;
 
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
-import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import com.mycreat.kiipu.R;
@@ -30,7 +28,6 @@ public class DialogUtil {
                                       TextWatcher textWatcher,
                                       ButtonCallBack callBack,
                                       DialogInterface.OnClickListener positiveButtonClick,
-                                      DialogInterface.OnClickListener negativeButtonClick,
                                       ArrayMap<Object, Object> arrayMap) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.view_edit_dialog, null);
@@ -40,19 +37,23 @@ public class DialogUtil {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle((String) arrayMap.get("title"));
         builder.setPositiveButton("确定", positiveButtonClick);
-        builder.setNegativeButton("取消", negativeButtonClick);
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyBoardUtils.closeKeyboard(editText,context);
+            }
+        });
         builder.setCancelable(false);
         builder.setView(view);
         String hint = (String) arrayMap.get("hint");
         String content = (String) arrayMap.get("content");
         editText.setHint(hint);
-        if(!StringUtils.isEmpty(content)){
-            editText.setText(content);
-            editText.setSelection(content.length());
-        }
+        editText.setText(content+"");
+        editText.setSelection(content.length());
         AlertDialog dialog = builder.create();
         dialog.show();
-        // 获取 PositiveButton 重点在这里, 设置没有文字时按钮置灰
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        /* 获取 PositiveButton 重点在这里, 设置没有文字时按钮置灰*/
         Button btn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         if (callBack != null) {
             callBack.buttonCallBack(btn);

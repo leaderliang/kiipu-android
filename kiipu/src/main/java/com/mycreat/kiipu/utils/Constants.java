@@ -17,6 +17,8 @@ public class Constants {
 
     public static final int RESULT_MOVE_BOOKMARK_CODE = 5;
 
+    public static final int LINEAR_LAYOUT_MANAGER = 6;
+
     public static final int BLUR_VALUE = 20; //模糊
 
     public static final int CORNER_RADIUS = 20; //圆角
@@ -44,6 +46,8 @@ public class Constants {
     public static final String DEFAULT_COLOR_VALUE = "FFB74D";
 
     public static final String DEFAULT_COLOR = "#FFB74D";
+
+    public static final String KEY_LAYOUT_MANAGER = "layoutManager";
 
 
 }
