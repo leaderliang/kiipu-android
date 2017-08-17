@@ -1,6 +1,5 @@
 package com.mycreat.kiipu.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,7 +10,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -50,8 +48,6 @@ import com.mycreat.kiipu.view.bookmark.BookmarkDetailDialog;
 import com.mycreat.kiipu.view.bookmark.BookmarkTemplateWebVIew;
 import com.mycreat.kiipu.view.KiipuRecyclerView;
 
-import org.jetbrains.annotations.NotNull;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -84,9 +80,9 @@ public class BookMarkActivity extends BaseActivity
 
     private ProgressBar mProgress;
 
-    private SwipeRefreshLayout swipeToLoadLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private KiipuRecyclerView recyclerView;
+    private KiipuRecyclerView mRecyclerView;
 
     private ImageView mIvClose, mIvIcon, mIvDetail;
 
@@ -120,17 +116,28 @@ public class BookMarkActivity extends BaseActivity
 
     private MenuItem menuSetting;
 
+    protected RecyclerView.LayoutManager mLayoutManager;
+
+    protected LayoutManagerType mCurrentLayoutManagerType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         useBaseLayout = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation_drawer);
+        getInstanceState(savedInstanceState);
         initViews();
         initData();
         initListener();
 
     }
 
+    private void getInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            // Restore saved layout manager type.
+            mCurrentLayoutManagerType = (LayoutManagerType) savedInstanceState.getSerializable(Constants.KEY_LAYOUT_MANAGER);
+        }
+    }
 
     public void initViews() {
         /*  main layout*/
@@ -152,9 +159,9 @@ public class BookMarkActivity extends BaseActivity
 
         mProgress = initViewById(R.id.pb_view);
 
-        swipeToLoadLayout = initViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout = initViewById(R.id.swipe_refresh_layout);
 
-        recyclerView = initViewById(R.id.recyclerView);
+        mRecyclerView = initViewById(R.id.recyclerView);
 
         mFloatingActionButton = initViewById(R.id.floating_action_bt);
 
@@ -170,7 +177,7 @@ public class BookMarkActivity extends BaseActivity
         }, 300);
 
         mScrollThreshold = getResources().getDimensionPixelOffset(R.dimen.fab_scroll_threshold);
-        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -200,8 +207,8 @@ public class BookMarkActivity extends BaseActivity
             }
         });
 
-        swipeToLoadLayout.setColorSchemeColors(Color.parseColor(Constants.DEFAULT_COLOR));
-        swipeToLoadLayout.setRefreshing(true);
+        mSwipeRefreshLayout.setColorSchemeColors(Color.parseColor(Constants.DEFAULT_COLOR));
+        mSwipeRefreshLayout.setRefreshing(true);
         toolbar.setTitle("");// default null
         toolbar.setLogo(R.drawable.login_logo_text);
         setSupportActionBar(toolbar);
@@ -214,20 +221,19 @@ public class BookMarkActivity extends BaseActivity
 //        toggle.syncState();
 
         //如果可以确定每个item的高度是固定的，设置这个选项可以提高性能
-        recyclerView.setHasFixedSize(true);
-
-        GridLayoutManager mGirdLayoutManager = new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(mGirdLayoutManager);
+        mRecyclerView.setHasFixedSize(true);
 
         adapter = new BookMarkAdapter(mBookmarkList);
-        adapter.setOnLoadMoreListener(BookMarkActivity.this, recyclerView);
-//        adapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
+        adapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
+//      adapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setOnItemChildClickListener(new OnItemChildClickListener());
 
-        recyclerView.setAdapter(adapter);
+        mRecyclerView.setAdapter(adapter);
 
-        recyclerView.addOnItemTouchListener(new OnItemClickListener() {
+        setRecyclerViewLayoutManager(LayoutManagerType.GRID_LAYOUT_MANAGER);
+
+        mRecyclerView.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Bookmark bookmark = requestData.get(position);
@@ -248,7 +254,7 @@ public class BookMarkActivity extends BaseActivity
         setOnClick(mBtLogOut);
         // 左侧菜单显示隐藏事件监听，左侧菜单点击选中 selector
         navigationView.setNavigationItemSelectedListener(this);
-        swipeToLoadLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
     }
 
     public void initData() {
@@ -297,16 +303,6 @@ public class BookMarkActivity extends BaseActivity
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.navigation_drawer, menu);
@@ -318,15 +314,18 @@ public class BookMarkActivity extends BaseActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        /*Handle action bar item clicks here. The action bar will automatically handle clicks on the Home/Up button, so long
+        /* Handle action bar item clicks here. The action bar will automatically handle clicks on the Home/Up button, so long
          * as you specify a parent activity in AndroidManifest.xml.
          * noinspection SimplifiableIfStatement
          * */
         switch (item.getItemId()) {
+            /*切换布局样式*/
             case R.id.action_more:
-                recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//                if(recyclerView.getLayoutManager().)
-//                LogUtil.e("recyclerView.getLayoutManager()"+recyclerView.getLayoutManager());
+                if (mCurrentLayoutManagerType.equals(LayoutManagerType.LINEAR_LAYOUT_MANAGER)) {
+                    setRecyclerViewLayoutManager(LayoutManagerType.GRID_LAYOUT_MANAGER);
+                } else {
+                    setRecyclerViewLayoutManager(LayoutManagerType.LINEAR_LAYOUT_MANAGER);
+                }
                 return true;
             case R.id.action_setting:
                 modifyCollectionsName();
@@ -351,7 +350,7 @@ public class BookMarkActivity extends BaseActivity
             case R.id.nav_all_bookmark:
                 // Handle the camera action
 //                startActivity(new Intent(this, RecycleViewActivity.class));
-                swipeToLoadLayout.setRefreshing(true);
+                mSwipeRefreshLayout.setRefreshing(true);
                 collectionId = Constants.ALL_COLLECTION;
                 toolbar.setTitle(null);
                 toolbar.setLogo(R.drawable.login_logo_text);
@@ -362,13 +361,13 @@ public class BookMarkActivity extends BaseActivity
             case R.id.nav_inbox:
                 collectionId = Constants.INBOX;
                 toolbar.setTitle(getString(R.string.inbox));
-                swipeToLoadLayout.setRefreshing(true);
+                mSwipeRefreshLayout.setRefreshing(true);
                 getBookmarkList();
                 // 点击 收件箱 、全部 菜单时隐藏设置按钮
                 menuSetting.setVisible(false);
                 break;
             default:
-                swipeToLoadLayout.setRefreshing(false);
+                mSwipeRefreshLayout.setRefreshing(false);
                 break;
         }
         drawer.closeDrawer(GravityCompat.START);
@@ -386,7 +385,7 @@ public class BookMarkActivity extends BaseActivity
 
     @Override
     public void onLoadMoreRequested() {
-        swipeToLoadLayout.setRefreshing(false);
+        mSwipeRefreshLayout.setRefreshing(false);
         adapter.setEnableLoadMore(true);
         REFRESH_TYPE = 1; // LOAD MORE
         getBookmarkList();
@@ -409,7 +408,7 @@ public class BookMarkActivity extends BaseActivity
                         requestData.clear();
                         requestData.addAll(mBookmarkList);
                         adapter.setNewData(mBookmarkList);
-                        swipeToLoadLayout.setRefreshing(false);
+                        mSwipeRefreshLayout.setRefreshing(false);
                     } else if (REFRESH_TYPE == 1) {// load more
                         requestData.addAll(mBookmarkList);
                         adapter.addData(mBookmarkList);
@@ -419,7 +418,7 @@ public class BookMarkActivity extends BaseActivity
                         }
                     }
                 } else {
-                    swipeToLoadLayout.setRefreshing(false);
+                    mSwipeRefreshLayout.setRefreshing(false);
                     adapter.loadMoreComplete();
                     adapter.loadMoreEnd(false);
                     if (REFRESH_TYPE == 0) {// when refresh
@@ -436,7 +435,7 @@ public class BookMarkActivity extends BaseActivity
             @Override
             public void onFailure(Call<List<Bookmark>> call, Throwable t) {
                 mProgress.setVisibility(View.GONE);
-                swipeToLoadLayout.setRefreshing(false);
+                mSwipeRefreshLayout.setRefreshing(false);
                 adapter.loadMoreFail();
                 Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
                         .setDuration(2500)
@@ -502,6 +501,10 @@ public class BookMarkActivity extends BaseActivity
      * @param collectionName
      */
     private void createCollection(String collectionName) {
+        if(StringUtils.isEmpty(collectionName)){
+            ToastUtil.showToastShort("书签名不能为空");
+            return;
+        }
         Call<Collections> call = KiipuApplication.mRetrofitService.createCollection(userAccessToken, collectionName);
         call.enqueue(new Callback<Collections>() {
             @Override
@@ -653,8 +656,8 @@ public class BookMarkActivity extends BaseActivity
             }
         });
 
-//        BookmarkDetailDialog bookmarkDetailDialog = new BookmarkDetailDialog();
-//        bookmarkDetailDialog.show(getSupportFragmentManager(), "bookmark_detail", position,  adapter.getData());
+        BookmarkDetailDialog bookmarkDetailDialog = new BookmarkDetailDialog();
+        bookmarkDetailDialog.show(getSupportFragmentManager(), "bookmark_detail", position,  adapter.getData());
 
     }
 
@@ -727,6 +730,11 @@ public class BookMarkActivity extends BaseActivity
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+                return false;
+            }
             if ((System.currentTimeMillis() - nowTime) > 2000) {
                 Toast.makeText(this, "再按一次退出程序并清空登录信息", Toast.LENGTH_SHORT).show();
                 nowTime = System.currentTimeMillis();
@@ -761,6 +769,7 @@ public class BookMarkActivity extends BaseActivity
             ArrayMap<Object, Object> arrayMap = new ArrayMap<>();
             arrayMap.put("title","名称");
             arrayMap.put("hint","输入你要创建的书签名");
+            arrayMap.put("content","");// 为了当输入框没有文本时，按钮置灰
             editDialog(Constants.CREATE_COLLECTION, arrayMap);
             return false;
         }
@@ -777,7 +786,7 @@ public class BookMarkActivity extends BaseActivity
             item.setChecked(true);
             toolbar.setTitle(item.getTitle());
             collectionId = (item.getItemId() == R.id.nav_share) ? mCollectionList.get(0).collectionId : mCollectionList.get(item.getItemId()).collectionId;
-            swipeToLoadLayout.setRefreshing(true);
+            mSwipeRefreshLayout.setRefreshing(true);
             adapter.setEnableLoadMore(false);
             REFRESH_TYPE = 0;
             getBookmarkList();
@@ -792,7 +801,7 @@ public class BookMarkActivity extends BaseActivity
                 new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        inputName = s.toString().trim();
+
                     }
 
                     @Override
@@ -802,7 +811,7 @@ public class BookMarkActivity extends BaseActivity
                     @Override
                     public void afterTextChanged(Editable s) {
                         inputName = s.toString().trim();
-                        if (inputName.isEmpty()) {
+                        if (StringUtils.isEmpty(inputName)) {
                             if (finalButton != null) {
                                 finalButton.setEnabled(false);
                             }
@@ -816,8 +825,9 @@ public class BookMarkActivity extends BaseActivity
                     @Override
                     public void buttonCallBack(Button btn) {
                         finalButton = btn;
-                        if (inputName.isEmpty()) {
+                        if (StringUtils.isEmpty(inputName)) {
                             finalButton.setEnabled(false);
+                            return;
                         }
                         finalButton.setEnabled(true);
                     }
@@ -829,10 +839,6 @@ public class BookMarkActivity extends BaseActivity
                         } else if (toDoTag == Constants.MODIFY_COLLECTION_NAME) {
                             modifyCollectionName(inputName);
                         }
-                    }
-                }, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
                     }
                 }, arrayMap);
     }
@@ -883,13 +889,49 @@ public class BookMarkActivity extends BaseActivity
         }
     }
 
+    /**
+     * 设置布局样式
+     */
+    public void setRecyclerViewLayoutManager(LayoutManagerType layoutManagerType) {
+        int scrollPosition = 0;
+
+        // If a layout manager has already been set, get current scroll position.
+        if (mRecyclerView.getLayoutManager() != null) {
+            scrollPosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager())
+                    .findFirstCompletelyVisibleItemPosition();
+        }
+
+        switch (layoutManagerType) {
+            case GRID_LAYOUT_MANAGER:
+                mLayoutManager = new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false);
+                mCurrentLayoutManagerType = LayoutManagerType.GRID_LAYOUT_MANAGER;
+                break;
+            case LINEAR_LAYOUT_MANAGER:
+                mLayoutManager = new LinearLayoutManager(this);
+                mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+                break;
+            default:
+                mLayoutManager = new LinearLayoutManager(this);
+                mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+        }
+        adapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.scrollToPosition(scrollPosition);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save currently selected layout manager.
+        savedInstanceState.putSerializable(Constants.KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         String clipStr = ClipboardUtils.get(this);
         if (!TextUtils.isEmpty(clipStr)) {
 //            ToastUtil.showToastShort(this, "粘贴板有数据哦~");
-
         }
     }
 
