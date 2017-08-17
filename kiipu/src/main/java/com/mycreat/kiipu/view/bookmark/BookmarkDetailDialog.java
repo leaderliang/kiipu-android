@@ -3,17 +3,26 @@ package com.mycreat.kiipu.view.bookmark;
 import android.app.Dialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.*;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.databinding.BookmarkDetailDialogBinding;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarkDialog;
+import com.mycreat.kiipu.utils.BitmapUtil;
+import com.mycreat.kiipu.utils.ColorUtil;
 import com.mycreat.kiipu.utils.ViewUtils;
 import com.mycreat.kiipu.utils.bind.BindView;
 import org.jetbrains.annotations.NotNull;
@@ -45,14 +54,31 @@ public class BookmarkDetailDialog extends DialogFragment{
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         //无边框
         setStyle(DialogFragment.STYLE_NO_FRAME, 0);
+        //设置背景透明
+        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
         ViewUtils.bindViews(view, this);
         bookmarkDialog.setAdapter(new BookmarkDetailAdapter(getActivity(), _bookmarks));
         bookmarkDialog.setBookmarks(_bookmarks);
         bookmarkDialog.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         bookmarkDialog.setCurrentPosition(currentPosition);
+        bookmarkDialog.setGlideListener(new RequestListener<String, GlideDrawable>() {
+            @Override
+            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                Bitmap bm = BitmapUtil.drawable2Bitmap(resource);
+                int color = ColorUtil.Companion.getVibRantColor(bm, ContextCompat.getColor(getContext(), R.color.colorPrimary));
+                bookmarkDialog.vibRantColor.set(color);
+                return false;
+            }
+        });
         binding.setBookmarkDialog(bookmarkDialog);
         binding.executePendingBindings();
-        PaperLikeRecyclerViewHandler recyclerViewTouchListener = new PaperLikeRecyclerViewHandler(recyclerView, view, bookmarkDialog);
+        PaperLikeRecyclerViewHandler recyclerViewTouchListener = new PaperLikeRecyclerViewHandler(recyclerView, view, bookmarkDialog, binding);
         recyclerView.setOnTouchListener(recyclerViewTouchListener);
         recyclerView.addOnScrollListener(new RecyclerScrollListener(recyclerView, bookmarkDialog.getAdapter()));
         recyclerView.scrollToPosition(bookmarkDialog.getCurrentPosition());
@@ -76,7 +102,7 @@ public class BookmarkDetailDialog extends DialogFragment{
     @NotNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new Dialog(getActivity(), R.style.DF_NO_PADDING){
+        return new Dialog(getActivity(), R.style.DF_NO_PADDING_TRANSPARENT){
 
             @Override
             public void onBackPressed() {
@@ -108,4 +134,6 @@ public class BookmarkDetailDialog extends DialogFragment{
             this.onCancelListener = (OnCancelListener) context;
         }
     }
+
+
 }

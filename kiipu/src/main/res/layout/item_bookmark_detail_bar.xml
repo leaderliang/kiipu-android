@@ -2,30 +2,31 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
 >
     <data class="BookmarkDetailBarBinding">
+        <import type="com.mycreat.kiipu.utils.ColorUtil" />
         <variable name="bookmark" type="com.mycreat.kiipu.model.Bookmark" />
+        <variable name="vibRantColor" type="Integer" />
+        <variable name="glideListener" type="com.bumptech.glide.request.RequestListener" />
     </data>
 <RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <ImageButton
+    android:layout_height="wrap_content"
+    android:background="@{vibRantColor}"
+    >
+    <ImageView
         android:id="@+id/bd_bar_close_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:src="@drawable/ic_close"
+        android:padding="@dimen/icdd_common_padding"
         />
-    <ImageView android:layout_width="24dp"
-               android:layout_height="24dp"
-               android:layout_centerHorizontal="true"
-               app:imageUrl="@{bookmark.info.icon}"
+    <ImageView
+            android:id="@+id/bookmark_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            app:imageUrl="@{bookmark.info.icon}"
+            app:listener="@{glideListener}"
     />
-    <!--<TextView-->
-        <!--android:id="@+id/bd_bar_title"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content" />-->
 
-    <!--<ImageButton-->
-        <!--android:id="@+id/bd_bar_options_btn"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" />-->
 </RelativeLayout>
 </layout>

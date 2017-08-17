@@ -83,6 +83,7 @@ dependencies {
     //add material design support
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:palette-v7:25.3.1'
     // Glide library, used to handle asynchronous loading and caching of images （https://github.com/bumptech/glide）
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'

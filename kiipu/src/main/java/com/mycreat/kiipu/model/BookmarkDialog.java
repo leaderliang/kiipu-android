@@ -1,6 +1,12 @@
 package com.mycreat.kiipu.model;
 
+import android.databinding.ObservableField;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.mycreat.kiipu.R;
+import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.view.bookmark.BookmarkDetailAdapter;
 
 import java.util.List;
@@ -15,6 +21,12 @@ public class BookmarkDialog {
     private RecyclerView.LayoutManager layoutManager;
     private List<Bookmark> bookmarks;
     private int currentPosition;
+
+    private RequestListener<? super String, GlideDrawable> glideListener;
+
+    //动态变化的
+    public ObservableField<Bookmark> currentBookmark = new ObservableField<>();
+    public ObservableField<Integer> vibRantColor = new ObservableField<>(ContextCompat.getColor( KiipuApplication.appContext, R.color.colorPrimary));
 
     public BookmarkDetailAdapter getAdapter() {
         return adapter;
@@ -40,11 +52,23 @@ public class BookmarkDialog {
         this.bookmarks = bookmarks;
     }
 
+    public RequestListener<? super String, GlideDrawable> getGlideListener() {
+        return glideListener;
+    }
+
+    public void setGlideListener(RequestListener<? super String, GlideDrawable> glideListener) {
+        this.glideListener = glideListener;
+    }
+
     public int getCurrentPosition() {
         return currentPosition;
     }
 
     public void setCurrentPosition(int currentPosition) {
         this.currentPosition = currentPosition;
+        if(currentPosition > 0 && currentPosition < bookmarks.size())
+            currentBookmark.set(bookmarks.get(currentPosition));
     }
+
+
 }

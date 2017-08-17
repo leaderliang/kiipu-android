@@ -4,6 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import com.mycreat.kiipu.BR;
+import com.mycreat.kiipu.databinding.BookmarkDetailDialogBinding;
 import com.mycreat.kiipu.model.BookmarkDialog;
 
 import java.util.concurrent.locks.Lock;
@@ -21,12 +23,13 @@ public class PaperLikeRecyclerViewHandler implements GestureDetector.OnGestureLi
     private RecyclerView.Adapter adapter;
     private GestureDetector gestureDetector;
     private BookmarkDialog bookmarkDialog;
-
-    public PaperLikeRecyclerViewHandler(RecyclerView recyclerView, View rootView, BookmarkDialog bookmarkDialog) {
+    private BookmarkDetailDialogBinding binding;
+    public PaperLikeRecyclerViewHandler(RecyclerView recyclerView, View rootView, BookmarkDialog bookmarkDialog, BookmarkDetailDialogBinding binding) {
         this.recyclerView = recyclerView;
         this.rootView = rootView;
         gestureDetector = new GestureDetector(rootView.getContext(), this);
         this.bookmarkDialog = bookmarkDialog;
+        this.binding = binding;
     }
 
 
@@ -118,5 +121,9 @@ public class PaperLikeRecyclerViewHandler implements GestureDetector.OnGestureLi
             return handled;
         }
 
+    }
+
+    public void smoothScrollTo(){
+        binding.notifyPropertyChanged(BR.bookmarkDialog);
     }
 }

@@ -35,5 +35,7 @@
     <dimen name="icdd_img_height">100dp</dimen>
     <dimen name="icdd_icon_size">16dp</dimen>
     <dimen name="icdd_common_margin">8dp</dimen>
+    <dimen name="icdd_common_padding">5dp</dimen>
+    <dimen name="icdd_margin_top">90dp</dimen>
 
 </resources>
