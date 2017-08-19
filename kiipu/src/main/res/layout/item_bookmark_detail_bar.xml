@@ -7,10 +7,12 @@
         <variable name="vibRantColor" type="Integer" />
         <variable name="glideListener" type="com.bumptech.glide.request.RequestListener" />
     </data>
-<RelativeLayout
+<com.mycreat.kiipu.view.RippleRelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@{vibRantColor}"
+    android:paddingTop="@dimen/icdd_bar_padding"
+    android:paddingBottom="@dimen/icdd_bar_padding"
+    app:changeBackground="@{vibRantColor}"
     >
     <ImageView
         android:id="@+id/bd_bar_close_btn"
@@ -28,5 +30,5 @@
             app:listener="@{glideListener}"
     />
 
-</RelativeLayout>
+</com.mycreat.kiipu.view.RippleRelativeLayout>
 </layout>

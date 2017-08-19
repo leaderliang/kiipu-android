@@ -2,13 +2,13 @@ package com.mycreat.kiipu.view.bookmark;
 
 import android.databinding.BindingAdapter;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.support.annotation.DrawableRes;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.mycreat.kiipu.view.RippleRelativeLayout;
 
 /**
  * Created by zhanghaihai on 2017/7/27.
@@ -38,4 +38,13 @@ public class BaseDataBindingAdapter {
             Glide.with(view.getContext()).load(imageUrl).placeholder(placeHolder).error(error).into(view);
         }
     }
+
+    @BindingAdapter(value = {"changeBackground"})
+    public static void changeBackground(RippleRelativeLayout view, int color){
+        if(color != 0) {
+            view.setBackgroundColor(Color.TRANSPARENT);
+            view.changeBackground(color);
+        }
+    }
+
 }

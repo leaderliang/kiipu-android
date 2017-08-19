@@ -63,7 +63,7 @@
     <!-- 无边距DialogFragment-->
     <style name="DF_NO_PADDING_TRANSPARENT" parent="android:Theme.Dialog" >
         <!-- Fill the screen -->
-        <item name="android:windowFullscreen">true</item>
+        <!--<item name="android:windowFullscreen">true</item>-->
 
         <!-- No backgrounds, titles or window float -->
         <item name="android:windowIsFloating">false</item>

@@ -640,24 +640,23 @@ public class BookMarkActivity extends BaseActivity
 
 
     private void showBookmarkDetailDialog(final int position) {
-        String htmlPath =  requestData.get(position).tmplName +"/"+requestData.get(position).tmplVersion+".html";
-        Call<String> call = KiipuApplication.mRetrofitTemplateService.requestHtml(htmlPath);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                LogUtil.e("html response.body()----->"+response.body());
-            }
+//        String htmlPath =  requestData.get(position).tmplName +"/"+requestData.get(position).tmplVersion+".html";
+//        Call<String> call = KiipuApplication.mRetrofitTemplateService.requestHtml(htmlPath);
+//        call.enqueue(new Callback<String>() {
+//            @Override
+//            public void onResponse(Call<String> call, Response<String> response) {
+//                LogUtil.e("html response.body()----->"+response.body());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<String> call, Throwable t) {
+//                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
+//                        .setDuration(2500)
+//                        .show();
+//            }
+//        });
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
-                        .setDuration(2500)
-                        .show();
-            }
-        });
-
-        BookmarkDetailDialog bookmarkDetailDialog = new BookmarkDetailDialog();
-        bookmarkDetailDialog.show(getSupportFragmentManager(), "bookmark_detail", position,  adapter.getData());
+        new BookmarkDetailDialog().show(getSupportFragmentManager(), "bookmark_detail", position,  adapter.getData());
 
     }
 

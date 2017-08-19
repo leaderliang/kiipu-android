@@ -2,6 +2,7 @@ package com.mycreat.kiipu.view.bookmark;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.mycreat.kiipu.R;
+import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.databinding.BookmarkDetailDialogBinding;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarkDialog;
@@ -62,19 +64,23 @@ public class BookmarkDetailDialog extends DialogFragment{
         bookmarkDialog.setBookmarks(_bookmarks);
         bookmarkDialog.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         bookmarkDialog.setCurrentPosition(currentPosition);
+        bookmarkDialog.vibRantColor.set(ContextCompat.getColor(getContext(), R.color.colorPrimary));
         bookmarkDialog.setGlideListener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                bookmarkDialog.vibRantColor.set(ContextCompat.getColor(KiipuApplication.appContext, R.color.colorPrimary));
                 return false;
             }
 
             @Override
             public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                 Bitmap bm = BitmapUtil.drawable2Bitmap(resource);
-                int color = ColorUtil.Companion.getVibRantColor(bm, ContextCompat.getColor(getContext(), R.color.colorPrimary));
+                int color = ColorUtil.Companion.getVibRantColor(bm, ContextCompat.getColor(KiipuApplication.appContext, R.color.colorPrimary));
                 bookmarkDialog.vibRantColor.set(color);
                 return false;
             }
+
+
         });
         binding.setBookmarkDialog(bookmarkDialog);
         binding.executePendingBindings();
@@ -82,7 +88,6 @@ public class BookmarkDetailDialog extends DialogFragment{
         recyclerView.setOnTouchListener(recyclerViewTouchListener);
         recyclerView.addOnScrollListener(new RecyclerScrollListener(recyclerView, bookmarkDialog.getAdapter()));
         recyclerView.scrollToPosition(bookmarkDialog.getCurrentPosition());
-
     }
 
     @Nullable
@@ -96,6 +101,8 @@ public class BookmarkDetailDialog extends DialogFragment{
         _bookmarks.clear();
         _bookmarks.addAll(bookmarks);
         currentPosition = firstlyShowingPosition;
+        if(bookmarkDialog != null)
+            bookmarkDialog.vibRantColor.set(ContextCompat.getColor(KiipuApplication.appContext, R.color.colorPrimary));
         super.show(manager, tag);
     }
 
@@ -135,5 +142,9 @@ public class BookmarkDetailDialog extends DialogFragment{
         }
     }
 
-
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        bookmarkDialog.vibRantColor.set(0);
+    }
 }

@@ -26,7 +26,7 @@ public class BookmarkDialog {
 
     //动态变化的
     public ObservableField<Bookmark> currentBookmark = new ObservableField<>();
-    public ObservableField<Integer> vibRantColor = new ObservableField<>(ContextCompat.getColor( KiipuApplication.appContext, R.color.colorPrimary));
+    public ObservableField<Integer> vibRantColor = new ObservableField<>(ContextCompat.getColor(KiipuApplication.appContext, R.color.colorPrimary));
 
     public BookmarkDetailAdapter getAdapter() {
         return adapter;

@@ -1,12 +1,16 @@
 package com.mycreat.kiipu.view.bookmark;
 
+import android.graphics.Color;
+import android.provider.CalendarContract;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import com.mycreat.kiipu.BR;
 import com.mycreat.kiipu.databinding.BookmarkDetailDialogBinding;
 import com.mycreat.kiipu.model.BookmarkDialog;
+import com.mycreat.kiipu.utils.Constants;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -60,11 +64,11 @@ public class PaperLikeRecyclerViewHandler implements GestureDetector.OnGestureLi
         if(Math.abs(distanceX) > rootView.getWidth() * 0.4 ){
             if(e2.getX() - e1.getX() > 0 && bookmarkDialog.getCurrentPosition() > 0) {
                 bookmarkDialog.setCurrentPosition(bookmarkDialog.getCurrentPosition() - 1);
-                recyclerView.smoothScrollToPosition(bookmarkDialog.getCurrentPosition());
+                smoothScrollTo(bookmarkDialog.getCurrentPosition());
                 return true;
             }else if(e2.getX() - e1.getX() < 0 && bookmarkDialog.getCurrentPosition() < bookmarkDialog.getAdapter().getItemCount() -1){
                 bookmarkDialog.setCurrentPosition(bookmarkDialog.getCurrentPosition() + 1);
-                recyclerView.smoothScrollToPosition(bookmarkDialog.getCurrentPosition());
+                smoothScrollTo(bookmarkDialog.getCurrentPosition());
                 return true;
             }
 
@@ -84,13 +88,13 @@ public class PaperLikeRecyclerViewHandler implements GestureDetector.OnGestureLi
         if(e1 == null || e2 == null || Math.abs(e1.getX() - e2.getX()) < Math.abs(e1.getY() - e2.getY())) return false; //横向距离下雨纵向距离不滑动
         if (e1.getX() - e2.getX() > 0 && bookmarkDialog.getCurrentPosition() < bookmarkDialog.getAdapter().getItemCount() -1) {
             bookmarkDialog.setCurrentPosition(bookmarkDialog.getCurrentPosition() + 1);
-            recyclerView.smoothScrollToPosition(bookmarkDialog.getCurrentPosition());
+            smoothScrollTo(bookmarkDialog.getCurrentPosition());
             return true;
             // 手向左滑动，下一个bookmark
         } else if (e2.getX() - e1.getX() > 0 && bookmarkDialog.getCurrentPosition() > 0) {
             // 向右滑动，上一个bookmark
             bookmarkDialog.setCurrentPosition(bookmarkDialog.getCurrentPosition() -1 );
-            recyclerView.smoothScrollToPosition(bookmarkDialog.getCurrentPosition());
+            smoothScrollTo(bookmarkDialog.getCurrentPosition());
             return true;
         }else {
             return false;
@@ -104,14 +108,14 @@ public class PaperLikeRecyclerViewHandler implements GestureDetector.OnGestureLi
         if(!handled && event.getAction() ==  MotionEvent.ACTION_UP){
             lock.lock();
             if(Math.abs(dragDistanceX) <= rootView.getWidth() * 0.4f) {
-                recyclerView.smoothScrollToPosition(bookmarkDialog.getCurrentPosition());
+                smoothScrollTo(bookmarkDialog.getCurrentPosition());
             }else{
                 if(dragDistanceX > 0 && bookmarkDialog.getCurrentPosition() > 0) {
-                    recyclerView.smoothScrollToPosition(bookmarkDialog.getCurrentPosition() - 1);
+                    smoothScrollTo(bookmarkDialog.getCurrentPosition() - 1);
                 }else if(bookmarkDialog.getCurrentPosition() < bookmarkDialog.getAdapter().getItemCount() - 1){
-                    recyclerView.smoothScrollToPosition(bookmarkDialog.getCurrentPosition() + 1);
+                    smoothScrollTo(bookmarkDialog.getCurrentPosition() + 1);
                 }else{
-                    recyclerView.smoothScrollToPosition(bookmarkDialog.getCurrentPosition());
+                    smoothScrollTo(bookmarkDialog.getCurrentPosition());
                 }
             }
             dragDistanceX = 0;
@@ -123,7 +127,7 @@ public class PaperLikeRecyclerViewHandler implements GestureDetector.OnGestureLi
 
     }
 
-    public void smoothScrollTo(){
-        binding.notifyPropertyChanged(BR.bookmarkDialog);
+    public void smoothScrollTo(int position){
+        recyclerView.smoothScrollToPosition(position);
     }
 }
