@@ -13,11 +13,11 @@ public class Constants {
 
     public static final int BOOKMARK_TYPE_WEB = 3;
 
+    public static final int LINEAR_LAYOUT_MANAGER = 6;
+
     public static final int REQUEST_MOVE_BOOKMARK_CODE = 4;
 
     public static final int RESULT_MOVE_BOOKMARK_CODE = 5;
-
-    public static final int LINEAR_LAYOUT_MANAGER = 6;
 
     public static final int BLUR_VALUE = 20; //模糊
 

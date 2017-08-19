@@ -38,6 +38,7 @@ import com.cocosw.bottomsheet.BottomSheetHelper;
 import com.github.clans.fab.FloatingActionButton;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.BookMarkAdapter;
+import com.mycreat.kiipu.adapter.BookMarkListAdapter;
 import com.mycreat.kiipu.core.AppManager;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
@@ -77,6 +78,7 @@ public class BookMarkActivity extends BaseActivity
     private NavigationView navigationView;
 
     private BookMarkAdapter adapter;
+    private BookMarkListAdapter listAdapter;
 
     private ProgressBar mProgress;
 
@@ -905,16 +907,23 @@ public class BookMarkActivity extends BaseActivity
             case GRID_LAYOUT_MANAGER:
                 mLayoutManager = new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false);
                 mCurrentLayoutManagerType = LayoutManagerType.GRID_LAYOUT_MANAGER;
+                adapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
                 break;
             case LINEAR_LAYOUT_MANAGER:
+                listAdapter = new BookMarkListAdapter(mBookmarkList);
                 mLayoutManager = new LinearLayoutManager(this);
                 mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+                listAdapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
+                listAdapter.setOnLoadMoreListener(this);
+                mRecyclerView.setAdapter(listAdapter);
+
+
                 break;
             default:
                 mLayoutManager = new LinearLayoutManager(this);
                 mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         }
-        adapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
+
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.scrollToPosition(scrollPosition);
     }

@@ -10,7 +10,10 @@ import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.model.LayoutManagerType;
-import com.mycreat.kiipu.utils.*;
+import com.mycreat.kiipu.utils.BaseViewHolder;
+import com.mycreat.kiipu.utils.Constants;
+import com.mycreat.kiipu.utils.GlideUtil;
+import com.mycreat.kiipu.utils.ImageCallback;
 import com.mycreat.kiipu.view.LeftIvTextView;
 
 import java.net.MalformedURLException;
@@ -21,12 +24,12 @@ import java.util.List;
  * email: leaderliang.dev@gmail.com
  * TODO
  */
-public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseViewHolder> {
+public class BookMarkListAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseViewHolder> {
 
 
     private LayoutManagerType mCurrentLayoutManagerType;
 
-    public BookMarkAdapter(List<Bookmark> data) {
+    public BookMarkListAdapter(List<Bookmark> data) {
         super(data);
         addItemType(Constants.BOOKMARK_TYPE_IMG, R.layout.item_bookmark_default);
         addItemType(Constants.BOOKMARK_TYPE_TEXT, R.layout.item_bookmark_default);
@@ -36,10 +39,10 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
     }
 
     @Override
-    protected void convert(com.mycreat.kiipu.utils.BaseViewHolder holder, Bookmark bookmark) {
+    protected void convert(BaseViewHolder holder, Bookmark bookmark) {
         final BookmarksInfo mBookmarksInfo = bookmark.info;
         if(getmCurrentLayoutManagerType() != null) {
-            if (getmCurrentLayoutManagerType().equals(LayoutManagerType.GRID_LAYOUT_MANAGER)) {
+            if (true|| getmCurrentLayoutManagerType().equals(LayoutManagerType.GRID_LAYOUT_MANAGER)) {
                 LeftIvTextView mLeftIvTextView = holder.getView(R.id.card_view_title);
                 mLeftIvTextView.loadImage(mBookmarksInfo.getIcon());
                 mLeftIvTextView.setText(mBookmarksInfo.getTitle() + "");
@@ -59,7 +62,7 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
                     case Constants.BOOKMARK_TYPE_TEXT:
                         holder.getView(R.id.iv_item_header).setVisibility(View.GONE);
                         holder.getView(R.id.tv_introduce).setVisibility(View.VISIBLE);
-                        holder.setText(R.id.tv_introduce, mBookmarksInfo.getIntroduce() + "");
+                        holder.setText(R.id.tv_introduce, "I am List" + mBookmarksInfo.getIntroduce() + "");
                         break;
                     case Constants.BOOKMARK_TYPE_WEB:
                         holder.getView(R.id.iv_item_header).setVisibility(View.VISIBLE);
