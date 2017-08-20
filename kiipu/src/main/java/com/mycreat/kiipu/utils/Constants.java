@@ -7,6 +7,10 @@ package com.mycreat.kiipu.utils;
  */
 public class Constants {
 
+    public static final int REFRESH_TYPE_PULL = 0x000;
+
+    public static final int REFRESH_TYPE_LOAD_MORE = 0x001;
+
     public static final int BOOKMARK_TYPE_IMG = 1;
 
     public static final int BOOKMARK_TYPE_TEXT = 2;
@@ -48,6 +52,7 @@ public class Constants {
     public static final String DEFAULT_COLOR = "#FFB74D";
 
     public static final String KEY_LAYOUT_MANAGER = "layoutManager";
+
 
 
 }
