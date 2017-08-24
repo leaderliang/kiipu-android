@@ -14,8 +14,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-    <!-- app:itemIconTint="@color/google_blue" 为图标设置统一颜色-->
+
     <!-- menu -->
+    <!-- app:itemIconTint="@color/google_blue" 为图标设置统一颜色
+    app:itemBackground="@drawable/nav_menu_text_selector"
+    -->
     <android.support.design.widget.NavigationView
             android:id="@+id/nav_view"
             android:layout_width="wrap_content"
@@ -26,8 +29,6 @@
             app:menu="@menu/activity_navigation_drawer"
             app:itemTextColor="@color/nav_menu_text_color"
             app:itemIconTint="@color/nav_menu_text_color"
-            app:itemBackground="@drawable/nav_menu_text_selector"
-            android:background="@color/white"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             />
 

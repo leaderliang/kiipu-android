@@ -349,7 +349,7 @@ public class BookMarkActivity extends BaseActivity
                 collectionId = Constants.ALL_COLLECTION;
                 toolbar.setTitle(null);
                 toolbar.setLogo(R.drawable.login_logo_text);
-                getBookmarkList(getCurrentAdapter());
+                getBookmarkList();
                 // 点击 收件箱 、全部 菜单时隐藏设置按钮
                 menuSetting.setVisible(false);
                 break;
@@ -357,7 +357,7 @@ public class BookMarkActivity extends BaseActivity
                 collectionId = Constants.INBOX;
                 toolbar.setTitle(getString(R.string.inbox));
                 mSwipeRefreshLayout.setRefreshing(true);
-                getBookmarkList(getCurrentAdapter());
+                getBookmarkList();
                 // 点击 收件箱 、全部 菜单时隐藏设置按钮
                 menuSetting.setVisible(false);
                 break;
@@ -374,7 +374,7 @@ public class BookMarkActivity extends BaseActivity
     public void onRefresh() {
         adapter.setEnableLoadMore(false);
         REFRESH_TYPE = Constants.REFRESH_TYPE_PULL; // PULL
-        getBookmarkList(getCurrentAdapter());
+        getBookmarkList();
     }
 
 
@@ -383,19 +383,14 @@ public class BookMarkActivity extends BaseActivity
         mSwipeRefreshLayout.setRefreshing(false);
         adapter.setEnableLoadMore(true);
         REFRESH_TYPE = Constants.REFRESH_TYPE_LOAD_MORE; // LOAD MORE
-        getBookmarkList(getCurrentAdapter());
+        getBookmarkList();
     }
 
     /**
      * 获取书签
      * all bookmarks  传0  或者不传 collection_id
      */
-    private void getBookmarkList(final Object objAdapter) {
-        if(objAdapter instanceof BookMarkAdapter){
-            BookMarkAdapter adapters = (BookMarkAdapter) objAdapter;
-        }else{
-            BookMarkListAdapter adapters = (BookMarkListAdapter) objAdapter;
-        }
+    private void getBookmarkList() {
 
         String lastItemId = mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).id : "";
         itemId = REFRESH_TYPE == 0 ? "" : lastItemId;
@@ -582,6 +577,7 @@ public class BookMarkActivity extends BaseActivity
      *
      * @param mCollectionList
      * @param isRequestMenu
+     * navigationView.setItemIconTintList(resources.getColorStateList(R.drawable.nav_menu_text_color, null)); 设置本地资源图片
      */
     private void addLeftMenu(List<Collections> mCollectionList, final boolean isRequestMenu) {
         navigationView.getMenu().findItem(R.id.item_collection).setTitle("收藏夹");
@@ -608,6 +604,7 @@ public class BookMarkActivity extends BaseActivity
                                 navigationView.getMenu().findItem(finalI).setTitle(collectionName)
                                         .setIcon(resource)//动态添加menu
                                         .setOnMenuItemClickListener(new OnMenuItemClickListener());
+
                             }
                         }
                     });
@@ -791,7 +788,7 @@ public class BookMarkActivity extends BaseActivity
             mSwipeRefreshLayout.setRefreshing(true);
             adapter.setEnableLoadMore(false);
             REFRESH_TYPE = 0;
-            getBookmarkList(getCurrentAdapter());
+            getBookmarkList();
             /*set toolbar setting menu visible */
             menuSetting.setVisible(true);
             return false;
