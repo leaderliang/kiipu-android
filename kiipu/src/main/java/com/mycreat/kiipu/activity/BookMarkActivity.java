@@ -527,6 +527,7 @@ public class BookMarkActivity extends BaseActivity
 
     /**
      * delete item
+     * @param position
      */
     private void requestDeleteItem(final int position) {
         Call<Bookmark> call = KiipuApplication.mRetrofitService.deleteBookmark(userAccessToken, requestData.get(position).id);
@@ -548,6 +549,8 @@ public class BookMarkActivity extends BaseActivity
 
     /**
      * move bookmark
+     * @param dataPosition
+     * @param collectionId
      */
     private void requestMoveBookmark(final int dataPosition, final int collectionId) {
         String bookmarkId = requestData.get(dataPosition).id;
@@ -842,6 +845,10 @@ public class BookMarkActivity extends BaseActivity
                 }, arrayMap);
     }
 
+    /**
+     * 修改书签夹名字
+     * @param inputName
+     */
     private void modifyCollectionName(String inputName) {
         Call<Collections> call = KiipuApplication.mRetrofitService.modifyCollection(userAccessToken, collectionId, inputName);
         call.enqueue(new Callback<Collections>() {
@@ -850,7 +857,7 @@ public class BookMarkActivity extends BaseActivity
                 Collections collections = response.body();
                 if (collections != null) {
                     toolbar.setTitle(collections.collectionName);
-                    ToastUtil.showToastShort("书签夹名称修改成功啦~");
+                    ToastUtil.showToastShort(getString(R.string.modify_collection_success));
                     for (int i = 0; i < mCollectionList.size(); i++) {
                        if(mCollectionList.get(i).collectionId.equals(collections.collectionId)){
                            mCollectionList.get(i).collectionName = collections.collectionName;
@@ -861,12 +868,12 @@ public class BookMarkActivity extends BaseActivity
                     addLeftMenu(mCollectionList, false);
                     return;
                 }
-                ToastUtil.showToastShort("书签夹名称修改失败，请稍后重试~");
+                ToastUtil.showToastShort(getString(R.string.modify_collection_fail));
             }
 
             @Override
             public void onFailure(Call<Collections> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, "书签夹名称修改失败，请稍后重试~"+t.getMessage(), Snackbar.LENGTH_LONG)
+                Snackbar.make(mFloatingActionButton, getString(R.string.modify_collection_fail)+" "+t.getMessage(), Snackbar.LENGTH_LONG)
                         .setDuration(2500)
                         .show();
             }
@@ -880,8 +887,8 @@ public class BookMarkActivity extends BaseActivity
         String title = toolbar.getTitle().toString();
         if(!StringUtils.isEmpty(title)){
             ArrayMap<Object, Object> arrayMap = new ArrayMap<>();
-            arrayMap.put("title","修改书签夹");
-            arrayMap.put("hint","输入你要修改的书签夹名");
+            arrayMap.put("title",getString(R.string.modify_collection));
+            arrayMap.put("hint",getString(R.string.input_collection_name));
             arrayMap.put("content",title);
             editDialog(Constants.MODIFY_COLLECTION_NAME, arrayMap);
         }
@@ -903,13 +910,14 @@ public class BookMarkActivity extends BaseActivity
                 mLayoutManager = new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false);
                 mCurrentLayoutManagerType = LayoutManagerType.GRID_LAYOUT_MANAGER;
 
-                adapter = new BookMarkAdapter(mBookmarkList);
-                adapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
-//              adapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
-                adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
-                adapter.setOnItemChildClickListener(new OnItemChildClickListener());
-                adapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
-
+                if(adapter == null) {
+                    adapter = new BookMarkAdapter(mBookmarkList);
+                    adapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
+//                  adapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
+                    adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+                    adapter.setOnItemChildClickListener(new OnItemChildClickListener());
+                    adapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
+                }
                 mRecyclerView.setAdapter(adapter);
                 break;
             case LINEAR_LAYOUT_MANAGER:

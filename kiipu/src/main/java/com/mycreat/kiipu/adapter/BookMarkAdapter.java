@@ -34,7 +34,11 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
         addItemType(Constants.BOOKMARK_TYPE_IMG, R.layout.item_bookmark_default);
         addItemType(Constants.BOOKMARK_TYPE_TEXT, R.layout.item_bookmark_default);
         addItemType(Constants.BOOKMARK_TYPE_WEB, R.layout.item_bookmark_web);
+
+        setDefaultViewTypeLayout(R.layout.item_bookmark_linear_layut_manager);
     }
+
+
 
     @Override
     protected void convert(com.mycreat.kiipu.utils.BaseViewHolder holder, Bookmark bookmark) {
