@@ -22,11 +22,8 @@ public class BookmarkDialog {
     private List<Bookmark> bookmarks;
     private int currentPosition;
 
-    private RequestListener<? super String, GlideDrawable> glideListener;
-
     //动态变化的
     public ObservableField<Bookmark> currentBookmark = new ObservableField<>();
-    public ObservableField<Integer> vibRantColor = new ObservableField<>(ContextCompat.getColor(KiipuApplication.appContext, R.color.colorPrimary));
 
     public BookmarkDetailAdapter getAdapter() {
         return adapter;
@@ -50,14 +47,6 @@ public class BookmarkDialog {
 
     public void setBookmarks(List<Bookmark> bookmarks) {
         this.bookmarks = bookmarks;
-    }
-
-    public RequestListener<? super String, GlideDrawable> getGlideListener() {
-        return glideListener;
-    }
-
-    public void setGlideListener(RequestListener<? super String, GlideDrawable> glideListener) {
-        this.glideListener = glideListener;
     }
 
     public int getCurrentPosition() {

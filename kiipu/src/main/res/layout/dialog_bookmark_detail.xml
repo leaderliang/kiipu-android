@@ -10,30 +10,17 @@
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
         >
-
-
         <View android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/bookmark_detail_translucent"
-        />
-
-        <include
-                android:id="@+id/bookmark_detail_bar"
-                layout="@layout/item_bookmark_detail_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/icdd_margin_top"
-                app:bookmark="@{bookmarkDialog.currentBookmark}"
-                app:vibRantColor="@{bookmarkDialog.vibRantColor}"
-                app:glideListener="@{bookmarkDialog.glideListener}"
         />
 
         <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/bookmark_detail_bar"
-                android:background="@color/white"
+                android:background="@android:color/transparent"
+                android:layout_marginTop="@dimen/icdd_margin_top"
                 app:bookmarks="@{bookmarkDialog.bookmarks}"
                 app:adapter="@{bookmarkDialog.adapter}"
                 app:layoutManager="@{bookmarkDialog.layoutManager}"

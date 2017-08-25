@@ -2,19 +2,23 @@ package com.mycreat.kiipu.view.bookmark;
 
 import android.app.Activity;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.mycreat.kiipu.R;
+import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.databinding.BookmarkDetailBinding;
 import com.mycreat.kiipu.databinding.BookmarkDetailFooterBinding;
 import com.mycreat.kiipu.model.Bookmark;
-import com.mycreat.kiipu.utils.Constants;
-import com.mycreat.kiipu.utils.CustomTabsUtils;
-import com.mycreat.kiipu.utils.LogUtil;
-import com.mycreat.kiipu.utils.ViewUtils;
+import com.mycreat.kiipu.model.BookmarkDialogItem;
+import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.utils.bind.BindView;
 import org.jetbrains.annotations.NotNull;
 
@@ -101,34 +105,28 @@ public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
 
         public void update(Bookmark bookmark){
-            //处理滑动冲突
-//            tmplWebView.setOnTouchListener(new View.OnTouchListener() {
-//                private float oldX;
-//                private float oldY;
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//                    //按下事件不拦截
-//                    if(event.getAction() == MotionEvent.ACTION_DOWN) {
-//                        tmplWebView.requestDisallowInterceptTouchEvent(false);
-//                        oldX = event.getX();
-//                        oldY = event.getY();
-//                        return false;
-//                    }else{
-//                        float distanceX = event.getX() - oldX;
-//                        float distanceY = event.getY() - oldY;
-//                        //横向移动大于竖向移动 不拦截
-//                        if(Math.abs(distanceX) > Math.abs(distanceY)) {
-//                            tmplWebView.requestDisallowInterceptTouchEvent(false);
-//                            return false;
-//                        }else{
-//                            tmplWebView.requestDisallowInterceptTouchEvent(true);
-//                            return true;
-//                        }
-//                    }
-//                }
-//            });
             if(mBinding != null){
-                mBinding.setBookmark(bookmark);
+                final BookmarkDialogItem item = new BookmarkDialogItem();
+                item.vibRantColor.set(ColorUtil.Companion.getColor(R.color.colorPrimary));
+                item.setBookmark(bookmark);
+                item.setGlideListener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        item.vibRantColor.set(ContextCompat.getColor(KiipuApplication.appContext, R.color.colorPrimary));
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        Bitmap bm = BitmapUtil.drawable2Bitmap(resource);
+                        int color = ColorUtil.Companion.getVibRantColor(bm, ContextCompat.getColor(KiipuApplication.appContext, R.color.colorPrimary));
+                        item.vibRantColor.set(color);
+                        return false;
+                    }
+
+
+                });
+                mBinding.setItem(item);
                 mBinding.setOnLinkClickListener(new BookmarkTemplateWebVIew.OnLinkClickListener() {
                     @Override
                     public void onClick(@NotNull String url, @NotNull Bookmark bookmark) {
