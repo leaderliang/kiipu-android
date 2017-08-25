@@ -47,7 +47,7 @@
                         android:id="@+id/img_more_info"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/item_more_info_icon_"
+                        android:src="@drawable/item_more_info_icon_vertical"
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 />
             </LinearLayout>
