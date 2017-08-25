@@ -38,6 +38,7 @@ import com.cocosw.bottomsheet.BottomSheetHelper;
 import com.github.clans.fab.FloatingActionButton;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.BookMarkAdapter;
+import com.mycreat.kiipu.adapter.BookMarkListAdapter;
 import com.mycreat.kiipu.core.AppManager;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
@@ -78,6 +79,8 @@ public class BookMarkActivity extends BaseActivity
 
     private BookMarkAdapter adapter;
 
+    private BookMarkListAdapter listAdapter;
+
     private ProgressBar mProgress;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -98,7 +101,7 @@ public class BookMarkActivity extends BaseActivity
 
     private long nowTime;
 
-    public Button finalButton;
+    private Button finalButton;
 
     private String inputName, collectionId = Constants.ALL_COLLECTION, viewTheme;
 
@@ -222,14 +225,6 @@ public class BookMarkActivity extends BaseActivity
 
         //如果可以确定每个item的高度是固定的，设置这个选项可以提高性能
         mRecyclerView.setHasFixedSize(true);
-
-        adapter = new BookMarkAdapter(mBookmarkList);
-        adapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
-//      adapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
-        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
-        adapter.setOnItemChildClickListener(new OnItemChildClickListener());
-
-        mRecyclerView.setAdapter(adapter);
 
         setRecyclerViewLayoutManager(LayoutManagerType.GRID_LAYOUT_MANAGER);
 
@@ -378,7 +373,7 @@ public class BookMarkActivity extends BaseActivity
     @Override
     public void onRefresh() {
         adapter.setEnableLoadMore(false);
-        REFRESH_TYPE = 0; // PULL
+        REFRESH_TYPE = Constants.REFRESH_TYPE_PULL; // PULL
         getBookmarkList();
     }
 
@@ -387,7 +382,7 @@ public class BookMarkActivity extends BaseActivity
     public void onLoadMoreRequested() {
         mSwipeRefreshLayout.setRefreshing(false);
         adapter.setEnableLoadMore(true);
-        REFRESH_TYPE = 1; // LOAD MORE
+        REFRESH_TYPE = Constants.REFRESH_TYPE_LOAD_MORE; // LOAD MORE
         getBookmarkList();
     }
 
@@ -396,6 +391,7 @@ public class BookMarkActivity extends BaseActivity
      * all bookmarks  传0  或者不传 collection_id
      */
     private void getBookmarkList() {
+
         String lastItemId = mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).id : "";
         itemId = REFRESH_TYPE == 0 ? "" : lastItemId;
         Call<List<Bookmark>> call = KiipuApplication.mRetrofitService.getBookmarkList(userAccessToken, Constants.PAGE_SIZE, itemId, collectionId);
@@ -404,12 +400,13 @@ public class BookMarkActivity extends BaseActivity
             public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
                 if (!CollectionUtils.isEmpty(response.body())) {
                     mBookmarkList = response.body();
-                    if (REFRESH_TYPE == 0) {
+                    if (REFRESH_TYPE == Constants.REFRESH_TYPE_PULL) {
                         requestData.clear();
                         requestData.addAll(mBookmarkList);
                         adapter.setNewData(mBookmarkList);
+
                         mSwipeRefreshLayout.setRefreshing(false);
-                    } else if (REFRESH_TYPE == 1) {// load more
+                    } else if (REFRESH_TYPE == Constants.REFRESH_TYPE_LOAD_MORE) {// load more
                         requestData.addAll(mBookmarkList);
                         adapter.addData(mBookmarkList);
                         adapter.loadMoreComplete();// 数据加载完成
@@ -421,7 +418,7 @@ public class BookMarkActivity extends BaseActivity
                     mSwipeRefreshLayout.setRefreshing(false);
                     adapter.loadMoreComplete();
                     adapter.loadMoreEnd(false);
-                    if (REFRESH_TYPE == 0) {// when refresh
+                    if (REFRESH_TYPE == Constants.REFRESH_TYPE_PULL) {// when refresh
                         requestData.clear();
                         mBookmarkList.clear();
                         adapter.setNewData(mBookmarkList);
@@ -580,6 +577,7 @@ public class BookMarkActivity extends BaseActivity
      *
      * @param mCollectionList
      * @param isRequestMenu
+     * navigationView.setItemIconTintList(resources.getColorStateList(R.drawable.nav_menu_text_color, null)); 设置本地资源图片
      */
     private void addLeftMenu(List<Collections> mCollectionList, final boolean isRequestMenu) {
         navigationView.getMenu().findItem(R.id.item_collection).setTitle("收藏夹");
@@ -606,6 +604,7 @@ public class BookMarkActivity extends BaseActivity
                                 navigationView.getMenu().findItem(finalI).setTitle(collectionName)
                                         .setIcon(resource)//动态添加menu
                                         .setOnMenuItemClickListener(new OnMenuItemClickListener());
+
                             }
                         }
                     });
@@ -879,7 +878,6 @@ public class BookMarkActivity extends BaseActivity
     private void modifyCollectionsName() {
         String title = toolbar.getTitle().toString();
         if(!StringUtils.isEmpty(title)){
-
             ArrayMap<Object, Object> arrayMap = new ArrayMap<>();
             arrayMap.put("title","修改书签夹");
             arrayMap.put("hint","输入你要修改的书签夹名");
@@ -899,23 +897,51 @@ public class BookMarkActivity extends BaseActivity
             scrollPosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager())
                     .findFirstCompletelyVisibleItemPosition();
         }
-
         switch (layoutManagerType) {
             case GRID_LAYOUT_MANAGER:
                 mLayoutManager = new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false);
                 mCurrentLayoutManagerType = LayoutManagerType.GRID_LAYOUT_MANAGER;
+
+                adapter = new BookMarkAdapter(mBookmarkList);
+                adapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
+//              adapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
+                adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+                adapter.setOnItemChildClickListener(new OnItemChildClickListener());
+                adapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
+
+                mRecyclerView.setAdapter(adapter);
                 break;
             case LINEAR_LAYOUT_MANAGER:
                 mLayoutManager = new LinearLayoutManager(this);
                 mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+
+                listAdapter = new BookMarkListAdapter(mBookmarkList);
+                listAdapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
+                listAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+                listAdapter.setOnItemChildClickListener(new OnItemChildClickListener());
+                listAdapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
+
+                mRecyclerView.setAdapter(listAdapter);
+
                 break;
             default:
                 mLayoutManager = new LinearLayoutManager(this);
                 mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         }
-        adapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
+
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.scrollToPosition(scrollPosition);
+    }
+
+    private Object getCurrentAdapter(){
+        if(mCurrentLayoutManagerType != null){
+            if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
+                return adapter;
+            }else if(mCurrentLayoutManagerType == LayoutManagerType.LINEAR_LAYOUT_MANAGER){
+                return listAdapter;
+            }
+        }
+        return adapter;
     }
 
     @Override

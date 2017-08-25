@@ -10,7 +10,10 @@ import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarksInfo;
 import com.mycreat.kiipu.model.LayoutManagerType;
-import com.mycreat.kiipu.utils.*;
+import com.mycreat.kiipu.utils.BaseViewHolder;
+import com.mycreat.kiipu.utils.Constants;
+import com.mycreat.kiipu.utils.GlideUtil;
+import com.mycreat.kiipu.utils.ImageCallback;
 import com.mycreat.kiipu.view.LeftIvTextView;
 
 import java.net.MalformedURLException;
@@ -31,13 +34,12 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
         addItemType(Constants.BOOKMARK_TYPE_IMG, R.layout.item_bookmark_default);
         addItemType(Constants.BOOKMARK_TYPE_TEXT, R.layout.item_bookmark_default);
         addItemType(Constants.BOOKMARK_TYPE_WEB, R.layout.item_bookmark_web);
-        addItemType(Constants.LINEAR_LAYOUT_MANAGER, R.layout.item_bookmark_linear_layut_manager);
     }
 
     @Override
     protected void convert(com.mycreat.kiipu.utils.BaseViewHolder holder, Bookmark bookmark) {
         final BookmarksInfo mBookmarksInfo = bookmark.info;
-        if(getmCurrentLayoutManagerType() != null) {
+        if (getmCurrentLayoutManagerType() != null) {
             if (getmCurrentLayoutManagerType().equals(LayoutManagerType.GRID_LAYOUT_MANAGER)) {
                 LeftIvTextView mLeftIvTextView = holder.getView(R.id.card_view_title);
                 mLeftIvTextView.loadImage(mBookmarksInfo.getIcon());
@@ -82,25 +84,17 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }
-            }else{
-//                holder.setImage(R.id.iv_icon, new ImageCallback() {
-//                    @Override
-//                    public void callback(ImageView imageView) {
-//                        imageView.setMaxWidth(KiipuApplication.SCREEN_WIDTH);
-//                        imageView.setMaxHeight((int) (KiipuApplication.SCREEN_WIDTH / (16 / 9f)));
-//                        GlideUtil.getInstance().loadImage(imageView, mBookmarksInfo.getImg(), true);
-//                    }
-//                });
-//                holder.setText(R.id.tv_title, mBookmarksInfo.getTitle() + "");
             }
         }
     }
 
-    public void setCurrentLayoutManagerType(LayoutManagerType mCurrentLayoutManagerType){
+    public void setCurrentLayoutManagerType(LayoutManagerType mCurrentLayoutManagerType) {
         this.mCurrentLayoutManagerType = mCurrentLayoutManagerType;
     }
 
     public LayoutManagerType getmCurrentLayoutManagerType() {
         return mCurrentLayoutManagerType;
     }
+
+
 }
