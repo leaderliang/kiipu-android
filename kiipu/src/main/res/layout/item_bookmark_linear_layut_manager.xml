@@ -1,48 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="50dp"
+              android:layout_height="wrap_content"
               android:gravity="center"
               android:foreground="?android:attr/selectableItemBackgroundBorderless"
 >
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginLeft="12dp"
+    >
 
-
-    <RelativeLayout
-            android:id="@+id/rl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="12dp"
-            android:layout_marginLeft="12dp">
-
-        <ImageView
-                android:id="@+id/iv_icon"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="3dp"
-                android:src="@drawable/default_logo_small"/>
-
-        <TextView
-                android:id="@+id/tv_title"
+        <RelativeLayout
+                android:id="@+id/rl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/iv_icon"
-                android:maxLines="1"
-                android:textColor="@color/color_4c3b3b"
-                android:textSize="12sp"/>
+                android:layout_centerInParent="true">
 
-        <ImageView
-                android:id="@+id/img_more_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/item_more_info_icon"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
-        />
+            <ImageView
+                    android:id="@+id/iv_icon"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="3dp"
+                    android:src="@drawable/default_logo_small"/>
+
+            <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/iv_icon"
+                    android:maxLines="1"
+                    android:textColor="@color/color_4c3b3b"
+                    android:textSize="12sp"/>
+
+            <LinearLayout android:id="@+id/ll_more_info"
+                          android:layout_width="50dp"
+                          android:layout_height="wrap_content"
+                          android:layout_alignParentRight="true"
+                          android:layout_centerVertical="true"
+                          android:gravity="right"
+            >
+
+                <ImageView
+                        android:id="@+id/img_more_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/item_more_info_icon_"
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                />
+            </LinearLayout>
+        </RelativeLayout>
+        <View android:layout_width="match_parent"
+              android:layout_height="0.5dp"
+              android:layout_gravity="bottom"
+              android:layout_alignParentBottom="true"
+              android:background="@color/color_c5c5c5"/>
     </RelativeLayout>
-
-
 </LinearLayout>

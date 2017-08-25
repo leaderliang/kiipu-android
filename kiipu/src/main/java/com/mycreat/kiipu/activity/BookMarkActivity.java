@@ -65,7 +65,7 @@ public class BookMarkActivity extends BaseActivity
         BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
 
     /* 0 pull; 1 load more */
-    private int REFRESH_TYPE = 0;
+    private int REFRESH_TYPE = Constants.REFRESH_TYPE_PULL;
 
     private String itemId = "";
 
@@ -119,7 +119,7 @@ public class BookMarkActivity extends BaseActivity
 
     private MenuItem menuSetting;
 
-    protected RecyclerView.LayoutManager mLayoutManager;
+//    protected RecyclerView.LayoutManager mLayoutManager;
 
     protected LayoutManagerType mCurrentLayoutManagerType;
 
@@ -316,9 +316,12 @@ public class BookMarkActivity extends BaseActivity
         switch (item.getItemId()) {
             /*切换布局样式*/
             case R.id.action_more:
-                if (mCurrentLayoutManagerType.equals(LayoutManagerType.LINEAR_LAYOUT_MANAGER)) {
+                if (mCurrentLayoutManagerType == LayoutManagerType.LINEAR_LAYOUT_MANAGER) {
                     setRecyclerViewLayoutManager(LayoutManagerType.GRID_LAYOUT_MANAGER);
                 } else {
+                    REFRESH_TYPE = Constants.REFRESH_TYPE_PULL;
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    getBookmarkList();
                     setRecyclerViewLayoutManager(LayoutManagerType.LINEAR_LAYOUT_MANAGER);
                 }
                 return true;
@@ -340,7 +343,7 @@ public class BookMarkActivity extends BaseActivity
 //        mProgress.setVisibility(View.VISIBLE);
         adapter.setEnableLoadMore(false);
         toolbar.setLogo(null);
-        REFRESH_TYPE = 0;
+        REFRESH_TYPE = Constants.REFRESH_TYPE_PULL;
         switch (item.getItemId()) {
             case R.id.nav_all_bookmark:
                 // Handle the camera action
@@ -400,30 +403,64 @@ public class BookMarkActivity extends BaseActivity
             public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
                 if (!CollectionUtils.isEmpty(response.body())) {
                     mBookmarkList = response.body();
+                    GlideUtil.getInstance().clearMemory(BookMarkActivity.this);
                     if (REFRESH_TYPE == Constants.REFRESH_TYPE_PULL) {
                         requestData.clear();
                         requestData.addAll(mBookmarkList);
-                        adapter.setNewData(mBookmarkList);
-
+                        if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
+                            adapter.setNewData(mBookmarkList);
+                        }else{
+                            listAdapter.setNewData(mBookmarkList);
+                        }
                         mSwipeRefreshLayout.setRefreshing(false);
                     } else if (REFRESH_TYPE == Constants.REFRESH_TYPE_LOAD_MORE) {// load more
                         requestData.addAll(mBookmarkList);
-                        adapter.addData(mBookmarkList);
-                        adapter.loadMoreComplete();// 数据加载完成
-                        if (mBookmarkList.size() < Constants.PAGE_SIZE) {// 没有更多数据
-                            adapter.loadMoreEnd(false);
+
+                        if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
+                            adapter.addData(mBookmarkList);
+                            adapter.loadMoreComplete();// 数据加载完成
+                            if (mBookmarkList.size() < Constants.PAGE_SIZE) {// 没有更多数据
+                                adapter.loadMoreEnd(false);
+                            }
+                        }else{
+                            listAdapter.addData(mBookmarkList);
+                            listAdapter.loadMoreComplete();// 数据加载完成
+                            if (mBookmarkList.size() < Constants.PAGE_SIZE) {// 没有更多数据
+                                listAdapter.loadMoreEnd(false);
+                            }
                         }
                     }
                 } else {
                     mSwipeRefreshLayout.setRefreshing(false);
-                    adapter.loadMoreComplete();
-                    adapter.loadMoreEnd(false);
-                    if (REFRESH_TYPE == Constants.REFRESH_TYPE_PULL) {// when refresh
+//                    adapter.loadMoreComplete();
+//                    adapter.loadMoreEnd(false);
+//                    if (REFRESH_TYPE == Constants.REFRESH_TYPE_PULL) {// when refresh
+//                        requestData.clear();
+//                        mBookmarkList.clear();
+//                        adapter.setNewData(mBookmarkList);
+//                        mRequestErrorLayout.setErrorText("暂时还没有书签呦~");
+//                        adapter.setEmptyView(mRequestErrorLayout);
+//                    }
+
+                    if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
+                        adapter.loadMoreComplete();
+                        adapter.loadMoreEnd(false);
+                        if (REFRESH_TYPE == Constants.REFRESH_TYPE_PULL) {// when refresh
+                            adapter.setNewData(mBookmarkList);
+                            adapter.setEmptyView(mRequestErrorLayout);
+                        }
+                    }else{
+                        listAdapter.loadMoreComplete();
+                        listAdapter.loadMoreEnd(false);
+                        if (REFRESH_TYPE == Constants.REFRESH_TYPE_PULL) {// when refresh
+                            listAdapter.setNewData(mBookmarkList);
+                            listAdapter.setEmptyView(mRequestErrorLayout);
+                        }
+                    }
+                    if (REFRESH_TYPE == Constants.REFRESH_TYPE_PULL) {
                         requestData.clear();
                         mBookmarkList.clear();
-                        adapter.setNewData(mBookmarkList);
                         mRequestErrorLayout.setErrorText("暂时还没有书签呦~");
-                        adapter.setEmptyView(mRequestErrorLayout);
                     }
                 }
                 mProgress.setVisibility(View.GONE);
@@ -634,8 +671,10 @@ public class BookMarkActivity extends BaseActivity
         public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
             switch (view.getId()) {
                 case R.id.img_more_info:
+                case R.id.ll_more_info:
                     showListPopupWindow(position);
                     break;
+
             }
         }
     }
@@ -790,7 +829,7 @@ public class BookMarkActivity extends BaseActivity
             collectionId = (item.getItemId() == R.id.nav_share) ? mCollectionList.get(0).collectionId : mCollectionList.get(item.getItemId()).collectionId;
             mSwipeRefreshLayout.setRefreshing(true);
             adapter.setEnableLoadMore(false);
-            REFRESH_TYPE = 0;
+            REFRESH_TYPE = Constants.REFRESH_TYPE_PULL;
             getBookmarkList();
             /*set toolbar setting menu visible */
             menuSetting.setVisible(true);
@@ -907,7 +946,7 @@ public class BookMarkActivity extends BaseActivity
         }
         switch (layoutManagerType) {
             case GRID_LAYOUT_MANAGER:
-                mLayoutManager = new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false);
+                mRecyclerView.setLayoutManager(new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false));
                 mCurrentLayoutManagerType = LayoutManagerType.GRID_LAYOUT_MANAGER;
 
                 if(adapter == null) {
@@ -921,7 +960,7 @@ public class BookMarkActivity extends BaseActivity
                 mRecyclerView.setAdapter(adapter);
                 break;
             case LINEAR_LAYOUT_MANAGER:
-                mLayoutManager = new LinearLayoutManager(this);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                 mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
 
                 listAdapter = new BookMarkListAdapter(mBookmarkList);
@@ -934,23 +973,12 @@ public class BookMarkActivity extends BaseActivity
 
                 break;
             default:
-                mLayoutManager = new LinearLayoutManager(this);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                 mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         }
 
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.scrollToPosition(scrollPosition);
-    }
 
-    private Object getCurrentAdapter(){
-        if(mCurrentLayoutManagerType != null){
-            if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
-                return adapter;
-            }else if(mCurrentLayoutManagerType == LayoutManagerType.LINEAR_LAYOUT_MANAGER){
-                return listAdapter;
-            }
-        }
-        return adapter;
+        mRecyclerView.scrollToPosition(scrollPosition);
     }
 
     @Override
@@ -958,6 +986,12 @@ public class BookMarkActivity extends BaseActivity
         // Save currently selected layout manager.
         savedInstanceState.putSerializable(Constants.KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        GlideUtil.getInstance().clearMemory(BookMarkActivity.this);
     }
 
     @Override

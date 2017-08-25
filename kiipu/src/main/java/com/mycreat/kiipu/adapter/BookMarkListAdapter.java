@@ -38,6 +38,7 @@ public class BookMarkListAdapter extends BaseQuickAdapter<Bookmark, BaseViewHold
                     }
                 });
                 holder.setText(R.id.tv_title, mBookmarksInfo.getTitle() + "");
+                holder.addOnClickListener(R.id.ll_more_info);
             }
         }
     }
