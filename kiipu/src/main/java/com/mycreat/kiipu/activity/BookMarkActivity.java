@@ -21,10 +21,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.bumptech.glide.Glide;
@@ -45,6 +42,7 @@ import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.*;
 import com.mycreat.kiipu.model.Collections;
 import com.mycreat.kiipu.utils.*;
+import com.mycreat.kiipu.view.MyDecoration;
 import com.mycreat.kiipu.view.bookmark.BookmarkDetailDialog;
 import com.mycreat.kiipu.view.bookmark.BookmarkTemplateWebVIew;
 import com.mycreat.kiipu.view.KiipuRecyclerView;
@@ -662,24 +660,6 @@ public class BookMarkActivity extends BaseActivity
         }
     }
 
-    /**
-     * CardView More
-     */
-    private class OnItemChildClickListener implements BaseQuickAdapter.OnItemChildClickListener {
-
-        @Override
-        public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-            switch (view.getId()) {
-                case R.id.img_more_info:
-                case R.id.ll_more_info:
-                    showListPopupWindow(position);
-                    break;
-
-            }
-        }
-    }
-
-
     private void showBookmarkDetailDialog(final int position) {
         String htmlPath =  requestData.get(position).tmplName +"/"+requestData.get(position).tmplVersion+".html";
         Call<String> call = KiipuApplication.mRetrofitTemplateService.requestHtml(htmlPath);
@@ -714,6 +694,11 @@ public class BookMarkActivity extends BaseActivity
         sheet.show();
     }
 
+    /**
+     * more info
+     * @param dataPosition
+     * @param which
+     */
     private void onMoreInfoItemClick(int dataPosition, int which) {
         switch (which) {
             case R.id.show_detail:
@@ -955,8 +940,11 @@ public class BookMarkActivity extends BaseActivity
 //                  adapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
                     adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
                     adapter.setOnItemChildClickListener(new OnItemChildClickListener());
+                    adapter.setOnItemLongClickListener(new onItemLongClick());
+
                     adapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
                 }
+                setRecyclerParams(6f,6F);
                 mRecyclerView.setAdapter(adapter);
                 break;
             case LINEAR_LAYOUT_MANAGER:
@@ -967,8 +955,10 @@ public class BookMarkActivity extends BaseActivity
                 listAdapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
                 listAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
                 listAdapter.setOnItemChildClickListener(new OnItemChildClickListener());
+                listAdapter.setOnItemLongClickListener(new onItemLongClick());
                 listAdapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
 
+                setRecyclerParams(0f,0F);
                 mRecyclerView.setAdapter(listAdapter);
 
                 break;
@@ -977,8 +967,20 @@ public class BookMarkActivity extends BaseActivity
                 mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         }
 
-
         mRecyclerView.scrollToPosition(scrollPosition);
+    }
+
+
+    /**
+     *
+     * LINEAR_LAYOUT_MANAGER 模式下，左右无边距
+     * @param paddingLeft
+     * @param paddingRight
+     */
+    private void setRecyclerParams(float paddingLeft, float paddingRight){
+        int left = DensityUtils.dp2px(this, paddingLeft);
+        int right = DensityUtils.dp2px(this, paddingRight);
+        mRecyclerView.setPadding(left, 0, right, 0);
     }
 
     @Override
@@ -986,6 +988,32 @@ public class BookMarkActivity extends BaseActivity
         // Save currently selected layout manager.
         savedInstanceState.putSerializable(Constants.KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    /**
+     * CardView More
+     */
+    private class OnItemChildClickListener implements BaseQuickAdapter.OnItemChildClickListener {
+
+        @Override
+        public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+            switch (view.getId()) {
+                case R.id.img_more_info:
+                case R.id.ll_more_info:
+                    showListPopupWindow(position);
+                    break;
+
+            }
+        }
+    }
+
+
+    private class onItemLongClick implements BaseQuickAdapter.OnItemLongClickListener {
+        @Override
+        public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+            showBookmarkDetailDialog(position);
+            return false;
+        }
     }
 
     @Override
@@ -1002,9 +1030,5 @@ public class BookMarkActivity extends BaseActivity
 //            ToastUtil.showToastShort(this, "粘贴板有数据哦~");
         }
     }
-
-
-
-
 
 }

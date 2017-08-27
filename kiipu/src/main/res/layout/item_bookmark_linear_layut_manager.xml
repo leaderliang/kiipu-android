@@ -6,23 +6,22 @@
               android:foreground="?android:attr/selectableItemBackgroundBorderless"
 >
     <RelativeLayout android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginLeft="12dp"
-    >
+                    android:layout_height="48dp">
 
         <RelativeLayout
                 android:id="@+id/rl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
+                android:layout_centerInParent="true"
+                >
 
             <ImageView
                     android:id="@+id/iv_icon"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="3dp"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginRight="8dp"
                     android:src="@drawable/default_logo_small"/>
 
             <TextView
@@ -32,30 +31,33 @@
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@+id/iv_icon"
                     android:maxLines="1"
+                    android:ellipsize="end"
                     android:textColor="@color/color_4c3b3b"
-                    android:textSize="12sp"/>
+                    android:layout_toLeftOf="@+id/ll_more_info"
+                    android:textSize="14sp"/>
 
             <LinearLayout android:id="@+id/ll_more_info"
-                          android:layout_width="50dp"
-                          android:layout_height="wrap_content"
+                          android:layout_width="48dp"
+                          android:layout_height="match_parent"
                           android:layout_alignParentRight="true"
                           android:layout_centerVertical="true"
-                          android:gravity="right"
+                          android:gravity="center"
+                          android:foreground="?android:attr/selectableItemBackgroundBorderless"
             >
 
                 <ImageView
                         android:id="@+id/img_more_info"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+
                         android:src="@drawable/item_more_info_icon_vertical"
-                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 />
             </LinearLayout>
         </RelativeLayout>
         <View android:layout_width="match_parent"
-              android:layout_height="0.5dp"
+              android:layout_height="0.5px"
               android:layout_gravity="bottom"
               android:layout_alignParentBottom="true"
-              android:background="@color/color_c5c5c5"/>
+              android:background="@color/color_dcdcdc"/>
     </RelativeLayout>
 </LinearLayout>

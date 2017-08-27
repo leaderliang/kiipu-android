@@ -49,9 +49,7 @@
                     android:background="@color/white"
                     android:scrollbarStyle="outsideOverlay"
                     android:paddingLeft="6dp"
-                    android:paddingRight="6dp"
-
-            />
+                    android:paddingRight="6dp"/>
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <include layout="@layout/view_loading_progress"/>
