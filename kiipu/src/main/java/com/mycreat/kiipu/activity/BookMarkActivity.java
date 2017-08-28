@@ -530,7 +530,7 @@ public class BookMarkActivity extends BaseActivity
     /**
      * 创建书签
      *
-     * @param collectionName
+     * @param collectionName 书签名
      */
     private void createCollection(String collectionName) {
         if(StringUtils.isEmpty(collectionName)){
@@ -562,7 +562,7 @@ public class BookMarkActivity extends BaseActivity
 
     /**
      * delete item
-     * @param position
+     * @param position 删除索引
      */
     private void requestDeleteItem(final int position) {
         Call<Bookmark> call = KiipuApplication.mRetrofitService.deleteBookmark(userAccessToken, requestData.get(position).id);
@@ -584,8 +584,8 @@ public class BookMarkActivity extends BaseActivity
 
     /**
      * move bookmark
-     * @param dataPosition
-     * @param collectionId
+     * @param dataPosition 书签数据索引
+     * @param collectionId 书签 id
      */
     private void requestMoveBookmark(final int dataPosition, final int collectionId) {
         String bookmarkId = requestData.get(dataPosition).id;
@@ -941,7 +941,6 @@ public class BookMarkActivity extends BaseActivity
                     adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
                     adapter.setOnItemChildClickListener(new OnItemChildClickListener());
                     adapter.setOnItemLongClickListener(new onItemLongClick());
-
                     adapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
                 }
                 setRecyclerParams(6f,6F);
@@ -950,14 +949,14 @@ public class BookMarkActivity extends BaseActivity
             case LINEAR_LAYOUT_MANAGER:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                 mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-
-                listAdapter = new BookMarkListAdapter(mBookmarkList);
-                listAdapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
-                listAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
-                listAdapter.setOnItemChildClickListener(new OnItemChildClickListener());
-                listAdapter.setOnItemLongClickListener(new onItemLongClick());
-                listAdapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
-
+                if(listAdapter == null) {
+                    listAdapter = new BookMarkListAdapter(mBookmarkList);
+                    listAdapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
+                    listAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+                    listAdapter.setOnItemChildClickListener(new OnItemChildClickListener());
+                    listAdapter.setOnItemLongClickListener(new onItemLongClick());
+                    listAdapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
+                }
                 setRecyclerParams(0f,0F);
                 mRecyclerView.setAdapter(listAdapter);
 
