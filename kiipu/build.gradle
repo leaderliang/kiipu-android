@@ -122,6 +122,3 @@ dependencies {
     compile 'com.samskivert:jmustache:1.13'
     compile project(path: ':kiipu_db')
 }
-//repositories {
-//    mavenCentral()
-//}
