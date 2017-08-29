@@ -798,7 +798,7 @@ public class BookMarkActivity extends BaseActivity
             arrayMap.put("title","名称");
             arrayMap.put("hint","输入你要创建的书签名");
             arrayMap.put("content","");// 为了当输入框没有文本时，按钮置灰
-            editDialog(Constants.CREATE_COLLECTION, arrayMap);
+            editDialog(Constants.CREATE_COLLECTION, null ,arrayMap);
             return false;
         }
     }
@@ -824,7 +824,7 @@ public class BookMarkActivity extends BaseActivity
         }
     }
 
-    protected void editDialog(final int toDoTag, ArrayMap<Object,Object> arrayMap) {
+    protected void editDialog(final int toDoTag, DialogInterface.OnClickListener NeutralButtonClick, ArrayMap<Object,Object> arrayMap) {
         DialogUtil.showEditDialog(this,
                 new TextWatcher() {
                     @Override
@@ -859,7 +859,8 @@ public class BookMarkActivity extends BaseActivity
                         }
                         finalButton.setEnabled(true);
                     }
-                }, new DialogInterface.OnClickListener() {
+                }, NeutralButtonClick
+                , new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (toDoTag == Constants.CREATE_COLLECTION) {
@@ -916,7 +917,12 @@ public class BookMarkActivity extends BaseActivity
             arrayMap.put("title",getString(R.string.modify_collection));
             arrayMap.put("hint",getString(R.string.input_collection_name));
             arrayMap.put("content",title);
-            editDialog(Constants.MODIFY_COLLECTION_NAME, arrayMap);
+            editDialog(Constants.MODIFY_COLLECTION_NAME, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ToastUtil.showToastShort("删除成功啦~");
+                }
+            }, arrayMap);
         }
     }
 

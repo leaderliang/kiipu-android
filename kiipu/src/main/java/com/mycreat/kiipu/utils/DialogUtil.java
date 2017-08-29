@@ -27,6 +27,7 @@ public class DialogUtil {
     public static void showEditDialog(final Context context,
                                       TextWatcher textWatcher,
                                       ButtonCallBack callBack,
+                                      DialogInterface.OnClickListener NeutralButtonClick,
                                       DialogInterface.OnClickListener positiveButtonClick,
                                       ArrayMap<Object, Object> arrayMap) {
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -36,6 +37,9 @@ public class DialogUtil {
         editText.addTextChangedListener(textWatcher);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle((String) arrayMap.get("title"));
+        if(NeutralButtonClick != null) {
+            builder.setNeutralButton("删除", NeutralButtonClick);
+        }
         builder.setPositiveButton("确定", positiveButtonClick);
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
