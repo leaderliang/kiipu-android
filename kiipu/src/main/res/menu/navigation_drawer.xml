@@ -12,9 +12,16 @@
           android:orderInCategory="0"
           app:showAsAction="always"/>
 
+
+    <!-- collapseActionView 代表当前MenuItem 点击的时候能够显示或者隐藏一个ActionView
+         新版本v4包内部提供了SearchView点创建工具类，不需要使用actionViewClass属性了
+    -->
+
     <item android:id="@+id/action_search"
           android:icon="@drawable/toolbar_search_icon"
           android:orderInCategory="1"
-          app:showAsAction="always"/>
+          app:showAsAction="always|collapseActionView"
+          app:actionViewClass="android.support.v7.widget.SearchView"
+    />
 
 </menu>

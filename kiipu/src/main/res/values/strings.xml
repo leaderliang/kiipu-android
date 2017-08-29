@@ -14,4 +14,6 @@
     <string name="modify_collection">修改书签夹</string>
     <string name="modify_collection_fail">书签夹名称修改失败，请稍后重试~</string>
     <string name="modify_collection_success">书签夹名称修改成功啦~</string>
+    <string name="exit_app">退出 Kiipu!</string>
+    <string name="search_bookmark">搜索书签...</string>
 </resources>

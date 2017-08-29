@@ -10,12 +10,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.*;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -42,7 +42,6 @@ import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.*;
 import com.mycreat.kiipu.model.Collections;
 import com.mycreat.kiipu.utils.*;
-import com.mycreat.kiipu.view.MyDecoration;
 import com.mycreat.kiipu.view.bookmark.BookmarkDetailDialog;
 import com.mycreat.kiipu.view.bookmark.BookmarkTemplateWebVIew;
 import com.mycreat.kiipu.view.KiipuRecyclerView;
@@ -51,6 +50,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -60,7 +60,7 @@ import java.util.*;
  */
 public class BookMarkActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
+        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener, SearchView.OnQueryTextListener {
 
     /* 0 pull; 1 load more */
     private int REFRESH_TYPE = Constants.REFRESH_TYPE_PULL;
@@ -75,7 +75,7 @@ public class BookMarkActivity extends BaseActivity
     /* left menu */
     private NavigationView navigationView;
 
-    private BookMarkAdapter adapter;
+    private BookMarkAdapter mGridLayoutAdapter;
 
     private BookMarkListAdapter listAdapter;
 
@@ -120,6 +120,8 @@ public class BookMarkActivity extends BaseActivity
 //    protected RecyclerView.LayoutManager mLayoutManager;
 
     protected LayoutManagerType mCurrentLayoutManagerType;
+
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,7 +211,6 @@ public class BookMarkActivity extends BaseActivity
         });
 
         mSwipeRefreshLayout.setColorSchemeColors(Color.parseColor(Constants.DEFAULT_COLOR));
-        mSwipeRefreshLayout.setRefreshing(true);
         toolbar.setTitle("");// default null
         toolbar.setLogo(R.drawable.login_logo_text);
         setSupportActionBar(toolbar);
@@ -218,29 +219,13 @@ public class BookMarkActivity extends BaseActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
-        // 注释掉可更换 navigationIcon
-//        toggle.syncState();
+//        toggle.syncState(); /* 注释掉可更换 navigationIcon*/
 
         //如果可以确定每个item的高度是固定的，设置这个选项可以提高性能
         mRecyclerView.setHasFixedSize(true);
-
         setRecyclerViewLayoutManager(LayoutManagerType.GRID_LAYOUT_MANAGER);
-
-        mRecyclerView.addOnItemTouchListener(new OnItemClickListener() {
-            @Override
-            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Bookmark bookmark = requestData.get(position);
-                viewTheme = TextUtils.isEmpty(bookmark.viewTheme) ? Constants.DEFAULT_COLOR_VALUE : bookmark.viewTheme;
-                String url = bookmark.info.getUrl();
-//                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-//                builder.setToolbarColor(Color.parseColor("#FFB74D"));
-//                CustomTabsIntent customTabsIntent = builder.build();
-//                customTabsIntent.launchUrl(BookMarkActivity.this, Uri.parse(url));
-                CustomTabsUtils.showCustomTabsView(BookMarkActivity.this, url, viewTheme);
-            }
-        });
+        mRecyclerView.addOnItemTouchListener(new onBookmarkItemClickListener());
     }
-
 
     public void initListener() {
         setOnClick(mFloatingActionButton);
@@ -285,7 +270,7 @@ public class BookMarkActivity extends BaseActivity
                         .show();
                 break;
             case R.id.bt_log_out:
-                DialogUtil.showCommonDialog(this, null, "退出 Kiipu!", false, new DialogInterface.OnClickListener() {
+                DialogUtil.showCommonDialog(this, null, getString(R.string.exit_app), false, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         logOut();
@@ -299,6 +284,26 @@ public class BookMarkActivity extends BaseActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.navigation_drawer, menu);
+        MenuItem menuSearch = menu.findItem(R.id.action_search);
+        View view = MenuItemCompat.getActionView(menuSearch);
+        if(view != null){
+            mSearchView = (android.support.v7.widget.SearchView) view;
+            // 设置SearchView 的查询回调接口
+            mSearchView.setOnQueryTextListener(this);
+            mSearchView.setQueryHint(getString(R.string.search_bookmark));
+            /* search_src_text 是源码中 searchView 的 id*/
+            EditText content = (EditText) mSearchView.findViewById(R.id.search_src_text);
+            content.setTextColor(ContextCompat.getColor(this,R.color.white));
+            /* 设置光标颜色 */
+            try {
+                Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
+                f.setAccessible(true);
+                f.set(content, R.drawable.cursor_color);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         menuSetting = menu.findItem(R.id.action_setting);
         /*set toolbar setting menu default gone */
         menuSetting.setVisible(false);
@@ -317,9 +322,6 @@ public class BookMarkActivity extends BaseActivity
                 if (mCurrentLayoutManagerType == LayoutManagerType.LINEAR_LAYOUT_MANAGER) {
                     setRecyclerViewLayoutManager(LayoutManagerType.GRID_LAYOUT_MANAGER);
                 } else {
-                    REFRESH_TYPE = Constants.REFRESH_TYPE_PULL;
-                    mSwipeRefreshLayout.setRefreshing(true);
-                    getBookmarkList();
                     setRecyclerViewLayoutManager(LayoutManagerType.LINEAR_LAYOUT_MANAGER);
                 }
                 return true;
@@ -327,7 +329,7 @@ public class BookMarkActivity extends BaseActivity
                 modifyCollectionsName();
                 return true;
             case R.id.action_search:
-                ToastUtil.showToastShort("搜索书签");
+
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -339,7 +341,7 @@ public class BookMarkActivity extends BaseActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
 //        mProgress.setVisibility(View.VISIBLE);
-        adapter.setEnableLoadMore(false);
+        setEnableLoadMore(false);
         toolbar.setLogo(null);
         REFRESH_TYPE = Constants.REFRESH_TYPE_PULL;
         switch (item.getItemId()) {
@@ -373,7 +375,8 @@ public class BookMarkActivity extends BaseActivity
 
     @Override
     public void onRefresh() {
-        adapter.setEnableLoadMore(false);
+        mSwipeRefreshLayout.setRefreshing(true);
+        setEnableLoadMore(false);
         REFRESH_TYPE = Constants.REFRESH_TYPE_PULL; // PULL
         getBookmarkList();
     }
@@ -382,7 +385,7 @@ public class BookMarkActivity extends BaseActivity
     @Override
     public void onLoadMoreRequested() {
         mSwipeRefreshLayout.setRefreshing(false);
-        adapter.setEnableLoadMore(true);
+        setEnableLoadMore(true);
         REFRESH_TYPE = Constants.REFRESH_TYPE_LOAD_MORE; // LOAD MORE
         getBookmarkList();
     }
@@ -406,7 +409,7 @@ public class BookMarkActivity extends BaseActivity
                         requestData.clear();
                         requestData.addAll(mBookmarkList);
                         if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
-                            adapter.setNewData(mBookmarkList);
+                            mGridLayoutAdapter.setNewData(mBookmarkList);
                         }else{
                             listAdapter.setNewData(mBookmarkList);
                         }
@@ -415,10 +418,10 @@ public class BookMarkActivity extends BaseActivity
                         requestData.addAll(mBookmarkList);
 
                         if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
-                            adapter.addData(mBookmarkList);
-                            adapter.loadMoreComplete();// 数据加载完成
+                            mGridLayoutAdapter.addData(mBookmarkList);
+                            mGridLayoutAdapter.loadMoreComplete();// 数据加载完成
                             if (mBookmarkList.size() < Constants.PAGE_SIZE) {// 没有更多数据
-                                adapter.loadMoreEnd(false);
+                                mGridLayoutAdapter.loadMoreEnd(false);
                             }
                         }else{
                             listAdapter.addData(mBookmarkList);
@@ -441,11 +444,11 @@ public class BookMarkActivity extends BaseActivity
 //                    }
 
                     if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
-                        adapter.loadMoreComplete();
-                        adapter.loadMoreEnd(false);
+                        mGridLayoutAdapter.loadMoreComplete();
+                        mGridLayoutAdapter.loadMoreEnd(false);
                         if (REFRESH_TYPE == Constants.REFRESH_TYPE_PULL) {// when refresh
-                            adapter.setNewData(mBookmarkList);
-                            adapter.setEmptyView(mRequestErrorLayout);
+                            mGridLayoutAdapter.setNewData(mBookmarkList);
+                            mGridLayoutAdapter.setEmptyView(mRequestErrorLayout);
                         }
                     }else{
                         listAdapter.loadMoreComplete();
@@ -468,7 +471,7 @@ public class BookMarkActivity extends BaseActivity
             public void onFailure(Call<List<Bookmark>> call, Throwable t) {
                 mProgress.setVisibility(View.GONE);
                 mSwipeRefreshLayout.setRefreshing(false);
-                adapter.loadMoreFail();
+                loadMoreFail();
                 Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
                         .setDuration(2500)
                         .show();
@@ -570,7 +573,7 @@ public class BookMarkActivity extends BaseActivity
             @Override
             public void onResponse(Call<Bookmark> call, Response<Bookmark> response) {
                 requestData.remove(position);
-                adapter.remove(position);
+                removeAdapterData(position);
             }
 
             @Override
@@ -594,7 +597,7 @@ public class BookMarkActivity extends BaseActivity
             @Override
             public void onResponse(Call<Bookmark> call, Response<Bookmark> response) {
                 requestData.remove(dataPosition);
-                adapter.remove(dataPosition);
+                removeAdapterData(dataPosition);
                 Snackbar.make(mFloatingActionButton, "移动书签到 " + mCollectionList.get(collectionId).collectionName + " 成功", Snackbar.LENGTH_LONG)
                         .setDuration(2500)
                         .show();
@@ -678,7 +681,7 @@ public class BookMarkActivity extends BaseActivity
         });
 
         BookmarkDetailDialog bookmarkDetailDialog = new BookmarkDetailDialog();
-        bookmarkDetailDialog.show(getSupportFragmentManager(), "bookmark_detail", position,  adapter.getData());
+        bookmarkDetailDialog.show(getSupportFragmentManager(), "bookmark_detail", position,  getBookmarkDetailData());
 
     }
 
@@ -744,7 +747,7 @@ public class BookMarkActivity extends BaseActivity
                     int dataPosition = data.getIntExtra("dataPosition", 0);
                     String collectionName = data.getStringExtra("collectionName");
                     requestData.remove(dataPosition);
-                    adapter.remove(dataPosition);
+                    removeAdapterData(dataPosition);
                     Snackbar.make(mFloatingActionButton, "移动书签到 " + collectionName + " 成功", Snackbar.LENGTH_LONG)
                             .setDuration(2500)
                             .show();
@@ -787,7 +790,6 @@ public class BookMarkActivity extends BaseActivity
         startActivity(new Intent(this, LoginActivity.class));
     }
 
-
     private class OnAddMenuItemClickListener implements MenuItem.OnMenuItemClickListener {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -813,7 +815,7 @@ public class BookMarkActivity extends BaseActivity
             toolbar.setTitle(item.getTitle());
             collectionId = (item.getItemId() == R.id.nav_share) ? mCollectionList.get(0).collectionId : mCollectionList.get(item.getItemId()).collectionId;
             mSwipeRefreshLayout.setRefreshing(true);
-            adapter.setEnableLoadMore(false);
+            setEnableLoadMore(false);
             REFRESH_TYPE = Constants.REFRESH_TYPE_PULL;
             getBookmarkList();
             /*set toolbar setting menu visible */
@@ -920,6 +922,7 @@ public class BookMarkActivity extends BaseActivity
 
     /**
      * 设置布局样式
+     * @param layoutManagerType 布局类型
      */
     public void setRecyclerViewLayoutManager(LayoutManagerType layoutManagerType) {
         int scrollPosition = 0;
@@ -934,38 +937,33 @@ public class BookMarkActivity extends BaseActivity
                 mRecyclerView.setLayoutManager(new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false));
                 mCurrentLayoutManagerType = LayoutManagerType.GRID_LAYOUT_MANAGER;
 
-                if(adapter == null) {
-                    adapter = new BookMarkAdapter(mBookmarkList);
-                    adapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
-//                  adapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
-                    adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
-                    adapter.setOnItemChildClickListener(new OnItemChildClickListener());
-                    adapter.setOnItemLongClickListener(new onItemLongClick());
-                    adapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
-                }
+                mGridLayoutAdapter = new BookMarkAdapter(mBookmarkList);
+                mGridLayoutAdapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
+//              mGridLayoutAdapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
+                mGridLayoutAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+                mGridLayoutAdapter.setOnItemChildClickListener(new OnItemChildClickListener());
+                mGridLayoutAdapter.setOnItemLongClickListener(new onItemLongClick());
+                mGridLayoutAdapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
                 setRecyclerParams(6f,6F);
-                mRecyclerView.setAdapter(adapter);
+                mRecyclerView.setAdapter(mGridLayoutAdapter);
                 break;
             case LINEAR_LAYOUT_MANAGER:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                 mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-                if(listAdapter == null) {
-                    listAdapter = new BookMarkListAdapter(mBookmarkList);
-                    listAdapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
-                    listAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
-                    listAdapter.setOnItemChildClickListener(new OnItemChildClickListener());
-                    listAdapter.setOnItemLongClickListener(new onItemLongClick());
-                    listAdapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
-                }
+
+                listAdapter = new BookMarkListAdapter(mBookmarkList);
+                listAdapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
+                listAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+                listAdapter.setOnItemChildClickListener(new OnItemChildClickListener());
+                listAdapter.setOnItemLongClickListener(new onItemLongClick());
+                listAdapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
                 setRecyclerParams(0f,0F);
                 mRecyclerView.setAdapter(listAdapter);
-
                 break;
             default:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                 mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         }
-
         mRecyclerView.scrollToPosition(scrollPosition);
     }
 
@@ -987,6 +985,20 @@ public class BookMarkActivity extends BaseActivity
         // Save currently selected layout manager.
         savedInstanceState.putSerializable(Constants.KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    private class onBookmarkItemClickListener extends OnItemClickListener {
+        @Override
+        public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
+            Bookmark bookmark = requestData.get(position);
+            viewTheme = TextUtils.isEmpty(bookmark.viewTheme) ? Constants.DEFAULT_COLOR_VALUE : bookmark.viewTheme;
+            String url = bookmark.info.getUrl();
+//          CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+//          builder.setToolbarColor(Color.parseColor("#FFB74D"));
+//          CustomTabsIntent customTabsIntent = builder.build();
+//          customTabsIntent.launchUrl(BookMarkActivity.this, Uri.parse(url));
+            CustomTabsUtils.showCustomTabsView(BookMarkActivity.this, url, viewTheme);
+        }
     }
 
     /**
@@ -1013,6 +1025,62 @@ public class BookMarkActivity extends BaseActivity
             showBookmarkDetailDialog(position);
             return false;
         }
+    }
+
+    private void setEnableLoadMore(boolean enable){
+        if (mCurrentLayoutManagerType == LayoutManagerType.LINEAR_LAYOUT_MANAGER){
+            listAdapter.setEnableLoadMore(enable);
+        }else if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
+            mGridLayoutAdapter.setEnableLoadMore(enable);
+        }
+    }
+
+    private void loadMoreFail(){
+        if (mCurrentLayoutManagerType == LayoutManagerType.LINEAR_LAYOUT_MANAGER){
+            listAdapter.loadMoreFail();
+        }else if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
+            mGridLayoutAdapter.loadMoreFail();
+        }
+    }
+
+    private void removeAdapterData(int position){
+        if (mCurrentLayoutManagerType == LayoutManagerType.LINEAR_LAYOUT_MANAGER){
+            listAdapter.remove(position);
+        }else if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
+            mGridLayoutAdapter.remove(position);
+        }
+    }
+
+    private List<Bookmark> getBookmarkDetailData(){
+        if (mCurrentLayoutManagerType == LayoutManagerType.LINEAR_LAYOUT_MANAGER){
+            listAdapter.getData();
+        }else if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
+            mGridLayoutAdapter.getData();
+        }
+        return mGridLayoutAdapter.getData();
+    }
+
+    /**
+     * 当用户在输入法中点击搜索按钮时,或者输入回车时,调用这个方法，发起实际的搜索功能
+     * @param query 输入的字段
+     * @return
+     */
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Toast.makeText(BookMarkActivity.this, "查询" + query, Toast.LENGTH_SHORT).show();
+        mSearchView.clearFocus();
+        return false;
+    }
+
+    /**
+     * 每一次输入字符，都会调用这个方法，实现搜索的联想功能
+     * @param newText
+     * @return
+     */
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Toast.makeText(BookMarkActivity.this, "" + newText, Toast.LENGTH_SHORT).show();
+        return false;
     }
 
     @Override
