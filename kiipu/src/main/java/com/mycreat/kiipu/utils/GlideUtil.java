@@ -53,9 +53,10 @@ public class GlideUtil {
         if (isFade) {
             Glide.with(mContext)
                     .load(imgUrl)
+                    .asBitmap()
                     .placeholder(R.drawable.default_item_cover) // 占位图
                     .error(R.drawable.default_item_cover)
-                    .crossFade(1000)//默认渐入渐出动画执行时间
+//                    .crossFade(1000)//默认渐入渐出动画执行时间
                     .priority(Priority.NORMAL) //下载的优先级
                     //all:缓存源资源和转换后的资源 none:不作任何磁盘缓存
                     //source:缓存源资源   result：缓存转换后的资源
@@ -67,6 +68,7 @@ public class GlideUtil {
         } else {
             Glide.with(mContext)
                     .load(imgUrl)
+                    .asBitmap()
                     .placeholder(R.drawable.default_item_cover) // 占位图
                     .error(R.drawable.default_item_cover)
                     .priority(Priority.NORMAL) //下载的优先级
@@ -82,9 +84,10 @@ public class GlideUtil {
         if (isFade) {
             Glide.with(mContext)
                     .load(imgUrl)
+                    .asBitmap()
                     .placeholder(defaultImg) // 占位图
                     .error(defaultImg)
-                    .crossFade()
+//                    .crossFade()
                     .priority(Priority.NORMAL) //下载的优先级
                     //all:缓存源资源和转换后的资源 none:不作任何磁盘缓存
                     //source:缓存源资源   result：缓存转换后的资源

@@ -30,7 +30,7 @@ android {
         // Enabling multidex support.
         multiDexEnabled true
         versionCode 1
-        versionName "1.0.2.6"
+        versionName "1.0.2.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -40,25 +40,35 @@ android {
     }
 
     repositories {
-        maven { url "https://jitpack.io" }
+        mavenCentral()
     }
 
     buildTypes {
         release {
             // 在这里如果为 true，开启了混淆，但是未加入相应的混淆规则，所以在项目编译时出错了
             minifyEnabled false
+            debuggable true
+            signingConfig signingConfigs.debug
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         debug {
             minifyEnabled false
+            debuggable true
             signingConfig signingConfigs.debug
             proguardFiles 'proguard-rules.pro'
         }
     }
     // 签名文件相关配置
     signingConfigs {
+        release {
+            storeFile file('debug.keystore')
+            storePassword "kiipu.com"
+            keyAlias "kiipu"
+            keyPassword "kiipu.com"
+        }
+
         debug {
             storeFile file('debug.keystore')
             storePassword "kiipu.com"
@@ -102,7 +112,7 @@ dependencies {
 //    compile 'com.squareup.retrofit2:converter-scalars:2.3.0'
     // 配置方法数超过 64K 的应用（minSdkVersion <= 20 需要添加依赖 https://developer.android.com/studio/build/multidex.html）
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.15'
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.28'
     // Chrome Custom Tabs
     compile 'com.android.support:customtabs:25.3.1'
     // FloatingActionButton
@@ -113,6 +123,6 @@ dependencies {
     compile 'com.samskivert:jmustache:1.13'
     compile project(path: ':kiipu_db')
 }
-repositories {
-    mavenCentral()
-}
+//repositories {
+//    mavenCentral()
+//}

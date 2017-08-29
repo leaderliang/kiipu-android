@@ -34,13 +34,17 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
         addItemType(Constants.BOOKMARK_TYPE_IMG, R.layout.item_bookmark_default);
         addItemType(Constants.BOOKMARK_TYPE_TEXT, R.layout.item_bookmark_default);
         addItemType(Constants.BOOKMARK_TYPE_WEB, R.layout.item_bookmark_web);
+
+        setDefaultViewTypeLayout(R.layout.item_bookmark_linear_layut_manager);
     }
+
+
 
     @Override
     protected void convert(com.mycreat.kiipu.utils.BaseViewHolder holder, Bookmark bookmark) {
         final BookmarksInfo mBookmarksInfo = bookmark.info;
-        if (getmCurrentLayoutManagerType() != null) {
-            if (getmCurrentLayoutManagerType().equals(LayoutManagerType.GRID_LAYOUT_MANAGER)) {
+        if (getCurrentLayoutManagerType() != null) {
+            if (getCurrentLayoutManagerType().equals(LayoutManagerType.GRID_LAYOUT_MANAGER)) {
                 LeftIvTextView mLeftIvTextView = holder.getView(R.id.card_view_title);
                 mLeftIvTextView.loadImage(mBookmarksInfo.getIcon());
                 mLeftIvTextView.setText(mBookmarksInfo.getTitle() + "");
@@ -92,7 +96,7 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
         this.mCurrentLayoutManagerType = mCurrentLayoutManagerType;
     }
 
-    public LayoutManagerType getmCurrentLayoutManagerType() {
+    public LayoutManagerType getCurrentLayoutManagerType() {
         return mCurrentLayoutManagerType;
     }
 
