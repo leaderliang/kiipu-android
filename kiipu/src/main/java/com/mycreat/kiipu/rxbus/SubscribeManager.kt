@@ -58,7 +58,7 @@ class SubscribeManager {
      * @param subscribeOwner 订阅者宿主，可包含多个订阅者
      */
     fun register(subscribeOwner:Any){
-        var subMethodList:List<SubscribeMethod>? = null
+        var subMethodList:List<SubscribeMethod>?
         if(classSubMethodMap.containsKey(subscribeOwner.javaClass)){
             subMethodList = classSubMethodMap[subscribeOwner.javaClass]
         }else{
@@ -139,6 +139,8 @@ class SubscribeManager {
                 mSub = mSub.subscribeOn(Schedulers.io()).observeOn(Schedulers.newThread())
             }
 
+            else -> {
+            }
         }
 
         return mSub
@@ -148,7 +150,7 @@ class SubscribeManager {
      * 清空指定对象的注册信息
      */
     fun unRegister(subscribeOwner:Any){
-        var subMethodList:List<SubscribeMethod>? = null
+        var subMethodList:List<SubscribeMethod>?
         if(classSubMethodMap.containsKey(subscribeOwner.javaClass)){
             subMethodList = classSubMethodMap[subscribeOwner.javaClass]
         }else{

@@ -104,7 +104,7 @@ class RxBus {
     }
 
     fun register(subscribeOwner:Any){
-        val subMethods = subscribeManager.cacheSubscribeMethod(subscribeOwner)
+        subscribeManager.cacheSubscribeMethod(subscribeOwner)
         subscribeManager.register(subscribeOwner)
     }
 

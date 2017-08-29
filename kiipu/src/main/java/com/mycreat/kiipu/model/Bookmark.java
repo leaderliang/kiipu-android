@@ -4,6 +4,8 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Map;
+
 /**
  * Created by leaderliang on 2017/3/31.
  * email: leaderliang.dev@gmail.com
@@ -43,7 +45,7 @@ public class Bookmark implements MultiItemEntity {
     /*卡片详情模板相关*/
     @Expose
     @SerializedName("ext")
-    public BookmarkExt ext;
+    public Map<String, Object> ext;
     /**
      * template 标明了该卡片依赖的模板文件名
      * */
