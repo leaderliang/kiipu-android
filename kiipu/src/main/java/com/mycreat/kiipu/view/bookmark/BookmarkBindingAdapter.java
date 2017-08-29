@@ -13,6 +13,7 @@ import com.mycreat.kiipu.model.Bookmark;
 import java.util.List;
 
 /**
+ * 书签特定binding
  * Created by zhanghaihai on 2017/7/27.
  */
 public class BookmarkBindingAdapter {

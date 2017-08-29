@@ -11,6 +11,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.mycreat.kiipu.view.RippleRelativeLayout;
 
 /**
+ * 常用基本binding
  * Created by zhanghaihai on 2017/7/27.
  */
 public class BaseDataBindingAdapter {

@@ -4,27 +4,22 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.*;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.mycreat.kiipu.R;
-import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.databinding.BookmarkDetailDialogBinding;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarkDialog;
-import com.mycreat.kiipu.utils.BitmapUtil;
-import com.mycreat.kiipu.utils.ColorUtil;
+import com.mycreat.kiipu.rxbus.RxBus;
+import com.mycreat.kiipu.rxbus.RxBusSubscribe;
+import com.mycreat.kiipu.rxbus.ThreadMode;
 import com.mycreat.kiipu.utils.ViewUtils;
 import com.mycreat.kiipu.utils.bind.BindView;
 import org.jetbrains.annotations.NotNull;
@@ -41,16 +36,21 @@ import java.util.List;
 public class BookmarkDetailDialog extends DialogFragment{
     @BindView(R.id.recyclerView)
     private RecyclerView recyclerView;
+
     private int currentPosition;
     private List<Bookmark> _bookmarks = Collections.synchronizedList(new ArrayList<Bookmark>());
     private boolean ifCloseWhenTouchBlank = true;
     private OnCancelListener onCancelListener;
     private BookmarkDetailDialogBinding binding;
     private BookmarkDialog bookmarkDialog;
+
+    public BookmarkDetailDialog(){
+        bookmarkDialog = new BookmarkDialog();
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        bookmarkDialog = new BookmarkDialog();
 
         //无title样式
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -60,17 +60,15 @@ public class BookmarkDetailDialog extends DialogFragment{
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         ViewUtils.bindViews(view, this);
-        bookmarkDialog.setAdapter(new BookmarkDetailAdapter(getActivity(), _bookmarks));
-        bookmarkDialog.setBookmarks(_bookmarks);
+        bookmarkDialog.setAdapter(new BookmarkDetailAdapter(getActivity()));
         bookmarkDialog.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         bookmarkDialog.setCurrentPosition(currentPosition);
 
         binding.setBookmarkDialog(bookmarkDialog);
         binding.executePendingBindings();
-        PaperLikeRecyclerViewHandler recyclerViewTouchListener = new PaperLikeRecyclerViewHandler(recyclerView, view, bookmarkDialog, binding);
-        recyclerView.setOnTouchListener(recyclerViewTouchListener);
-        recyclerView.addOnScrollListener(new RecyclerScrollListener(recyclerView, bookmarkDialog.getAdapter()));
-        recyclerView.scrollToPosition(bookmarkDialog.getCurrentPosition());
+        PaperLikeRecyclerViewHandler recyclerViewTouchListener = new PaperLikeRecyclerViewHandler();
+        recyclerViewTouchListener.setUpRecycleView(recyclerView, binding);
+        RxBus.Companion.getDefault().register(this);
     }
 
     @Nullable
@@ -83,6 +81,7 @@ public class BookmarkDetailDialog extends DialogFragment{
     public void show(FragmentManager manager, String tag, int firstlyShowingPosition, List<Bookmark> bookmarks) {
         _bookmarks.clear();
         _bookmarks.addAll(bookmarks);
+        bookmarkDialog.setBookmarks(bookmarks);
         currentPosition = firstlyShowingPosition;
         super.show(manager, tag);
     }
@@ -126,5 +125,22 @@ public class BookmarkDetailDialog extends DialogFragment{
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        RxBus.Companion.getDefault().unregister(this);
+    }
+
+    @RxBusSubscribe(mode = ThreadMode.MAIN)
+    public void onEventDialogEvent(DialogEvent  event){
+        if(event.action == 0){
+            dismiss();
+        }
+    }
+
+    static class DialogEvent{
+        int action = 0;
     }
 }
