@@ -42,6 +42,10 @@ import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.*;
 import com.mycreat.kiipu.model.Collections;
+import com.mycreat.kiipu.model.rxbus.LoadMoreEvent;
+import com.mycreat.kiipu.rxbus.RxBus;
+import com.mycreat.kiipu.rxbus.RxBusSubscribe;
+import com.mycreat.kiipu.rxbus.ThreadMode;
 import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.bookmark.BookmarkDetailDialog;
 import com.mycreat.kiipu.view.bookmark.BookmarkTemplateWebVIew;
@@ -135,6 +139,7 @@ public class BookMarkActivity extends BaseActivity
         initViews();
         initData();
         initListener();
+        RxBus.Companion.getDefault().register(this);
 
     }
 
@@ -399,6 +404,8 @@ public class BookMarkActivity extends BaseActivity
                         mSwipeRefreshLayout.setRefreshing(false);
                     } else if (REFRESH_TYPE == Constants.REFRESH_TYPE_LOAD_MORE) {// load more
                         requestData.addAll(mBookmarkList);
+                        /////// Added by zhanghaihai 通知detail dialog 加载更多完成
+                        new LoadMoreEvent(1, mBookmarkList).post();
 
                         if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
                             mGridLayoutAdapter.addData(mBookmarkList);
@@ -1092,5 +1099,18 @@ public class BookMarkActivity extends BaseActivity
         }
     }
 
+    @RxBusSubscribe(mode = ThreadMode.MAIN)
+    public void onEventLoadMore(LoadMoreEvent event){
+        switch (event.action){
+            case 0:
+                onLoadMoreRequested();
+                break;
+        }
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RxBus.Companion.getDefault().unregister(this);
+    }
 }
