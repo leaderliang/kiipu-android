@@ -55,6 +55,8 @@ public class Constants {
 
     public static final int SPAN_COUNT = 2;
 
+    public static final int MAX_PROGRESS = 100;
+
     public static final String DEFAULT_COLOR_VALUE = "FFB74D";
 
     public static final String DEFAULT_COLOR = "#FFB74D";

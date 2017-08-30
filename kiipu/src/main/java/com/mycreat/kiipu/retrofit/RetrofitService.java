@@ -1,6 +1,7 @@
 package com.mycreat.kiipu.retrofit;
 
 import com.mycreat.kiipu.model.*;
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -30,6 +31,13 @@ public interface RetrofitService {
                                          @Query("count") Integer number,
                                          @Query("since_id") String id,
                                          @Query("collection_id") String collectionId);
+
+    @GET(RetrofitApi.BOOK_MARKS_LIST)
+    Observable<List<Bookmark>> getBookmarkLists(@Header("Authorization") String value,
+                                               @Query("count") Integer number,
+                                               @Query("since_id") String id,
+                                               @Query("collection_id") String collectionId);
+
 
     @DELETE(RetrofitApi.DELETE_BOOK_MARKS + "{id}")
     Call<Bookmark> deleteBookmark(@Header("Authorization") String value,
