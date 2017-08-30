@@ -330,8 +330,30 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 ```
 ### ExecutorCallAdapterFactory 
 
+### Snackbar
+```
+ Snackbar.make(mFloatingActionButton, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DialogUtil.showCommonDialog(BookMarkActivity.this, "Hello Dialog", "Is this material design?",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
 
+                                            }
+                                        }, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
 
+                                            }
+                                        });
+                            }
+                        })
+                        .setActionTextColor(Color.parseColor("#0097A7"))
+                        .setDuration(4000)
+                        .show();
+```
 
 
 

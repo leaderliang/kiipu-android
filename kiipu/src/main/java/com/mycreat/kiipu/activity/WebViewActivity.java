@@ -7,8 +7,10 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.*;
+import android.widget.ProgressBar;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.BaseActivity;
+import com.mycreat.kiipu.utils.Constants;
 
 /**
  * This Activity is used as a fallback when there is no browser installed that supports
@@ -19,6 +21,8 @@ public class WebViewActivity extends BaseActivity {
     public static final String EXTRA_URL = "extra.url";
 
     private WebView webView;
+
+    private ProgressBar progressbar;
 
     @Override
     protected void onViewClick(View v) {
@@ -32,7 +36,9 @@ public class WebViewActivity extends BaseActivity {
         setBackClickListener(new BackClickListener());
         mFloatingActionButton.hide();
         String url = getIntent().getStringExtra(EXTRA_URL);
-        webView = (WebView) findViewById(R.id.webview);
+        webView = (WebView) findViewById(R.id.webView);
+        progressbar = (ProgressBar) findViewById(R.id.progressbar);
+
         webView.setWebViewClient(new MyWebViewClient());
         webView.setWebChromeClient(new MyWebChromeClient());
 
@@ -43,9 +49,9 @@ public class WebViewActivity extends BaseActivity {
         setting.setJavaScriptEnabled(true);
         setting.setTextSize(WebSettings.TextSize.NORMAL);
         CookieManager.getInstance().setAcceptCookie(true);
-        if(!TextUtils.isEmpty(url)){
+        if (!TextUtils.isEmpty(url)) {
             webView.loadUrl(url);
-        }else{
+        } else {
             setBaseTitle("页面地址异常");
         }
 
@@ -102,7 +108,12 @@ public class WebViewActivity extends BaseActivity {
 
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
-
+            if (newProgress == Constants.MAX_PROGRESS) {
+                progressbar.setVisibility(View.GONE);
+            } else {
+                progressbar.setVisibility(View.VISIBLE);
+                progressbar.setProgress(newProgress);
+            }
         }
     }
 

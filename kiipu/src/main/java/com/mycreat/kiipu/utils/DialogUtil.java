@@ -4,13 +4,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.ListPopupWindow;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.*;
 import com.mycreat.kiipu.R;
 
 /**
@@ -27,6 +28,7 @@ public class DialogUtil {
     public static void showEditDialog(final Context context,
                                       TextWatcher textWatcher,
                                       ButtonCallBack callBack,
+                                      DialogInterface.OnClickListener NeutralButtonClick,
                                       DialogInterface.OnClickListener positiveButtonClick,
                                       ArrayMap<Object, Object> arrayMap) {
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -36,6 +38,9 @@ public class DialogUtil {
         editText.addTextChangedListener(textWatcher);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle((String) arrayMap.get("title"));
+        if(NeutralButtonClick != null) {
+            builder.setNeutralButton("删除", NeutralButtonClick);
+        }
         builder.setPositiveButton("确定", positiveButtonClick);
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
@@ -48,7 +53,7 @@ public class DialogUtil {
         String hint = (String) arrayMap.get("hint");
         String content = (String) arrayMap.get("content");
         editText.setHint(hint);
-        editText.setText(content+"");
+        editText.setText(content);
         editText.setSelection(content.length());
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -154,6 +159,36 @@ public class DialogUtil {
                 .setPositiveButton("确定", positiveButtonClick)
                 .setNegativeButton("取消", negativeButtonClick);
         builder.show();
+    }
+
+
+    public static ListPopupWindow showPopupWindow(Context mContext, View view, AdapterView.OnItemClickListener listener) {
+        final ListPopupWindow listPopupWindow = new ListPopupWindow(mContext);
+
+        // ListView适配器
+        listPopupWindow.setAdapter(
+                new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, Constants.ITEMS));
+        // 选择item的监听事件
+        listPopupWindow.setOnItemClickListener(listener);
+
+        // 对话框的宽高
+        listPopupWindow.setWidth(450);
+        listPopupWindow.setHeight(450);
+
+        // ListPopupWindow 相对的View
+        listPopupWindow.setAnchorView(view);
+
+        // ListPopupWindow 相对按钮横向 和纵向 的距离
+        listPopupWindow.setHorizontalOffset(50);
+        listPopupWindow.setVerticalOffset(1);
+
+        //  Set whether this window should be modal when shown.
+        // If a popup window is modal, it will receive all touch and key input. If the user touches outside the popup window's content area the popup window will be dismissed.
+        // modal boolean: true if the popup window should be modal, false otherwise.
+        listPopupWindow.setModal(false);
+
+        listPopupWindow.show();
+        return listPopupWindow;
     }
 
 }

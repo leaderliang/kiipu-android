@@ -16,4 +16,10 @@
     <string name="modify_collection_success">书签夹名称修改成功啦~</string>
     <string name="exit_app">退出 Kiipu!</string>
     <string name="search_bookmark">搜索书签...</string>
+    <string name="save_to_kiipu">保存到 kiipu</string>
+    <string name="double_back_click_info">再按一次退出程序并清空登录信息</string>
+    <string name="success">" 成功"</string>
+    <string name="move_bookmark_to">"移动书签到 "</string>
+    <string name="add_bookmark">添加书签</string>
+    <string name="collection_box">收藏夹</string>
 </resources>
