@@ -11,6 +11,14 @@ public class Constants {
 
     public static final int REFRESH_TYPE_LOAD_MORE = 0x001;
 
+    public static final int POPUP_SHOW_DETAIL = 0X000;
+
+    public static final int POPUP_MOVE_TO = 0X001;
+
+    public static final int POPUP_SHARE = 0X002;
+
+    public static final int POPUP_DELETE = 0X003;
+
     public static final int BOOKMARK_TYPE_IMG = 1;
 
     public static final int BOOKMARK_TYPE_TEXT = 2;
@@ -37,7 +45,7 @@ public class Constants {
 
     public static final String INBOX = "-1";
 
-    public static final String ITEMS[] = { "查看详情", "移动到", "删除", "分享"};
+    public static final String ITEMS[] = { "查看详情", "移动到", "删除"};
 
     public static final String ACCESS_TOKEN = "accessToken";
 

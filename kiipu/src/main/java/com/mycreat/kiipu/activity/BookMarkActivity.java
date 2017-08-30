@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.*;
+import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -122,6 +123,8 @@ public class BookMarkActivity extends BaseActivity
     protected LayoutManagerType mCurrentLayoutManagerType;
 
     private SearchView mSearchView;
+
+    private ListPopupWindow mListPopupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,27 +250,7 @@ public class BookMarkActivity extends BaseActivity
     public void onViewClick(View v) {
         switch (v.getId()) {
             case R.id.floating_action_bt:
-                Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                DialogUtil.showCommonDialog(BookMarkActivity.this, "Hello Dialog", "Is this material design?",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-
-                                            }
-                                        }, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-
-                                            }
-                                        });
-                            }
-                        })
-                        .setActionTextColor(Color.parseColor("#0097A7"))
-                        .setDuration(4000)
-                        .show();
+                startActivity(new Intent(this, addBookmarkActivity.class));
                 break;
             case R.id.bt_log_out:
                 DialogUtil.showCommonDialog(this, null, getString(R.string.exit_app), false, new DialogInterface.OnClickListener() {
@@ -598,7 +581,7 @@ public class BookMarkActivity extends BaseActivity
             public void onResponse(Call<Bookmark> call, Response<Bookmark> response) {
                 requestData.remove(dataPosition);
                 removeAdapterData(dataPosition);
-                Snackbar.make(mFloatingActionButton, "移动书签到 " + mCollectionList.get(collectionId).collectionName + " 成功", Snackbar.LENGTH_LONG)
+                Snackbar.make(mFloatingActionButton, getString(R.string.move_bookmark_to) + mCollectionList.get(collectionId).collectionName + getString(R.string.success), Snackbar.LENGTH_LONG)
                         .setDuration(2500)
                         .show();
             }
@@ -621,7 +604,7 @@ public class BookMarkActivity extends BaseActivity
      * navigationView.setItemIconTintList(resources.getColorStateList(R.drawable.nav_menu_text_color, null)); 设置本地资源图片
      */
     private void addLeftMenu(List<Collections> mCollectionList, final boolean isRequestMenu) {
-        navigationView.getMenu().findItem(R.id.item_collection).setTitle("收藏夹");
+        navigationView.getMenu().findItem(R.id.item_collection).setTitle(getString(R.string.collection_box));
         for (int i = 1; i < mCollectionList.size(); i++) {
             final String firstName = mCollectionList.get(0).collectionName;
             final String collectionName = mCollectionList.get(i).collectionName;
@@ -653,11 +636,11 @@ public class BookMarkActivity extends BaseActivity
         /* 添加书签按钮事件操作*/
         MenuItem lastMenu = navigationView.getMenu().findItem(mCollectionList.size());
         if(lastMenu == null){// 因为修改的书签夹时导致的
-            navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), "添加书签")
+            navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), getString(R.string.add_bookmark))
                     .setIcon(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_add))
                     .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
-        }else if(lastMenu != null && !navigationView.getMenu().findItem(mCollectionList.size()).getTitle().equals("添加书签")) {
-            navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), "添加书签")
+        }else if(lastMenu != null && !navigationView.getMenu().findItem(mCollectionList.size()).getTitle().equals(getString(R.string.add_bookmark))) {
+            navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), getString(R.string.add_bookmark))
                     .setIcon(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_add))
                     .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
         }
@@ -681,15 +664,25 @@ public class BookMarkActivity extends BaseActivity
     }
 
 
-    private void showListPopupWindow(final int dataPosition) {
-
-        BottomSheet sheet = new BottomSheet.Builder(this).sheet(R.menu.more_info).listener(new DialogInterface.OnClickListener() {
+    private void showListPopupWindow(View view, final int dataPosition) {
+        mListPopupWindow = DialogUtil.showPopupWindow(BookMarkActivity.this, view, new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                BookMarkActivity.this.onMoreInfoItemClick(dataPosition, which);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mListPopupWindow.dismiss();
+                switch (position) {
+                    case Constants.POPUP_SHOW_DETAIL:
+                        showBookmarkDetailDialog(dataPosition);
+                        break;
+                    case Constants.POPUP_MOVE_TO:
+                        showMoveBookmarkDialog(dataPosition);
+                        break;
+                    case Constants.POPUP_SHARE:
+                    case Constants.POPUP_DELETE:
+                        requestDeleteItem(dataPosition);
+                        break;
+                }
             }
-        }).build();
-        sheet.show();
+        });
     }
 
     /**
@@ -743,7 +736,7 @@ public class BookMarkActivity extends BaseActivity
                     String collectionName = data.getStringExtra("collectionName");
                     requestData.remove(dataPosition);
                     removeAdapterData(dataPosition);
-                    Snackbar.make(mFloatingActionButton, "移动书签到 " + collectionName + " 成功", Snackbar.LENGTH_LONG)
+                    Snackbar.make(mFloatingActionButton, getString(R.string.move_bookmark_to) + collectionName + getString(R.string.success), Snackbar.LENGTH_LONG)
                             .setDuration(2500)
                             .show();
                 }
@@ -760,7 +753,7 @@ public class BookMarkActivity extends BaseActivity
                 return false;
             }
             if ((System.currentTimeMillis() - nowTime) > 2000) {
-                Toast.makeText(this, "再按一次退出程序并清空登录信息", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.double_back_click_info), Toast.LENGTH_SHORT).show();
                 nowTime = System.currentTimeMillis();
             } else {
                 logOutApp();
@@ -1012,7 +1005,7 @@ public class BookMarkActivity extends BaseActivity
             switch (view.getId()) {
                 case R.id.img_more_info:
                 case R.id.ll_more_info:
-                    showListPopupWindow(position);
+                    showListPopupWindow(view, position);
                     break;
 
             }
@@ -1098,5 +1091,6 @@ public class BookMarkActivity extends BaseActivity
 //            ToastUtil.showToastShort(this, "粘贴板有数据哦~");
         }
     }
+
 
 }
