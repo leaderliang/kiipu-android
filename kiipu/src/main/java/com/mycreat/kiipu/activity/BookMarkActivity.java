@@ -708,7 +708,7 @@ public class BookMarkActivity extends BaseActivity
     }
 
     private void showShareDialog(int position) {
-        BottomSheet sheet = getShareActions(requestData.get(position).info.getUrl()).title("分享到：").limit(R.integer.no_limit).build();
+        BottomSheet sheet = getShareActions(requestData.get(position).info.url).title("分享到：").limit(R.integer.no_limit).build();
         sheet.show();
     }
 
@@ -986,7 +986,7 @@ public class BookMarkActivity extends BaseActivity
         public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
             Bookmark bookmark = requestData.get(position);
             viewTheme = TextUtils.isEmpty(bookmark.viewTheme) ? Constants.DEFAULT_COLOR_VALUE : bookmark.viewTheme;
-            String url = bookmark.info.getUrl();
+            String url = bookmark.info.url;
 //          CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
 //          builder.setToolbarColor(Color.parseColor("#FFB74D"));
 //          CustomTabsIntent customTabsIntent = builder.build();

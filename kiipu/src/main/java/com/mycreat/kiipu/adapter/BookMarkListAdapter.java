@@ -9,6 +9,7 @@ import com.mycreat.kiipu.model.LayoutManagerType;
 import com.mycreat.kiipu.utils.BaseViewHolder;
 import com.mycreat.kiipu.utils.GlideUtil;
 import com.mycreat.kiipu.utils.ImageCallback;
+import com.mycreat.kiipu.utils.StringUtils;
 
 import java.util.List;
 
@@ -34,10 +35,10 @@ public class BookMarkListAdapter extends BaseQuickAdapter<Bookmark, BaseViewHold
                 holder.setImage(R.id.iv_icon, new ImageCallback() {
                     @Override
                     public void callback(ImageView imageView) {
-                        GlideUtil.getInstance().loadImage(imageView, mBookmarksInfo.getIcon(), R.drawable.default_logo_small,true);
+                        GlideUtil.getInstance().loadImage(imageView, mBookmarksInfo.icon, R.drawable.default_logo_small,true);
                     }
                 });
-                holder.setText(R.id.tv_title, mBookmarksInfo.getTitle() + "");
+                holder.setText(R.id.tv_title, StringUtils.dealWithEmptyStr(mBookmarksInfo.title));
                 holder.addOnClickListener(R.id.ll_more_info);
             }
         }
