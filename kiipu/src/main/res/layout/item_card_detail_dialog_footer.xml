@@ -2,25 +2,25 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
 >
     <data class="BookmarkDetailFooterBinding">
-        <variable name="pbVisibility" type="int" />
-        <variable name="msgVisibility" type="int" />
-        <variable name="msg" type="String"/>
+        <variable name="endItem" type="com.mycreat.kiipu.model.BookmarkDialogEndItem" />
     </data>
     <RelativeLayout
                   android:orientation="vertical"
                   android:layout_width="match_parent"
-                  android:layout_height="match_parent">
+                  android:layout_height="match_parent"
+    >
         <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:visibility="@{pbVisibility}"
+                android:visibility="@{endItem.pbVisibility}"
+                style="?android:attr/progressBarStyleInverse"
         />
 
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:visibility="@{msgVisibility}"
-                  android:text="@{msg}"
+                  android:visibility="@{endItem.msgVisibility}"
+                  android:text="@{endItem.msg}"
         />
     </RelativeLayout>
 </layout>

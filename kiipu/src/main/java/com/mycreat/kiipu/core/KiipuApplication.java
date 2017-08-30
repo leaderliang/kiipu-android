@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import com.mycreat.kiipu.retrofit.RetrofitClient;
 import com.mycreat.kiipu.retrofit.RetrofitService;
 import com.mycreat.kiipu.service.CommonService;
+import com.mycreat.kiipu.utils.LogUtil;
 import com.umeng.socialize.Config;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.common.QueuedWork;
@@ -19,7 +20,7 @@ import com.umeng.socialize.common.QueuedWork;
  * email: leaderliang.dev@gmail.com
  * TODO
  */
-public class KiipuApplication extends MultiDexApplication {
+public class KiipuApplication extends MultiDexApplication implements Thread.UncaughtExceptionHandler{
 
     /*各个平台的配置，建议放在全局Application或者程序入口*/
     {
@@ -46,6 +47,7 @@ public class KiipuApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         initBase();
+        Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
     private void initBase() {
@@ -83,5 +85,15 @@ public class KiipuApplication extends MultiDexApplication {
         }
     }
 
+    @Override
+    public void uncaughtException(Thread thread, Throwable ex) {
+        ex.printStackTrace();
+        StackTraceElement[] sts = thread.getStackTrace().clone();
+        StringBuilder sb = new StringBuilder();
+        for(StackTraceElement st:sts ){
+            sb.append(st.getClass().getPackage()).append(".").append(st.getClassName()).append(">").append(st.getMethodName()).append(":").append(st.getLineNumber());
+        }
+        LogUtil.e(sb.append("\n").append(ex.getMessage()).toString());
+    }
 
 }

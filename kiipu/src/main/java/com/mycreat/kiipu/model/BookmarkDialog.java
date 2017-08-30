@@ -9,6 +9,7 @@ import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.view.bookmark.BookmarkDetailAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ public class BookmarkDialog {
 
     private BookmarkDetailAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private List<Bookmark> bookmarks;
+    public ObservableField<List<Bookmark>> bookmarks = new ObservableField<>();
     private int currentPosition;
 
     //动态变化的
@@ -41,22 +42,14 @@ public class BookmarkDialog {
         this.layoutManager = layoutManager;
     }
 
-    public List<Bookmark> getBookmarks() {
-        return bookmarks;
-    }
-
-    public void setBookmarks(List<Bookmark> bookmarks) {
-        this.bookmarks = bookmarks;
-    }
-
     public int getCurrentPosition() {
         return currentPosition;
     }
 
     public void setCurrentPosition(int currentPosition) {
         this.currentPosition = currentPosition;
-        if(currentPosition > 0 && currentPosition < bookmarks.size())
-            currentBookmark.set(bookmarks.get(currentPosition));
+        if(currentPosition > 0 && currentPosition < bookmarks.get().size())
+            currentBookmark.set(bookmarks.get().get(currentPosition));
     }
 
 

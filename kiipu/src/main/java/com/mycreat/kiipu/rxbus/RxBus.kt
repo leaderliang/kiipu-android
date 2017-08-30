@@ -4,12 +4,9 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.ConcurrentHashMap
 /**
- * Created by zhanghaihai on 2017/7/2.
- */
-/**
  * PublishSubject: 只会把在订阅发生的时间点之后来自原始Observable的数据发射给观察者
  *
- *
+ * Modified by zhanghaihai on 2017/7/2.
  * Created by YoKeyword on 2015/6/17.
  */
 class RxBus {

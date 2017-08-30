@@ -25,10 +25,12 @@ public class BookmarkBindingAdapter {
         view.refresh(bookmark);
     }
 
-    @BindingAdapter(value = {"bookmarks", "adapter"})
-    public static void setBookmarks(RecyclerView view, List<Bookmark> bookmarks, BookmarkDetailAdapter adapter){
-        view.setAdapter(adapter);
-        adapter.addBookMarks(bookmarks);
+    @BindingAdapter(value = {"addBookmarks", "adapter"})
+    public static void setBookmarks(RecyclerView view, List<Bookmark> addBookmarks, BookmarkDetailAdapter adapter){
+        if(view.getAdapter() == null || view.getAdapter() != adapter){
+            view.setAdapter(adapter);
+        }
+        adapter.addBookMarks(addBookmarks);
         adapter.notifyDataSetChanged();
     }
 

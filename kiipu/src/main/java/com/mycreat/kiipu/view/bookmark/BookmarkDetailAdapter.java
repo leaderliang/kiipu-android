@@ -2,6 +2,7 @@ package com.mycreat.kiipu.view.bookmark;
 
 import android.app.Activity;
 import android.databinding.DataBindingUtil;
+import android.databinding.ObservableField;
 import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +19,9 @@ import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.databinding.BookmarkDetailBinding;
 import com.mycreat.kiipu.databinding.BookmarkDetailFooterBinding;
 import com.mycreat.kiipu.model.Bookmark;
+import com.mycreat.kiipu.model.BookmarkDialogEndItem;
 import com.mycreat.kiipu.model.BookmarkDialogItem;
+import com.mycreat.kiipu.model.rxbus.LoadMoreEvent;
 import com.mycreat.kiipu.rxbus.RxBus;
 import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.utils.bind.BindView;
@@ -37,14 +40,14 @@ public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private List<Bookmark> bookmarks;
     private final int TYPE_BOOKMARK = 1;
     private final int TYPE_FOOTER = 2;
-    private int pbVisibility = View.VISIBLE;
-    private int msgVisibility = View.INVISIBLE;
+
     private String msg = "";
     private EndViewHolder endViewHolder;
-
+    BookmarkDialogEndItem bookmarkDialogEndItem;
     public BookmarkDetailAdapter(Activity activity) {
         this.activity = new WeakReference<>(activity).get() ;
         bookmarks = new ArrayList<>();
+        bookmarkDialogEndItem = new BookmarkDialogEndItem();
     }
 
     @Override
@@ -160,24 +163,23 @@ public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
 
         public void update() {
-            mBinding.setMsg(msg);
-            mBinding.setMsgVisibility(msgVisibility);
-            mBinding.setPbVisibility(pbVisibility);
+            mBinding.setEndItem(bookmarkDialogEndItem);
             mBinding.executePendingBindings();
+            loadingMore();
         }
     }
 
     public void loadingMore(){
         if(endViewHolder != null) {
-            msgVisibility = View.INVISIBLE;
-            pbVisibility = View.VISIBLE;
+            bookmarkDialogEndItem.msgVisibility.set(View.GONE);
+            bookmarkDialogEndItem.msgVisibility.set(View.VISIBLE);
         }
     }
 
     public void loadedMore(){
         if(endViewHolder != null) {
-            msgVisibility = View.VISIBLE;
-            pbVisibility = View.INVISIBLE;
+            bookmarkDialogEndItem.msgVisibility.set(View.VISIBLE);
+            bookmarkDialogEndItem.msgVisibility.set(View.GONE);
         }
     }
 
@@ -185,4 +187,8 @@ public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         bookmarks.addAll(nBookmarks);
     }
 
+    public void setBookMarks(List<Bookmark> nBookmarks){
+        bookmarks.clear();
+        bookmarks.addAll(nBookmarks);
+    }
 }

@@ -1,11 +1,14 @@
 package com.mycreat.kiipu.view.bookmark;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import com.mycreat.kiipu.databinding.BookmarkDetailDialogBinding;
+import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarkDialog;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static android.widget.NumberPicker.OnScrollListener.SCROLL_STATE_IDLE;
 
@@ -17,7 +20,7 @@ public class PaperLikeRecyclerViewHandler extends RecyclerView.OnScrollListener 
     private BookmarkDialog bookmarkDialog;
     private RecyclerView mRecyclerView;
     private MOnFlingListener onFlingListener = new MOnFlingListener();
-
+    private DataResolver dataResolver;
     private float offsetX = 0;
     private int offsetY= 0;
     private float startX = 0;
@@ -65,6 +68,11 @@ public class PaperLikeRecyclerViewHandler extends RecyclerView.OnScrollListener 
         super.onScrolled(recyclerView, dx, dy);
         offsetX += dx;
         offsetY += dy;
+        int lastVisiblePosition = -1;
+        if(dataResolver != null && recyclerView.getAdapter().getItemCount() > 0 && (lastVisiblePosition = dataResolver.getLastVisiblePosition()) == recyclerView.getAdapter().getItemCount() -1 ){
+            dataResolver.onLoadMore(lastVisiblePosition);
+        }
+
     }
 
     class MOnFlingListener extends RecyclerView.OnFlingListener{
@@ -98,7 +106,7 @@ public class PaperLikeRecyclerViewHandler extends RecyclerView.OnScrollListener 
         }
     }
 
-    public void setUpRecycleView(@NotNull RecyclerView recycleView, @NotNull BookmarkDetailDialogBinding binding) {
+    public void setUpRecycleView(@NotNull RecyclerView recycleView, @NotNull BookmarkDetailDialogBinding binding, @Nullable DataResolver dataResolver) {
 
         mRecyclerView = recycleView;
         bookmarkDialog = binding.getBookmarkDialog();
@@ -109,7 +117,21 @@ public class PaperLikeRecyclerViewHandler extends RecyclerView.OnScrollListener 
         recycleView.addOnScrollListener(this);
         //记录滚动开始的位置
         recycleView.setOnTouchListener(this);
-
+        this.dataResolver = dataResolver;
     }
 
+    public DataResolver getDataResolver() {
+        return dataResolver;
+    }
+
+    public void setDataResolver(DataResolver dataResolver) {
+        this.dataResolver = dataResolver;
+    }
+
+    public interface DataResolver{
+        public int getLastVisiblePosition();
+        public int getFirstVisiblePosition();
+        public void onLoadMore(int position);
+        public void onRefresh();
+    }
 }

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.*;
@@ -17,6 +18,7 @@ import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.databinding.BookmarkDetailDialogBinding;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.BookmarkDialog;
+import com.mycreat.kiipu.model.rxbus.LoadMoreEvent;
 import com.mycreat.kiipu.rxbus.RxBus;
 import com.mycreat.kiipu.rxbus.RxBusSubscribe;
 import com.mycreat.kiipu.rxbus.ThreadMode;
@@ -33,12 +35,11 @@ import java.util.List;
  * Created by zhanghaihai on 2017/6/28.
  */
 
-public class BookmarkDetailDialog extends DialogFragment{
+public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRecyclerViewHandler.DataResolver {
     @BindView(R.id.recyclerView)
     private RecyclerView recyclerView;
 
     private int currentPosition;
-    private List<Bookmark> _bookmarks = Collections.synchronizedList(new ArrayList<Bookmark>());
     private boolean ifCloseWhenTouchBlank = true;
     private OnCancelListener onCancelListener;
     private BookmarkDetailDialogBinding binding;
@@ -67,7 +68,7 @@ public class BookmarkDetailDialog extends DialogFragment{
         binding.setBookmarkDialog(bookmarkDialog);
         binding.executePendingBindings();
         PaperLikeRecyclerViewHandler recyclerViewTouchListener = new PaperLikeRecyclerViewHandler();
-        recyclerViewTouchListener.setUpRecycleView(recyclerView, binding);
+        recyclerViewTouchListener.setUpRecycleView(recyclerView, binding, this);
         RxBus.Companion.getDefault().register(this);
     }
 
@@ -79,9 +80,7 @@ public class BookmarkDetailDialog extends DialogFragment{
     }
 
     public void show(FragmentManager manager, String tag, int firstlyShowingPosition, List<Bookmark> bookmarks) {
-        _bookmarks.clear();
-        _bookmarks.addAll(bookmarks);
-        bookmarkDialog.setBookmarks(bookmarks);
+        bookmarkDialog.bookmarks.set(bookmarks);
         currentPosition = firstlyShowingPosition;
         super.show(manager, tag);
     }
@@ -108,6 +107,8 @@ public class BookmarkDetailDialog extends DialogFragment{
 
         };
     }
+
+
 
     public interface OnCancelListener{
         public void onCancel(BookmarkDetailDialog customDialogFragment);
@@ -140,7 +141,58 @@ public class BookmarkDetailDialog extends DialogFragment{
         }
     }
 
+    @RxBusSubscribe(mode = ThreadMode.MAIN)
+    public void onEventLoadMore(LoadMoreEvent event){
+        switch (event.action){
+            case 1:
+                bookmarkDialog.bookmarks.set(event.bookmarks);
+                recyclerView.getAdapter().notifyDataSetChanged();
+                isLoadingMore = false;
+                break;
+        }
+    }
+
     static class DialogEvent{
         int action = 0;
     }
+
+    @Override
+    public int getLastVisiblePosition() {
+        if(bookmarkDialog != null && bookmarkDialog.getLayoutManager() != null){
+            if(bookmarkDialog.getLayoutManager() instanceof LinearLayoutManager){
+                return ((LinearLayoutManager)bookmarkDialog.getLayoutManager()).findLastVisibleItemPosition();
+            }else if(bookmarkDialog.getLayoutManager() instanceof GridLayoutManager){
+                return ((GridLayoutManager)bookmarkDialog.getLayoutManager()).findLastVisibleItemPosition();
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public int getFirstVisiblePosition() {
+        if(bookmarkDialog != null && bookmarkDialog.getLayoutManager() != null){
+            if(bookmarkDialog.getLayoutManager() instanceof LinearLayoutManager){
+                return ((LinearLayoutManager)bookmarkDialog.getLayoutManager()).findFirstVisibleItemPosition();
+            }else if(bookmarkDialog.getLayoutManager() instanceof GridLayoutManager){
+                return ((GridLayoutManager)bookmarkDialog.getLayoutManager()).findFirstVisibleItemPosition();
+            }
+        }
+        return -1;
+    }
+    private boolean isLoadingMore = false;
+
+    @Override
+    public void onLoadMore(int position) {
+        if(!isLoadingMore){
+            isLoadingMore = true;
+            new LoadMoreEvent(0, null).post();
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+
+    }
+
+
 }

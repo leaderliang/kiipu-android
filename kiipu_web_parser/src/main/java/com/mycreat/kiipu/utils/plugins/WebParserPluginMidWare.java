@@ -1,7 +1,5 @@
 package com.mycreat.kiipu.utils.plugins;
 
-import com.mycreat.kiipu.utils.plugins.;
-
 /**
  * Created by zhanghaihai on 2017/7/23.
  */
