@@ -28,6 +28,7 @@
             tools:ignore="AllowBackup"
             android:theme="@style/AppBaseTheme">
 
+
         <!-- 友盟 -->
         <meta-data
                 android:name="UMENG_APPKEY"
@@ -62,10 +63,22 @@
         <activity android:name=".activity.CollectionActivity"
                   android:screenOrientation="portrait"
                   android:theme="@style/AppTheme"/>
-        <activity
-                    android:name=".activity.RecycleViewActivity"
-                    android:screenOrientation="portrait"
-                    android:theme="@style/AppTheme"/>
+        <activity android:name=".activity.addBookmarkActivity"
+                  android:screenOrientation="portrait"
+                  android:label="@string/save_to_kiipu"
+                  android:theme="@style/AppTheme">
+            <intent-filter>
+                <!--share-->
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.SEND" />
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
+
+        </activity>
+
+        <activity android:name=".activity.RecycleViewActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/AppTheme"/>
         <activity
                 android:name=".activity.MainActivity"
                 android:label="mainActivity"
