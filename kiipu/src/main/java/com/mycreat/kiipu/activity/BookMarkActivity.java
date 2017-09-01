@@ -121,8 +121,6 @@ public class BookMarkActivity extends BaseActivity
 
     private MenuItem menuSetting;
 
-//    protected RecyclerView.LayoutManager mLayoutManager;
-
     protected LayoutManagerType mCurrentLayoutManagerType;
 
     private SearchView mSearchView;
@@ -340,7 +338,7 @@ public class BookMarkActivity extends BaseActivity
                 toolbar.setTitle(null);
                 toolbar.setLogo(R.drawable.login_logo_text);
                 getBookmarkList();
-                // 点击 收件箱 、全部 菜单时隐藏设置按钮
+                /*点击 收件箱 、全部 菜单时隐藏设置按钮*/
                 menuSetting.setVisible(false);
                 break;
             case R.id.nav_inbox:
@@ -348,7 +346,7 @@ public class BookMarkActivity extends BaseActivity
                 toolbar.setTitle(getString(R.string.inbox));
                 mSwipeRefreshLayout.setRefreshing(true);
                 getBookmarkList();
-                // 点击 收件箱 、全部 菜单时隐藏设置按钮
+                /*点击 收件箱 、全部 菜单时隐藏设置按钮*/
                 menuSetting.setVisible(false);
                 break;
             default:
@@ -364,7 +362,7 @@ public class BookMarkActivity extends BaseActivity
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(true);
         setEnableLoadMore(false);
-        REFRESH_TYPE = Constants.REFRESH_TYPE_PULL; // PULL
+        REFRESH_TYPE = Constants.REFRESH_TYPE_PULL;
         getBookmarkList();
     }
 
@@ -373,7 +371,7 @@ public class BookMarkActivity extends BaseActivity
     public void onLoadMoreRequested() {
         mSwipeRefreshLayout.setRefreshing(false);
         setEnableLoadMore(true);
-        REFRESH_TYPE = Constants.REFRESH_TYPE_LOAD_MORE; // LOAD MORE
+        REFRESH_TYPE = Constants.REFRESH_TYPE_LOAD_MORE;
         getBookmarkList();
     }
 
