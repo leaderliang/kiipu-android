@@ -8,13 +8,11 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.LoginInfo;
 import com.mycreat.kiipu.utils.Constants;
-import com.mycreat.kiipu.utils.LogUtil;
 import com.mycreat.kiipu.utils.SharedPreferencesUtil;
 import com.mycreat.kiipu.utils.ToastUtil;
 import com.umeng.socialize.UMAuthListener;
@@ -169,13 +167,17 @@ public class LoginActivity extends BaseActivity {
             public void onResponse(Call<LoginInfo> call, Response<LoginInfo> response) {
                 SocializeUtils.safeCloseDialog(dialog);
                 LoginInfo loginInfo = response.body();
-                String accessToken = loginInfo.accessToken;
-                String userId = loginInfo.userId;
-                SharedPreferencesUtil.saveData(mContext, Constants.ACCESS_TOKEN, accessToken);
-                SharedPreferencesUtil.saveData(mContext, Constants.USER_ID, userId);
-                Log.e(TAG, "loginInfo userId " + loginInfo.userId + " token " + loginInfo.accessToken);
-                startActivity(new Intent(mContext, BookMarkActivity.class));
-                finish();
+                if(loginInfo != null) {
+                    String accessToken = loginInfo.accessToken;
+                    String userId = loginInfo.userId;
+                    SharedPreferencesUtil.saveData(mContext, Constants.ACCESS_TOKEN, accessToken);
+                    SharedPreferencesUtil.saveData(mContext, Constants.USER_ID, userId);
+                    Log.e(TAG, "loginInfo userId " + loginInfo.userId + " token " + loginInfo.accessToken);
+                    startActivity(new Intent(mContext, BookMarkActivity.class));
+                    finish();
+                }else{
+                    ToastUtil.showToastShort(getString(R.string.login_fail));
+                }
             }
 
             @Override

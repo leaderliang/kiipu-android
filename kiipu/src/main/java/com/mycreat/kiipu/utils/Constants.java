@@ -57,6 +57,8 @@ public class Constants {
 
     public static final int MAX_PROGRESS = 100;
 
+    public static final int ON_KEY_BACK_TIME = 2000;
+
     public static final String DEFAULT_COLOR_VALUE = "FFB74D";
 
     public static final String DEFAULT_COLOR = "#FFB74D";

@@ -3,6 +3,7 @@ package com.mycreat.kiipu.utils;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import com.mycreat.kiipu.core.AppManager;
 
 /**
  * 跟App相关的辅助类
@@ -56,5 +57,10 @@ public class AppUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void logOutApp(Context mContext) {
+        LogUtil.e("when logOutApp ACCESS_TOKEN " + SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN, ""));
+        AppManager.getAppManager().appExit(mContext);
     }
 }

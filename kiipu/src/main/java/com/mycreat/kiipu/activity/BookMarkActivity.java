@@ -37,7 +37,6 @@ import com.github.clans.fab.FloatingActionButton;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.BookMarkAdapter;
 import com.mycreat.kiipu.adapter.BookMarkListAdapter;
-import com.mycreat.kiipu.core.AppManager;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.*;
@@ -261,7 +260,7 @@ public class BookMarkActivity extends BaseActivity
                 DialogUtil.showCommonDialog(this, null, getString(R.string.exit_app), false, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        logOut();
+                        intentToLogin();
                     }
                 }, null);
                 break;
@@ -759,26 +758,18 @@ public class BookMarkActivity extends BaseActivity
                 drawer.closeDrawer(GravityCompat.START);
                 return false;
             }
-            if ((System.currentTimeMillis() - nowTime) > 2000) {
+            if ((System.currentTimeMillis() - nowTime) > Constants.ON_KEY_BACK_TIME) {
                 Toast.makeText(this, getString(R.string.double_back_click_info), Toast.LENGTH_SHORT).show();
                 nowTime = System.currentTimeMillis();
             } else {
-                logOutApp();
+                AppUtils.logOutApp(mContext);
             }
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    private void logOutApp() {
-        SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
-        SharedPreferencesUtil.removeKey(mContext, Constants.USER_ID);
-        LogUtil.e("when logOutApp ACCESS_TOKEN " + SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN, ""));
-        finish();
-        AppManager.getAppManager().appExit(this);
-    }
-
-    private void logOut() {
+    private void intentToLogin() {
         SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
         SharedPreferencesUtil.removeKey(mContext, Constants.USER_ID);
         finish();
@@ -942,7 +933,7 @@ public class BookMarkActivity extends BaseActivity
                 if(mGridLayoutAdapter == null) {
                     mGridLayoutAdapter = new BookMarkAdapter(mBookmarkList);
                     mGridLayoutAdapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
-//              mGridLayoutAdapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
+//                  mGridLayoutAdapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
                     mGridLayoutAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
                     mGridLayoutAdapter.setOnItemChildClickListener(new OnItemChildClickListener());
                     mGridLayoutAdapter.setOnItemLongClickListener(new onItemLongClick());
