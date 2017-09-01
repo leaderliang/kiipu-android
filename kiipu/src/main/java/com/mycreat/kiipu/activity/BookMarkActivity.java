@@ -932,32 +932,36 @@ public class BookMarkActivity extends BaseActivity
         if (mRecyclerView.getLayoutManager() != null) {
             scrollPosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager())
                     .findFirstCompletelyVisibleItemPosition();
+             LogUtil.d("scrollPosition-----> "+scrollPosition);
         }
         switch (layoutManagerType) {
             case GRID_LAYOUT_MANAGER:
                 mRecyclerView.setLayoutManager(new GridLayoutManager(this, Constants.SPAN_COUNT, GridLayoutManager.VERTICAL, false));
                 mCurrentLayoutManagerType = LayoutManagerType.GRID_LAYOUT_MANAGER;
 
-                mGridLayoutAdapter = new BookMarkAdapter(mBookmarkList);
-                mGridLayoutAdapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
+                if(mGridLayoutAdapter == null) {
+                    mGridLayoutAdapter = new BookMarkAdapter(mBookmarkList);
+                    mGridLayoutAdapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
 //              mGridLayoutAdapter.openLoadAnimation(new CustomAnimation());//  也可以自定义 Anim
-                mGridLayoutAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
-                mGridLayoutAdapter.setOnItemChildClickListener(new OnItemChildClickListener());
-                mGridLayoutAdapter.setOnItemLongClickListener(new onItemLongClick());
-                mGridLayoutAdapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
+                    mGridLayoutAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+                    mGridLayoutAdapter.setOnItemChildClickListener(new OnItemChildClickListener());
+                    mGridLayoutAdapter.setOnItemLongClickListener(new onItemLongClick());
+                    mGridLayoutAdapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
+                }
                 setRecyclerParams(6f,6F);
                 mRecyclerView.setAdapter(mGridLayoutAdapter);
                 break;
             case LINEAR_LAYOUT_MANAGER:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                 mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-
-                listAdapter = new BookMarkListAdapter(mBookmarkList);
-                listAdapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
-                listAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
-                listAdapter.setOnItemChildClickListener(new OnItemChildClickListener());
-                listAdapter.setOnItemLongClickListener(new onItemLongClick());
-                listAdapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
+                if(listAdapter == null) {
+                    listAdapter = new BookMarkListAdapter(mBookmarkList);
+                    listAdapter.setOnLoadMoreListener(BookMarkActivity.this, mRecyclerView);
+                    listAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+                    listAdapter.setOnItemChildClickListener(new OnItemChildClickListener());
+                    listAdapter.setOnItemLongClickListener(new onItemLongClick());
+                    listAdapter.setCurrentLayoutManagerType(mCurrentLayoutManagerType);
+                }
                 setRecyclerParams(0f,0F);
                 mRecyclerView.setAdapter(listAdapter);
                 break;
@@ -965,7 +969,7 @@ public class BookMarkActivity extends BaseActivity
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                 mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         }
-        mRecyclerView.scrollToPosition(scrollPosition);
+//        mRecyclerView.scrollToPosition(scrollPosition);
     }
 
 
