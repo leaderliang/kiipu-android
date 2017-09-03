@@ -80,6 +80,7 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
                         holder.setText(R.id.tv_url, url.getHost());
                     }
                     holder.addOnClickListener(R.id.img_more_info);
+
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }

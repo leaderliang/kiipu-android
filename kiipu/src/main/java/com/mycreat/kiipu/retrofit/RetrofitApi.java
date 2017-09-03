@@ -70,4 +70,10 @@ public class RetrofitApi {
      * /collections/:id
      */
     public static final String MODIFY_COLLECTION_NAME = BASE_URL + "collections/";
+
+    /**
+     * POST
+     * 添加书签
+     */
+    public static final String ADD_BOOK_MARKS = BASE_URL + "bookmarks";
 }

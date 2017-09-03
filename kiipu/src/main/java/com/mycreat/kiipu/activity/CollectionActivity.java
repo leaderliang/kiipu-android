@@ -107,7 +107,7 @@ public class CollectionActivity extends BaseActivity {
             return;
         }
         Call<Bookmark> call = KiipuApplication.mRetrofitService.moveBookmark(userAccessToken, bookmarkId, mCollectionList.get(collectionPosition).collectionId);
-        call.enqueue(new Callback<Bookmark>() {
+         call.enqueue(new Callback<Bookmark>() {
             @Override
             public void onResponse(Call<Bookmark> call, Response<Bookmark> response) {
 //                requestData.remove(dataPosition);

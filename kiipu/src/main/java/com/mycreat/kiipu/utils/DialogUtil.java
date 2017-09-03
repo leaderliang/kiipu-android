@@ -172,8 +172,8 @@ public class DialogUtil {
         listPopupWindow.setOnItemClickListener(listener);
 
         // 对话框的宽高
-        listPopupWindow.setWidth(450);
-        listPopupWindow.setHeight(450);
+        listPopupWindow.setWidth(500);
+        listPopupWindow.setHeight(ListPopupWindow.WRAP_CONTENT);
 
         // ListPopupWindow 相对的View
         listPopupWindow.setAnchorView(view);
@@ -185,7 +185,7 @@ public class DialogUtil {
         //  Set whether this window should be modal when shown.
         // If a popup window is modal, it will receive all touch and key input. If the user touches outside the popup window's content area the popup window will be dismissed.
         // modal boolean: true if the popup window should be modal, false otherwise.
-        listPopupWindow.setModal(false);
+        listPopupWindow.setModal(true);
 
         listPopupWindow.show();
         return listPopupWindow;

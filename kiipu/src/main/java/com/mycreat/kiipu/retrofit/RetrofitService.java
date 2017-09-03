@@ -110,4 +110,11 @@ public interface RetrofitService {
      */
     @GET(RetrofitApi.BASE_TEMPLATE_URL + "{htmlPath}")
     Call<String> requestHtml(@Path("htmlPath") String htmlPath);
+
+
+    @FormUrlEncoded
+    @POST(RetrofitApi.ADD_BOOK_MARKS)
+    Call<Bookmark> addBookmark(@Header("Authorization") String value,
+                                  @Field("data") String shareData);
+
 }

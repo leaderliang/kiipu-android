@@ -14,8 +14,7 @@
         android:layout_marginRight="6dp"
         android:layout_marginLeft="6dp"
         android:layout_marginTop="12dp"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
->
+        android:foreground="?android:attr/selectableItemBackgroundBorderless">
 
     <!--
         card_view:cardUseCompatPadding="true"  // 阴影Padding 让CardView在不同系统中使用相同的padding值

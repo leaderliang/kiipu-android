@@ -532,12 +532,16 @@ public class BookMarkActivity extends BaseActivity
             @Override
             public void onResponse(Call<Collections> call, Response<Collections> response) {
                 if (response.body() != null) {
-                    ToastUtil.showToastShort("创建书签成功啦~");
                     Collections collection = response.body();
                     mCollectionList.add(mCollectionList.size(), collection);
                     addLeftMenu(mCollectionList, false);
+                    Snackbar.make(mFloatingActionButton, "创建书签成功啦~", Snackbar.LENGTH_SHORT)
+                            .show();
+                    /*添加成功，打开侧边栏*/
+                    drawer.openDrawer(Gravity.LEFT);
                 }else{
-                    ToastUtil.showToastShort("创建书签失败，请稍后重试~");
+                    ToastUtil.showToastShort("");
+                    Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~", Snackbar.LENGTH_SHORT).show();
                 }
             }
 
@@ -867,8 +871,8 @@ public class BookMarkActivity extends BaseActivity
             public void onResponse(Call<Collections> call, Response<Collections> response) {
                 Collections collections = response.body();
                 if (collections != null) {
+                    Snackbar.make(mFloatingActionButton, getString(R.string.modify_collection_success), Snackbar.LENGTH_SHORT).show();
                     toolbar.setTitle(collections.collectionName);
-                    ToastUtil.showToastShort(getString(R.string.modify_collection_success));
                     for (int i = 0; i < mCollectionList.size(); i++) {
                        if(mCollectionList.get(i).collectionId.equals(collections.collectionId)){
                            mCollectionList.get(i).collectionName = collections.collectionName;
@@ -879,7 +883,7 @@ public class BookMarkActivity extends BaseActivity
                     addLeftMenu(mCollectionList, false);
                     return;
                 }
-                ToastUtil.showToastShort(getString(R.string.modify_collection_fail));
+                Snackbar.make(mFloatingActionButton, getString(R.string.modify_collection_fail), Snackbar.LENGTH_SHORT).show();
             }
 
             @Override
@@ -939,6 +943,7 @@ public class BookMarkActivity extends BaseActivity
                 }
                 setRecyclerParams(6f,6F);
                 mRecyclerView.setAdapter(mGridLayoutAdapter);
+
                 break;
             case LINEAR_LAYOUT_MANAGER:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -953,6 +958,7 @@ public class BookMarkActivity extends BaseActivity
                 }
                 setRecyclerParams(0f,0F);
                 mRecyclerView.setAdapter(listAdapter);
+
                 break;
             default:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -984,14 +990,14 @@ public class BookMarkActivity extends BaseActivity
     private class onBookmarkItemClickListener extends OnItemClickListener {
         @Override
         public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-            Bookmark bookmark = requestData.get(position);
-            viewTheme = TextUtils.isEmpty(bookmark.viewTheme) ? Constants.DEFAULT_COLOR_VALUE : bookmark.viewTheme;
-            String url = bookmark.info.url;
-//          CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-//          builder.setToolbarColor(Color.parseColor("#FFB74D"));
-//          CustomTabsIntent customTabsIntent = builder.build();
-//          customTabsIntent.launchUrl(BookMarkActivity.this, Uri.parse(url));
-            CustomTabsUtils.showCustomTabsView(BookMarkActivity.this, url, viewTheme);
+                Bookmark bookmark = requestData.get(position);
+                viewTheme = TextUtils.isEmpty(bookmark.viewTheme) ? Constants.DEFAULT_COLOR_VALUE : bookmark.viewTheme;
+                String url = bookmark.info.url;
+//              CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+//              builder.setToolbarColor(Color.parseColor("#FFB74D"));
+//              CustomTabsIntent customTabsIntent = builder.build();
+//              customTabsIntent.launchUrl(BookMarkActivity.this, Uri.parse(url));
+                CustomTabsUtils.showCustomTabsView(BookMarkActivity.this, url, viewTheme);
         }
     }
 
@@ -1007,7 +1013,6 @@ public class BookMarkActivity extends BaseActivity
                 case R.id.ll_more_info:
                     showListPopupWindow(view, position);
                     break;
-
             }
         }
     }

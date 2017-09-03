@@ -66,7 +66,7 @@
         <activity android:name=".activity.addBookmarkActivity"
                   android:screenOrientation="portrait"
                   android:label="@string/save_to_kiipu"
-                  android:theme="@style/AppTheme">
+                  android:theme="@style/Theme.ActivityDialogStyle">
             <intent-filter>
                 <!--share-->
                 <category android:name="android.intent.category.DEFAULT" />
