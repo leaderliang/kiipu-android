@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.view.*;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.databinding.BookmarkDetailDialogBinding;
@@ -61,8 +62,8 @@ public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRec
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         ViewUtils.bindViews(view, this);
-        bookmarkDialog.setAdapter(new BookmarkDetailAdapter(getActivity()));
-        bookmarkDialog.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        bookmarkDialog.setAdapter(new BookmarkDetailAdapter(getActivity(), recyclerView));
+        bookmarkDialog.setLayoutManager(new CustomLinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false){});
         bookmarkDialog.setCurrentPosition(currentPosition);
 
         binding.setBookmarkDialog(bookmarkDialog);
@@ -192,6 +193,30 @@ public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRec
     @Override
     public void onRefresh() {
 
+    }
+
+    class CustomLinearLayoutManager extends LinearLayoutManager{
+        boolean canScrollHorizontally = true;
+        public CustomLinearLayoutManager(Context context) {
+            super(context);
+        }
+
+        public CustomLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
+            super(context, orientation, reverseLayout);
+        }
+
+        public CustomLinearLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+            super(context, attrs, defStyleAttr, defStyleRes);
+        }
+
+        @Override
+        public boolean canScrollHorizontally() {
+            return canScrollHorizontally && super.canScrollHorizontally();
+        }
+
+        public void setCanScrollHorizontally(boolean canScrollHorizontally) {
+            this.canScrollHorizontally = canScrollHorizontally;
+        }
     }
 
 

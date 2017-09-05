@@ -5,12 +5,14 @@ import android.databinding.DataBindingUtil;
 import android.databinding.ObservableField;
 import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -35,7 +37,7 @@ import java.util.List;
  * 书签详情列表Adapter
  * Created by zhanghaihai on 2017/7/26.
  */
-public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener{
+public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener, BookmarkTemplateWebVIew.OnScrollChangedListener{
     private Activity activity;
     private List<Bookmark> bookmarks;
     private final int TYPE_BOOKMARK = 1;
@@ -44,10 +46,12 @@ public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private String msg = "";
     private EndViewHolder endViewHolder;
     BookmarkDialogEndItem bookmarkDialogEndItem;
-    public BookmarkDetailAdapter(Activity activity) {
+    RecyclerView recyclerView;
+    public BookmarkDetailAdapter(Activity activity, RecyclerView recyclerView) {
         this.activity = new WeakReference<>(activity).get() ;
         bookmarks = new ArrayList<>();
         bookmarkDialogEndItem = new BookmarkDialogEndItem();
+        this.recyclerView = recyclerView;
     }
 
     @Override
@@ -55,7 +59,7 @@ public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         switch (viewType) {
             case TYPE_BOOKMARK:
                 BookmarkDetailBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_card_detail_dialog, parent, false);
-                return new BookmarkHolder(binding.getRoot(), binding, activity);
+                return new BookmarkHolder(binding.getRoot(), binding, activity, this);
             case TYPE_FOOTER:
                 BookmarkDetailFooterBinding footerBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_card_detail_dialog_footer, parent, false);
                 return new EndViewHolder(footerBinding.getRoot(), footerBinding);
@@ -94,22 +98,40 @@ public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         RxBus.Companion.getDefault().post(new BookmarkDetailDialog.DialogEvent());
     }
 
-    private static class BookmarkHolder extends RecyclerView.ViewHolder{
+    @Override
+    public void onScrollChanged(int dx, int dy) {
+        if(Math.abs(dx) < Math.abs(dy)){
+            if(recyclerView.getLayoutManager() instanceof BookmarkDetailDialog.CustomLinearLayoutManager) {
+                BookmarkDetailDialog.CustomLinearLayoutManager customLinearLayoutManager = (BookmarkDetailDialog.CustomLinearLayoutManager) recyclerView.getLayoutManager();
+                customLinearLayoutManager.setCanScrollHorizontally(false);
+            }else{
+                BookmarkDetailDialog.CustomLinearLayoutManager customLinearLayoutManager = (BookmarkDetailDialog.CustomLinearLayoutManager) recyclerView.getLayoutManager();
+                customLinearLayoutManager.setCanScrollHorizontally(true);
+            }
+        }else{
+            BookmarkDetailDialog.CustomLinearLayoutManager customLinearLayoutManager = (BookmarkDetailDialog.CustomLinearLayoutManager) recyclerView.getLayoutManager();
+            customLinearLayoutManager.setCanScrollHorizontally(true);
+        }
+    }
+
+    private static class BookmarkHolder extends RecyclerView.ViewHolder {
         private BookmarkDetailBinding mBinding;
         private Activity activity;
         @BindView(R.id.wv_ext_detail)
         BookmarkTemplateWebVIew tmplWebView;
         @BindView(R.id.bd_bar_close_btn)
         ImageView closeBtn;
-
-        public BookmarkHolder(View itemView, BookmarkDetailBinding nBinding, Activity activity) {
+        BookmarkTemplateWebVIew.OnScrollChangedListener onScrollChangedListener;
+        public BookmarkHolder(View itemView, BookmarkDetailBinding nBinding, Activity activity, BookmarkTemplateWebVIew.OnScrollChangedListener onScrollChangedListener) {
             this(itemView);
             mBinding = nBinding;
             this.activity = activity;
+            this.onScrollChangedListener = onScrollChangedListener;
+            ViewUtils.bindViews(itemView, this);
+            tmplWebView.setOnScrollChangeListener(onScrollChangedListener);
         }
         public BookmarkHolder(View itemView) {
             super(itemView);
-            ViewUtils.bindViews(itemView, this);
         }
 
         public void update(Bookmark bookmark, View.OnClickListener onClickListener){

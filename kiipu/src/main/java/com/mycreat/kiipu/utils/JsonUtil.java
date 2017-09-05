@@ -5,6 +5,7 @@ package com.mycreat.kiipu.utils;
 
 import android.support.annotation.Nullable;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.json.*;
 
 import java.util.*;
@@ -17,7 +18,7 @@ import java.util.Map.Entry;
 public class JsonUtil {
 
 	public static String toJson(Object obj){
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder().serializeNulls().create();
 		return gson.toJson(obj);
 	}
 	public static String MapToJson(TreeMap<String, Object> map) {
@@ -111,8 +112,8 @@ public class JsonUtil {
 	 * @return
 	 */
 	@Nullable
-	public static Map<String , Object> getMapTree(String jsonStr, Object defaultValueIfNull) {
-		Object obj = getObjectFromJson(jsonStr);
+	public static Map<String , Object> getMapTree(String jsonStr, @Nullable Object defaultValueIfNull) {
+		Object obj = getObjectFromJson(jsonStr, defaultValueIfNull);
 		Map<String, Object> mMap = new HashMap<>();
 		if(obj instanceof Map ){
 			Map map = (Map) obj;
@@ -131,7 +132,7 @@ public class JsonUtil {
 	}
 	
 	
-	public static Object getObjectFromJson(String jsonStr){
+	public static Object getObjectFromJson(String jsonStr, @Nullable Object defaultValueIfNull){
 		JSONObject jsonObject = null;
 		try {
 			jsonObject = new JSONObject(jsonStr);
@@ -150,7 +151,7 @@ public class JsonUtil {
 						while (keyIter1.hasNext()) {
 							Object key1 = keyIter1.next();
 							Object object = getObjectFromJson(value
-									.getString(key1.toString()));
+									.getString(key1.toString()), defaultValueIfNull);
 							valueMap1.put(key1.toString(), object);
 						}
 						valueMap.put(key.toString(), valueMap1);
@@ -159,7 +160,7 @@ public class JsonUtil {
 							JSONArray values = value.names();
 							List<Object> objects = new ArrayList<Object>();
 							for (int i = 0; i < values.length(); i++) {
-								objects.add(getObjectFromJson(values.getString(i)));
+								objects.add(getObjectFromJson(values.getString(i), defaultValueIfNull));
 							}
 							valueMap.put(key.toString(), objects);
 						} else {
@@ -167,6 +168,9 @@ public class JsonUtil {
 						}
 					}
 					continue;
+				}else{
+					if(defaultValueIfNull != null)
+						valueMap.put(key.toString(), defaultValueIfNull);
 				}
 
 				// 若值是JSONArray
@@ -174,10 +178,12 @@ public class JsonUtil {
 				if (values != null) {
 					List<Object> objects = new ArrayList<Object>();
 					for (int i = 0; i < values.length(); i++) {
-						objects.add(getObjectFromJson(values.getString(i)));
+						objects.add(getObjectFromJson(values.getString(i), defaultValueIfNull));
 					}
 					valueMap.put(key.toString(), objects);
 					continue;
+				}else{
+					valueMap.put(key.toString(), defaultValueIfNull);
 				}
 
 				// 若值是基本类型
@@ -193,11 +199,11 @@ public class JsonUtil {
 		} catch (JSONException e) {
 			//可能是Json数组
 			try {
-				List<Object> objects = new ArrayList<Object>();
+				List<Object> objects = new ArrayList<>();
 				JSONArray jsonArray = new JSONArray(jsonStr);
 
 				for (int i = 0; i < jsonArray.length(); i++) {
-					objects.add(getObjectFromJson(jsonArray.getString(i)));
+					objects.add(getObjectFromJson(jsonArray.getString(i), defaultValueIfNull));
 				}
 				return objects;
 			} catch (JSONException e1) {
