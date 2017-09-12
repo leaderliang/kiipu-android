@@ -2,9 +2,13 @@ package com.mycreat.kiipu.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,7 +16,6 @@ import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.Bookmark;
-import com.mycreat.kiipu.utils.Constants;
 import com.mycreat.kiipu.utils.LogUtil;
 import com.mycreat.kiipu.utils.StringUtils;
 import com.mycreat.kiipu.utils.ToastUtil;
@@ -22,6 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,8 +36,7 @@ import java.util.regex.Pattern;
  */
 public class addBookmarkActivity extends BaseActivity {
 
-
-    private EditText etShareContent;
+//    private EditText etShareContent;
 
     private String resultUrl;
 
@@ -41,9 +44,11 @@ public class addBookmarkActivity extends BaseActivity {
 
     private String extraText;
 
-    private ImageView imgBack;
+//    private ImageView imgBack;
 
-    private TextView tvSave;
+//    private TextView tvSave;
+
+    private CoordinatorLayout mContainer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,20 +57,24 @@ public class addBookmarkActivity extends BaseActivity {
         setContentView(R.layout.activity_add_bookmark);
         initViews();
         initData();
-        initListener();
+//        initListener();
     }
 
 
     @Override
     protected void initViews() {
         super.initViews();
-        setBaseTitle("添加书签");
-        setBackBtn();
-        setFloatingVisibile(false);
+        /*去掉 dialog 两侧边距 */
+        WindowManager vm = getWindowManager();
+        Display dis = vm.getDefaultDisplay();
+        android.view.WindowManager.LayoutParams lay = getWindow().getAttributes();
+        lay.width = dis.getWidth() * 1;
+        getWindow().setAttributes(lay);
 
-        imgBack = initViewById(R.id.img_back);
-        tvSave = initViewById(R.id.tv_save);
-        etShareContent = initViewById(R.id.et_share_content);
+//        imgBack = initViewById(R.id.img_back);
+//        tvSave = initViewById(R.id.tv_save);
+//        etShareContent = initViewById(R.id.et_share_content);
+        mContainer = initViewById(R.id.container);
     }
 
 
@@ -90,12 +99,12 @@ public class addBookmarkActivity extends BaseActivity {
 
     }
 
-    @Override
-    protected void initListener() {
-        super.initListener();
-        imgBack.setOnClickListener(this);
-        tvSave.setOnClickListener(this);
-    }
+//    @Override
+//    protected void initListener() {
+//        super.initListener();
+//        imgBack.setOnClickListener(this);
+//        tvSave.setOnClickListener(this);
+//    }
 
     private void addBookmark(Intent intent) {
         extraText = intent.getExtras().get(Intent.EXTRA_TEXT).toString();
@@ -105,44 +114,53 @@ public class addBookmarkActivity extends BaseActivity {
         String strRegex = "[a-z]+:\\/\\/\\S+";
         Pattern pattern = Pattern.compile(strRegex);
         Matcher matcher = pattern.matcher(extraText);
+        List<String> list = new ArrayList<>();
         while (matcher.find()) {
             resultUrl = matcher.group();
+            list.add(resultUrl);
             if(!StringUtils.isEmpty(resultUrl) && extraText.contains(resultUrl)){
                 String contentText = extraText.replace(resultUrl,"");
-                etShareContent.setText(contentText);
+//                etShareContent.setText(contentText);
             }
             LogUtil.d("resultUrl-----" + resultUrl);
         }
+        // 判断网络
+        Snackbar.make(mContainer, "添加成功，请在 kiipu 中查看", Snackbar.LENGTH_LONG)
+                .setDuration(2500)
+                .show();
+
+        requestAddBookmark(list.get(0), extraText);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        },3000);
     }
 
     @Override
     protected void onViewClick(View v) {
 
         switch (v.getId()){
-            case R.id.img_back:
-                finish();
-                break;
-            case R.id.tv_save:
-                requestAddBookmark(etShareContent.getText().toString());
-                break;
+//            case R.id.img_back:
+//                finish();
+//                break;
+//            case R.id.tv_save:
+//                requestAddBookmark(etShareContent.getText().toString());
+//                break;
         }
     }
 
-    private void requestAddBookmark(String str) {
-        if(StringUtils.isEmpty(resultUrl)){
-//            Snackbar.make(mFloatingActionButton, "保存的网页数据异常，请稍后重试~", Snackbar.LENGTH_LONG).show();
-            ToastUtil.showToastShort("保存的网页数据异常，请稍后重试~");
+    private void requestAddBookmark(String url, String note) {
+        if(StringUtils.isEmpty(url)){
+            Snackbar.make(mContainer, "保存的网页数据异常，请稍后重试~", Snackbar.LENGTH_LONG).show();
             return;
         }
-        if(StringUtils.isEmpty(str)){
-//            Snackbar.make(mFloatingActionButton, "您还没有输入任何内容呦~", Snackbar.LENGTH_LONG).show();
-            ToastUtil.showToastShort("您还没有输入任何内容呦~");
-            return;
-        }
+
         try {
             jsonObject = new JSONObject();
-            jsonObject.put("url", resultUrl);
-            jsonObject.put("note", str);
+            jsonObject.put("url", url);
+            jsonObject.put("note", note);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -153,20 +171,18 @@ public class addBookmarkActivity extends BaseActivity {
                 Bookmark mBookmark = response.body();
                 if (mBookmark != null) {
                     LogUtil.d("result title---" + mBookmark.info.title);
-                    ToastUtil.showToastShort("添加成功，请在 kiipu 中查看");
-//                    Snackbar.make(mFloatingActionButton, "添加成功，请在 kiipu 中查看", Snackbar.LENGTH_LONG).show();
+//                    Snackbar.make(mContainer, "添加成功，请在 kiipu 中查看", Snackbar.LENGTH_LONG).show();
                 } else {
                     LogUtil.d("result title is null");
-                    ToastUtil.showToastShort("添加失败，请稍后重试");
+//                    Snackbar.make(mContainer, "添加失败，请稍后重试", Snackbar.LENGTH_LONG).show();
                 }
-                finish();
+//                finish();
             }
 
             @Override
             public void onFailure(Call<Bookmark> call, Throwable t) {
-//                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG).show();
-                ToastUtil.showToastShort(t.getMessage());
-                finish();
+//                Snackbar.make(mContainer, t.getMessage(), Snackbar.LENGTH_LONG).show();
+//                finish();
             }
         });
     }
