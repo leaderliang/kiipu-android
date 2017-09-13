@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableField;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 书签详情列表Adapter
@@ -47,6 +50,7 @@ public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private EndViewHolder endViewHolder;
     BookmarkDialogEndItem bookmarkDialogEndItem;
     RecyclerView recyclerView;
+    private Lock loadMoreLock = new ReentrantLock();
     public BookmarkDetailAdapter(Activity activity, RecyclerView recyclerView) {
         this.activity = new WeakReference<>(activity).get() ;
         bookmarks = new ArrayList<>();
@@ -71,8 +75,6 @@ public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof BookmarkHolder){
             ((BookmarkHolder)holder).update(bookmarks.get(position), this);
-        }else if(holder instanceof EndViewHolder){
-            ((EndViewHolder) holder).update();
         }
     }
 
@@ -138,7 +140,8 @@ public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             if(mBinding != null){
                 closeBtn.setOnClickListener(onClickListener);
                 final BookmarkDialogItem item = new BookmarkDialogItem();
-                item.vibRantColor.set(ColorUtil.Companion.getColor(R.color.colorPrimary));
+                int color = Color.parseColor((TextUtils.isEmpty(bookmark.viewTheme) ? "#ffffff" : "#") + bookmark.viewTheme);
+                item.vibRantColor.set(color);
                 item.setBookmark(bookmark);
                 item.setGlideListener(new RequestListener<String, GlideDrawable>() {
                     @Override
@@ -178,31 +181,35 @@ public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         public EndViewHolder(View itemView, BookmarkDetailFooterBinding nBinding) {
             super(itemView);
             mBinding = nBinding;
+            mBinding.setEndItem(bookmarkDialogEndItem);
+            mBinding.executePendingBindings();
         }
 
         public EndViewHolder(View itemView) {
             super(itemView);
         }
 
-        public void update() {
-            mBinding.setEndItem(bookmarkDialogEndItem);
-            mBinding.executePendingBindings();
-            loadingMore();
-        }
     }
 
-    public void loadingMore(){
-        if(endViewHolder != null) {
-            bookmarkDialogEndItem.msgVisibility.set(View.GONE);
-            bookmarkDialogEndItem.msgVisibility.set(View.VISIBLE);
-        }
+    /**
+     * 初始化显示时需要重新判断是否还有更多需要显示
+     */
+    public void initLoad(){
+        loadMoreLock.lock();
+        bookmarkDialogEndItem.msgVisibility.set(View.GONE);
+        bookmarkDialogEndItem.pbVisibility.set(View.VISIBLE);
+        loadMoreLock.unlock();
     }
 
-    public void loadedMore(){
-        if(endViewHolder != null) {
-            bookmarkDialogEndItem.msgVisibility.set(View.VISIBLE);
-            bookmarkDialogEndItem.msgVisibility.set(View.GONE);
-        }
+    /**
+     * 没有更多书签了
+     */
+    public void noMore(){
+        loadMoreLock.lock();
+        bookmarkDialogEndItem.pbVisibility.set(View.GONE);
+        bookmarkDialogEndItem.msgVisibility.set(View.VISIBLE);
+        bookmarkDialogEndItem.msg.set(KiipuApplication.appContext.getString(R.string.no_more_bookmark));
+        loadMoreLock.unlock();
     }
 
     public void addBookMarks(List<Bookmark> nBookmarks){

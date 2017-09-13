@@ -2,6 +2,7 @@ package com.mycreat.kiipu.adapter;
 
 import android.graphics.Color;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -13,6 +14,7 @@ import com.mycreat.kiipu.model.LayoutManagerType;
 import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.LeftIvTextView;
 
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.List;
 

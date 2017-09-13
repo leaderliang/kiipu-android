@@ -6,14 +6,11 @@
         <variable name="bookmarkDialog" type="com.mycreat.kiipu.model.BookmarkDialog" />
     </data>
     <RelativeLayout
+            android:id="@+id/dialog_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
+        android:background="@color/bookmark_detail_translucent"
         >
-        <View android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/bookmark_detail_translucent"
-        />
 
         <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"

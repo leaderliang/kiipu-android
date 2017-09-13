@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.*;
+import android.widget.RelativeLayout;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.databinding.BookmarkDetailDialogBinding;
 import com.mycreat.kiipu.model.Bookmark;
@@ -24,6 +25,7 @@ import com.mycreat.kiipu.rxbus.RxBus;
 import com.mycreat.kiipu.rxbus.RxBusSubscribe;
 import com.mycreat.kiipu.rxbus.ThreadMode;
 import com.mycreat.kiipu.utils.ViewUtils;
+import com.mycreat.kiipu.utils.bind.BindOnclick;
 import com.mycreat.kiipu.utils.bind.BindView;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,15 +38,19 @@ import java.util.List;
  * Created by zhanghaihai on 2017/6/28.
  */
 
-public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRecyclerViewHandler.DataResolver {
+public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRecyclerViewHandler.DataResolver, View.OnClickListener {
     @BindView(R.id.recyclerView)
-    private RecyclerView recyclerView;
+    public RecyclerView recyclerView;
+    @BindOnclick
+    @BindView(R.id.dialog_bg)
+    public RelativeLayout dialogBg;
 
     private int currentPosition;
     private boolean ifCloseWhenTouchBlank = true;
     private OnCancelListener onCancelListener;
     private BookmarkDetailDialogBinding binding;
     private BookmarkDialog bookmarkDialog;
+    private BookmarkDetailAdapter adapter;
 
     public BookmarkDetailDialog(){
         bookmarkDialog = new BookmarkDialog();
@@ -62,7 +68,8 @@ public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRec
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         ViewUtils.bindViews(view, this);
-        bookmarkDialog.setAdapter(new BookmarkDetailAdapter(getActivity(), recyclerView));
+        adapter = new BookmarkDetailAdapter(getActivity(), recyclerView);
+        bookmarkDialog.setAdapter(adapter);
         bookmarkDialog.setLayoutManager(new CustomLinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false){});
         bookmarkDialog.setCurrentPosition(currentPosition);
 
@@ -70,7 +77,7 @@ public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRec
         binding.executePendingBindings();
         PaperLikeRecyclerViewHandler recyclerViewTouchListener = new PaperLikeRecyclerViewHandler();
         recyclerViewTouchListener.setUpRecycleView(recyclerView, binding, this);
-        RxBus.Companion.getDefault().register(this);
+
     }
 
     @Nullable
@@ -81,9 +88,14 @@ public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRec
     }
 
     public void show(FragmentManager manager, String tag, int firstlyShowingPosition, List<Bookmark> bookmarks) {
+        RxBus.Companion.getDefault().register(this);
         bookmarkDialog.bookmarks.set(bookmarks);
         currentPosition = firstlyShowingPosition;
         super.show(manager, tag);
+
+        if(adapter != null)
+            adapter.initLoad();
+
     }
 
     @NotNull
@@ -109,6 +121,14 @@ public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRec
         };
     }
 
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.dialog_bg:
+                dismiss();
+                break;
+        }
+    }
 
 
     public interface OnCancelListener{
@@ -127,6 +147,7 @@ public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRec
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
+        RxBus.Companion.getDefault().unregister(this);
     }
 
     @Override
@@ -145,10 +166,16 @@ public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRec
     @RxBusSubscribe(mode = ThreadMode.MAIN)
     public void onEventLoadMore(LoadMoreEvent event){
         switch (event.action){
+
             case 1:
                 bookmarkDialog.bookmarks.set(event.bookmarks);
+                adapter.notifyDataSetChanged();
+                isLoadingMore = false;
+                break;
+            case 2:
                 recyclerView.getAdapter().notifyDataSetChanged();
                 isLoadingMore = false;
+                adapter.noMore();
                 break;
         }
     }

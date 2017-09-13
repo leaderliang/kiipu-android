@@ -401,24 +401,40 @@ public class BookMarkActivity extends BaseActivity
                         mSwipeRefreshLayout.setRefreshing(false);
                     } else if (REFRESH_TYPE == Constants.REFRESH_TYPE_LOAD_MORE) {// load more
                         requestData.addAll(mBookmarkList);
-                        /////// Added by zhanghaihai 通知detail dialog 加载更多完成
-                        new LoadMoreEvent(1, mBookmarkList).post();
 
                         if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
+                            /////// Added by zhanghaihai 通知detail dialog 加载更多完成
+                            new LoadMoreEvent(1, mBookmarkList).post();
+
                             mGridLayoutAdapter.addData(mBookmarkList);
                             mGridLayoutAdapter.loadMoreComplete();// 数据加载完成
                             if (mBookmarkList.size() < Constants.PAGE_SIZE) {// 没有更多数据
                                 mGridLayoutAdapter.loadMoreEnd(false);
+
+                                /////// Added by zhanghaihai 通知detail dialog 没有更多数据
+                                new LoadMoreEvent(2, mBookmarkList).post();
+
                             }
                         }else{
+                            /////// Added by zhanghaihai 通知detail dialog 加载更多完成
+                            new LoadMoreEvent(1, mBookmarkList).post();
+
                             listAdapter.addData(mBookmarkList);
                             listAdapter.loadMoreComplete();// 数据加载完成
                             if (mBookmarkList.size() < Constants.PAGE_SIZE) {// 没有更多数据
                                 listAdapter.loadMoreEnd(false);
+
+                                /////// Added by zhanghaihai 通知detail dialog 没有更多数据
+                                new LoadMoreEvent(2, mBookmarkList).post();
                             }
                         }
                     }
                 } else {
+                    /////// Added by zhanghaihai 通知detail dialog 加载更多请求成功但没有数据
+                    if(REFRESH_TYPE == Constants.REFRESH_TYPE_LOAD_MORE){
+                        new LoadMoreEvent(2, mBookmarkList).post();
+                    }
+
                     mSwipeRefreshLayout.setRefreshing(false);
 //                    adapter.loadMoreComplete();
 //                    adapter.loadMoreEnd(false);

@@ -39,6 +39,8 @@ public class LeftIvTextView extends RelativeLayout {
         mImageView = (ImageView) view.findViewById(R.id.iv_icon);
         mTextView_1 = (TextView) view.findViewById(R.id.tv_num1);
         mTextView_2 = (TextView) view.findViewById(R.id.tv_num2);
+        ViewTreeObserver vto = mTextView_1.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(onGlobalLayoutListener);
     }
 
     public void loadImage(String url) {
@@ -48,8 +50,6 @@ public class LeftIvTextView extends RelativeLayout {
     public void setText(final String text) {
         mTextView_1.setText(text);
         this.text = text;
-        ViewTreeObserver vto = mTextView_1.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(onGlobalLayoutListener);
         adjustTextLayout();
     }
 
