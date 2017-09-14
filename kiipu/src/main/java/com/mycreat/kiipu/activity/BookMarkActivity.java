@@ -252,7 +252,7 @@ public class BookMarkActivity extends BaseActivity
     public void onViewClick(View v) {
         switch (v.getId()) {
             case R.id.floating_action_bt:
-                startActivity(new Intent(this, addBookmarkActivity.class));
+//                startActivity(new Intent(this, addBookmarkActivity.class));
                 break;
             case R.id.bt_log_out:
                 DialogUtil.showCommonDialog(this, null, getString(R.string.exit_app), false, new DialogInterface.OnClickListener() {
@@ -759,7 +759,10 @@ public class BookMarkActivity extends BaseActivity
                     int dataPosition = data.getIntExtra("dataPosition", 0);
                     String collectionName = data.getStringExtra("collectionName");
                     requestData.remove(dataPosition);
-                    removeAdapterData(dataPosition);
+                    /*策划菜单选中全部时候，移动书签卡片，界面不更新*/
+                    if(!StringUtils.isEmpty(toolbar.getTitle())){
+                        removeAdapterData(dataPosition);
+                    }
                     Snackbar.make(mFloatingActionButton, getString(R.string.move_bookmark_to) + collectionName + getString(R.string.success), Snackbar.LENGTH_LONG)
                             .setDuration(2500)
                             .show();
@@ -959,7 +962,8 @@ public class BookMarkActivity extends BaseActivity
                 }
                 setRecyclerParams(6f,6F);
                 mRecyclerView.setAdapter(mGridLayoutAdapter);
-
+                /*侧滑菜单切换书签夹后切换布局样式，数据错乱问题*/
+                mGridLayoutAdapter.setNewData(requestData);
                 break;
             case LINEAR_LAYOUT_MANAGER:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -974,7 +978,8 @@ public class BookMarkActivity extends BaseActivity
                 }
                 setRecyclerParams(0f,0F);
                 mRecyclerView.setAdapter(listAdapter);
-
+                /*侧滑菜单切换书签夹后切换布局样式，数据错乱问题*/
+                listAdapter.setNewData(requestData);
                 break;
             default:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));

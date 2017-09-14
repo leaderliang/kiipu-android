@@ -39,6 +39,7 @@ public class LeftIvTextView extends RelativeLayout {
         mImageView = (ImageView) view.findViewById(R.id.iv_icon);
         mTextView_1 = (TextView) view.findViewById(R.id.tv_num1);
         mTextView_2 = (TextView) view.findViewById(R.id.tv_num2);
+        /*为提高性能，放构造方法里*/
         ViewTreeObserver vto = mTextView_1.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(onGlobalLayoutListener);
     }

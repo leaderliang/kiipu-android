@@ -1,6 +1,7 @@
 package com.mycreat.kiipu.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -16,9 +17,7 @@ import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.Bookmark;
-import com.mycreat.kiipu.utils.LogUtil;
-import com.mycreat.kiipu.utils.StringUtils;
-import com.mycreat.kiipu.utils.ToastUtil;
+import com.mycreat.kiipu.utils.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import retrofit2.Call;
@@ -36,17 +35,11 @@ import java.util.regex.Pattern;
  */
 public class addBookmarkActivity extends BaseActivity {
 
-//    private EditText etShareContent;
-
     private String resultUrl;
 
     private JSONObject jsonObject;
 
     private String extraText;
-
-//    private ImageView imgBack;
-
-//    private TextView tvSave;
 
     private CoordinatorLayout mContainer;
 
@@ -60,7 +53,6 @@ public class addBookmarkActivity extends BaseActivity {
 //        initListener();
     }
 
-
     @Override
     protected void initViews() {
         super.initViews();
@@ -71,9 +63,6 @@ public class addBookmarkActivity extends BaseActivity {
         lay.width = dis.getWidth() * 1;
         getWindow().setAttributes(lay);
 
-//        imgBack = initViewById(R.id.img_back);
-//        tvSave = initViewById(R.id.tv_save);
-//        etShareContent = initViewById(R.id.et_share_content);
         mContainer = initViewById(R.id.container);
     }
 
@@ -81,22 +70,33 @@ public class addBookmarkActivity extends BaseActivity {
     @Override
     protected void initData() {
         super.initData();
-
-        Intent intent = getIntent();
-        if (intent == null) return;
-        String action = intent.getAction();
-        if (action == null) return;
-        String type = intent.getType();
-        if (type == null) return;
-        Bundle extras = intent.getExtras();
-        if (extras == null) return;
-        if (Intent.ACTION_SEND.equals(action)) {
-            if ("text/plain".equals(type)) {
-                addBookmark(intent); // 处理发送来的文字
+        String accessToken = (String) SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN, "");
+        if(StringUtils.isEmpty(accessToken)){
+            Snackbar.make(mContainer, "请先登录 Kiipu", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("登录", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startActivity(new Intent(addBookmarkActivity.this, LoginActivity.class));
+                            finish();
+                        }
+                    })
+                    .setActionTextColor(Color.parseColor("#FFB74D"))
+                    .show();
+        }else {
+            Intent intent = getIntent();
+            if (intent == null) return;
+            String action = intent.getAction();
+            if (action == null) return;
+            String type = intent.getType();
+            if (type == null) return;
+            Bundle extras = intent.getExtras();
+            if (extras == null) return;
+            if (Intent.ACTION_SEND.equals(action)) {
+                if ("text/plain".equals(type)) {
+                    addBookmark(intent); // 处理发送来的文字
+                }
             }
         }
-
-
     }
 
 //    @Override

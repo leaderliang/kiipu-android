@@ -63,7 +63,7 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
                         holder.getView(R.id.tv_introduce).setVisibility(View.VISIBLE);
                         holder.setText(R.id.tv_introduce, StringUtils.dealWithEmptyStr(mBookmarksInfo.introduce));
                         break;
-                    case Constants.BOOKMARK_TYPE_WEB:
+                    case Constants.BOOKMARK_TYPE_WEB://两个 cardView 嵌套的布局
                         holder.getView(R.id.iv_item_header).setVisibility(View.VISIBLE);
                         holder.getView(R.id.tv_introduce).setVisibility(View.GONE);
                         holder.getView(R.id.ll_item_header).setBackgroundColor(Color.parseColor((TextUtils.isEmpty(bookmark.viewTheme) ? "#ffffff" : "#") + bookmark.viewTheme));
