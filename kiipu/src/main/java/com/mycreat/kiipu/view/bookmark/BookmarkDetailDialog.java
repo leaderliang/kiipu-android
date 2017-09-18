@@ -6,15 +6,16 @@ import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.*;
 import android.util.AttributeSet;
 import android.view.*;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.databinding.BookmarkDetailDialogBinding;
@@ -24,6 +25,7 @@ import com.mycreat.kiipu.model.rxbus.LoadMoreEvent;
 import com.mycreat.kiipu.rxbus.RxBus;
 import com.mycreat.kiipu.rxbus.RxBusSubscribe;
 import com.mycreat.kiipu.rxbus.ThreadMode;
+import com.mycreat.kiipu.utils.DensityUtils;
 import com.mycreat.kiipu.utils.ViewUtils;
 import com.mycreat.kiipu.utils.bind.BindOnclick;
 import com.mycreat.kiipu.utils.bind.BindView;
@@ -59,13 +61,18 @@ public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRec
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if(Build.VERSION.SDK_INT >=  Build.VERSION_CODES.LOLLIPOP) {
+            getDialog().getWindow().setStatusBarColor(R.color.colorPrimary);
+        }
 
         //无title样式
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         //无边框
         setStyle(DialogFragment.STYLE_NO_FRAME, 0);
+
         //设置背景透明
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        getDialog().getWindow().setWindowAnimations(R.style.DF_NO_PADDING_TRANSPARENT);
 
         ViewUtils.bindViews(view, this);
         adapter = new BookmarkDetailAdapter(getActivity(), recyclerView);
@@ -75,8 +82,19 @@ public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRec
 
         binding.setBookmarkDialog(bookmarkDialog);
         binding.executePendingBindings();
-        PaperLikeRecyclerViewHandler recyclerViewTouchListener = new PaperLikeRecyclerViewHandler();
-        recyclerViewTouchListener.setUpRecycleView(recyclerView, binding, this);
+        PagerSnapHelper paperSnapHelper=  new PagerSnapHelper();
+        paperSnapHelper.attachToRecyclerView(recyclerView);
+        recyclerView.scrollToPosition(currentPosition);
+        final int[] lastVisiblePosition = {-1};
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(recyclerView.getAdapter().getItemCount() > 0 && (lastVisiblePosition[0] = getLastVisiblePosition()) == recyclerView.getAdapter().getItemCount() -1 ){
+                    onLoadMore(lastVisiblePosition[0]);
+                }
+            }
+        });
 
     }
 
@@ -245,6 +263,5 @@ public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRec
             this.canScrollHorizontally = canScrollHorizontally;
         }
     }
-
 
 }
