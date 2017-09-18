@@ -10,9 +10,6 @@ import android.support.design.widget.Snackbar;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
@@ -71,7 +68,7 @@ public class addBookmarkActivity extends BaseActivity {
     protected void initData() {
         super.initData();
         String accessToken = (String) SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN, "");
-        if(StringUtils.isEmpty(accessToken)){
+        if (StringUtils.isEmpty(accessToken)) {
             Snackbar.make(mContainer, "请先登录 Kiipu", Snackbar.LENGTH_INDEFINITE)
                     .setAction("登录", new View.OnClickListener() {
                         @Override
@@ -82,7 +79,7 @@ public class addBookmarkActivity extends BaseActivity {
                     })
                     .setActionTextColor(Color.parseColor("#FFB74D"))
                     .show();
-        }else {
+        } else {
             Intent intent = getIntent();
             if (intent == null) return;
             String action = intent.getAction();
@@ -99,12 +96,6 @@ public class addBookmarkActivity extends BaseActivity {
         }
     }
 
-//    @Override
-//    protected void initListener() {
-//        super.initListener();
-//        imgBack.setOnClickListener(this);
-//        tvSave.setOnClickListener(this);
-//    }
 
     private void addBookmark(Intent intent) {
         extraText = intent.getExtras().get(Intent.EXTRA_TEXT).toString();
@@ -118,14 +109,10 @@ public class addBookmarkActivity extends BaseActivity {
         while (matcher.find()) {
             resultUrl = matcher.group();
             list.add(resultUrl);
-            if(!StringUtils.isEmpty(resultUrl) && extraText.contains(resultUrl)){
-                String contentText = extraText.replace(resultUrl,"");
-//                etShareContent.setText(contentText);
-            }
             LogUtil.d("resultUrl-----" + resultUrl);
         }
         // 判断网络
-        Snackbar.make(mContainer, "添加成功，请在 kiipu 中查看", Snackbar.LENGTH_LONG)
+        Snackbar.make(mContainer, getString(R.string.check_in_kiipu), Snackbar.LENGTH_LONG)
                 .setDuration(2500)
                 .show();
 
@@ -135,24 +122,15 @@ public class addBookmarkActivity extends BaseActivity {
             public void run() {
                 finish();
             }
-        },3000);
+        }, 3000);
     }
 
     @Override
     protected void onViewClick(View v) {
-
-        switch (v.getId()){
-//            case R.id.img_back:
-//                finish();
-//                break;
-//            case R.id.tv_save:
-//                requestAddBookmark(etShareContent.getText().toString());
-//                break;
-        }
     }
 
     private void requestAddBookmark(String url, String note) {
-        if(StringUtils.isEmpty(url)){
+        if (StringUtils.isEmpty(url)) {
             Snackbar.make(mContainer, "保存的网页数据异常，请稍后重试~", Snackbar.LENGTH_LONG).show();
             return;
         }
