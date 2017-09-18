@@ -403,7 +403,7 @@ public class BookMarkActivity extends BaseActivity
                         requestData.addAll(mBookmarkList);
 
                         if(mCurrentLayoutManagerType == LayoutManagerType.GRID_LAYOUT_MANAGER){
-                            /////// Added by zhanghaihai 通知detail dialog 加载更多完成
+                            // Added by zhanghaihai 通知detail dialog 加载更多完成
                             new LoadMoreEvent(1, mBookmarkList).post();
 
                             mGridLayoutAdapter.addData(mBookmarkList);
@@ -411,12 +411,12 @@ public class BookMarkActivity extends BaseActivity
                             if (mBookmarkList.size() < Constants.PAGE_SIZE) {// 没有更多数据
                                 mGridLayoutAdapter.loadMoreEnd(false);
 
-                                /////// Added by zhanghaihai 通知detail dialog 没有更多数据
+                                // Added by zhanghaihai 通知detail dialog 没有更多数据
                                 new LoadMoreEvent(2, mBookmarkList).post();
 
                             }
                         }else{
-                            /////// Added by zhanghaihai 通知detail dialog 加载更多完成
+                            // Added by zhanghaihai 通知detail dialog 加载更多完成
                             new LoadMoreEvent(1, mBookmarkList).post();
 
                             listAdapter.addData(mBookmarkList);
@@ -424,13 +424,13 @@ public class BookMarkActivity extends BaseActivity
                             if (mBookmarkList.size() < Constants.PAGE_SIZE) {// 没有更多数据
                                 listAdapter.loadMoreEnd(false);
 
-                                /////// Added by zhanghaihai 通知detail dialog 没有更多数据
+                                // Added by zhanghaihai 通知detail dialog 没有更多数据
                                 new LoadMoreEvent(2, mBookmarkList).post();
                             }
                         }
                     }
                 } else {
-                    /////// Added by zhanghaihai 通知detail dialog 加载更多请求成功但没有数据
+                    // Added by zhanghaihai 通知detail dialog 加载更多请求成功但没有数据
                     if(REFRESH_TYPE == Constants.REFRESH_TYPE_LOAD_MORE){
                         new LoadMoreEvent(2, mBookmarkList).post();
                     }
@@ -745,6 +745,7 @@ public class BookMarkActivity extends BaseActivity
 
     private void showMoveBookmarkDialog(final int dataPosition) {
         Intent intent = new Intent(this, CollectionActivity.class);
+        intent.putExtra("currentCollection", toolbar.getTitle().toString());
         intent.putExtra("dataPosition", dataPosition);
         intent.putExtra("currentBookmarkId", requestData.get(dataPosition).id);
         startActivityForResult(intent, Constants.REQUEST_MOVE_BOOKMARK_CODE);

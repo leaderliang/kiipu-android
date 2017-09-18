@@ -5,7 +5,8 @@
               android:gravity="center"
 >
 
-    <ProgressBar android:id="@+id/pb_view" android:layout_width="wrap_content"
+    <ProgressBar android:id="@+id/pb_view"
+                 android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:visibility="gone"
     />

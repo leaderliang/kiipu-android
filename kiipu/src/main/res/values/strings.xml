@@ -26,4 +26,5 @@
     <string name="no_more_bookmark">没有更多书签了！</string>
     <string name="save">保存</string>
     <string name="check_in_kiipu">添加成功，请在 kiipu 中查看</string>
+    <string name="move_to">移动到</string>
 </resources>

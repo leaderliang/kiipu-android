@@ -53,4 +53,6 @@
             app:borderWidth="0dp"
     />
 
+    <include layout="@layout/view_loading_progress"/>
+
 </android.support.design.widget.CoordinatorLayout>

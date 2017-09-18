@@ -16,7 +16,9 @@ import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.Collections;
+import com.mycreat.kiipu.utils.CollectionUtils;
 import com.mycreat.kiipu.utils.Constants;
+import com.mycreat.kiipu.utils.StringUtils;
 import com.mycreat.kiipu.utils.ToastUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,7 +40,7 @@ public class CollectionActivity extends BaseActivity {
 
     private CollectionListAdapter adapter;
 
-    private String bookmarkId;
+    private String bookmarkId, currentCollectionName;
 
     private int dataPosition;
 
@@ -59,7 +61,8 @@ public class CollectionActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
-        setBaseTitle("移动到");
+        setBaseTitle(getString(R.string.move_to));
+        setBackIcon(R.drawable.ic_close);
         setBackBtn();
         setFloatingVisibile(false);
         recyclerView = initViewById(R.id.recyclerView);
@@ -70,6 +73,7 @@ public class CollectionActivity extends BaseActivity {
     @Override
     protected void initData() {
         super.initData();
+        currentCollectionName = getIntent().getStringExtra("currentCollection");
         bookmarkId = getIntent().getStringExtra("currentBookmarkId");
         dataPosition = getIntent().getIntExtra("dataPosition",0);
         adapter = new CollectionListAdapter(CollectionActivity.this);
@@ -81,16 +85,31 @@ public class CollectionActivity extends BaseActivity {
      * 获取收藏夹列表
      */
     private void getCollectionList() {
+        showProgressBar();
         Call<List<Collections>> call = KiipuApplication.mRetrofitService.getCollectionList(userAccessToken);
         call.enqueue(new Callback<List<Collections>>() {
             @Override
             public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
                 mCollectionList = response.body();
-                adapter.addData(mCollectionList);
+                if(!CollectionUtils.isEmpty(mCollectionList)) {
+                    if (!StringUtils.isEmpty(currentCollectionName)) {
+                        for (int i = 0; i < mCollectionList.size(); i++) {
+                            if (mCollectionList.get(i).collectionName.equals(currentCollectionName)) {
+                                mCollectionList.remove(mCollectionList.get(i));
+                                break;
+                            }
+                        }
+                    }
+                    adapter.addData(mCollectionList);
+                }else{
+                    adapter.setEmptyView(mRequestErrorLayout);
+                }
+                dismissProgressBar();
             }
 
             @Override
             public void onFailure(Call<List<Collections>> call, Throwable t) {
+                dismissProgressBar();
                 Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
                         .setDuration(2500)
                         .show();

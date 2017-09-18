@@ -16,10 +16,7 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.*;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.activity.BookMarkActivity;
 import com.mycreat.kiipu.utils.Constants;
@@ -37,7 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     protected TextView baseTitle;
 
-    private ImageView back;
+    private ImageView mImgBack;
 
     private SparseArray<Object> mViews;
 
@@ -58,6 +55,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected RequestErrorLayout mRequestErrorLayout;
 
     protected FloatingActionButton mFloatingActionButton;
+
+    protected ProgressBar mProgressView;
 
     protected void initViews() {
     }
@@ -100,6 +99,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private void initBaseView() {
         mRequestErrorLayout = (RequestErrorLayout) getLayoutInflater().inflate(R.layout.view_empty, null);
         mFloatingActionButton = initViewById(R.id.floating_action_bt);
+        mProgressView = initViewById(R.id.pb_view);
         setOnClick(mFloatingActionButton);
     }
 
@@ -111,7 +111,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-        back = (ImageView) findViewById(R.id.img_back);
+        mImgBack = (ImageView) findViewById(R.id.img_back);
         baseTitle = (TextView) findViewById(R.id.title);
     }
 
@@ -176,25 +176,49 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
      * sometime you want to define back event
      */
     protected void setBackBtn() {
-        if (back != null) {
-            back.setVisibility(View.VISIBLE);
-            back.setOnClickListener(new View.OnClickListener() {
+        if (mImgBack != null) {
+            mImgBack.setVisibility(View.VISIBLE);
+            mImgBack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onBackPressed();
                 }
             });
         } else {
-            LogUtil.e(TAG, "back is null , please check out");
+            LogUtil.e(TAG, "back img is null , please check out");
+        }
+    }
+
+    protected void setBackIcon(int resId){
+        if(mImgBack != null){
+            mImgBack.setImageResource(resId);
+        }else{
+            LogUtil.e(TAG, "back img is null , please check out");
+        }
+    }
+
+    protected void showProgressBar(){
+        if(mProgressView != null){
+            mProgressView.setVisibility(View.VISIBLE);
+        }else{
+            LogUtil.e(TAG, "ProgressBar is null , please check out");
+        }
+    }
+
+    protected void dismissProgressBar(){
+        if(mProgressView != null){
+            mProgressView.setVisibility(View.GONE);
+        }else{
+            LogUtil.e(TAG, "ProgressBar is null , please check out");
         }
     }
 
     protected void setBackClickListener(View.OnClickListener l) {
-        if (back != null) {
-            back.setVisibility(View.VISIBLE);
-            back.setOnClickListener(l);
+        if (mImgBack != null) {
+            mImgBack.setVisibility(View.VISIBLE);
+            mImgBack.setOnClickListener(l);
         } else {
-            LogUtil.e(TAG, "back is null ,please check out");
+            LogUtil.e(TAG, "back img is null ,please check out");
         }
 
     }
