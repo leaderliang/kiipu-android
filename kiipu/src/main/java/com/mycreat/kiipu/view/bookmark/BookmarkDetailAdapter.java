@@ -140,26 +140,11 @@ public class BookmarkDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             if(mBinding != null){
                 closeBtn.setOnClickListener(onClickListener);
                 final BookmarkDialogItem item = new BookmarkDialogItem();
-                int color = Color.parseColor((TextUtils.isEmpty(bookmark.viewTheme) ? "#ffffff" : "#") + bookmark.viewTheme);
-                item.vibRantColor.set(color);
+                item.vibRantColor.set(StringUtils.isEmpty(bookmark.viewTheme) ?
+                        ContextCompat.getColor(KiipuApplication.appContext, R.color.colorPrimary)
+                        : Color.parseColor("#" + bookmark.viewTheme));
                 item.setBookmark(bookmark);
-                item.setGlideListener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        item.vibRantColor.set(ContextCompat.getColor(KiipuApplication.appContext, R.color.colorPrimary));
-                        return false;
-                    }
 
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        Bitmap bm = BitmapUtil.drawable2Bitmap(resource);
-                        int color = ColorUtil.Companion.getVibRantColor(bm, ContextCompat.getColor(KiipuApplication.appContext, R.color.colorPrimary));
-                        item.vibRantColor.set(color);
-                        return false;
-                    }
-
-
-                });
                 mBinding.setItem(item);
                 mBinding.setOnLinkClickListener(new BookmarkTemplateWebVIew.OnLinkClickListener() {
                     @Override
