@@ -31,6 +31,8 @@ public class Constants {
 
     public static final int RESULT_MOVE_BOOKMARK_CODE = 5;
 
+    public static final int RESULT_ADD_BOOKMARK_CODE = 7;
+
     public static final int BLUR_VALUE = 20; //模糊
 
     public static final int CORNER_RADIUS = 20; //圆角

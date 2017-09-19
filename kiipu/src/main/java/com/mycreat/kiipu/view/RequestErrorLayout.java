@@ -9,6 +9,7 @@ import com.mycreat.kiipu.R;
 
 /**
  * RequestErrorLayout
+ * @author liangyanqiao
  */
 public class RequestErrorLayout extends RelativeLayout {
 

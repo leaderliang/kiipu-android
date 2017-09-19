@@ -97,7 +97,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     private void initBaseView() {
-        mRequestErrorLayout = (RequestErrorLayout) getLayoutInflater().inflate(R.layout.view_empty, null);
         mFloatingActionButton = initViewById(R.id.floating_action_bt);
         mProgressView = initViewById(R.id.pb_view);
         setOnClick(mFloatingActionButton);
@@ -221,6 +220,17 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             LogUtil.e(TAG, "back img is null ,please check out");
         }
 
+    }
+
+    protected View getEmptyView() {
+        if (mRequestErrorLayout == null) {
+            mRequestErrorLayout = (RequestErrorLayout) getLayoutInflater().inflate(R.layout.view_empty, null);
+        } else {
+            if (mRequestErrorLayout.getParent() != null) {
+                ((ViewGroup) mRequestErrorLayout.getParent()).removeAllViews();
+            }
+        }
+        return mRequestErrorLayout;
     }
 
     protected void setFloatingVisibile(boolean isVisible) {

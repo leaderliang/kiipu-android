@@ -380,7 +380,6 @@ public class BookMarkActivity extends BaseActivity
      * all bookmarks  传0  或者不传 collection_id
      */
     private void getBookmarkList() {
-
         String lastItemId = mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).id : "";
         itemId = REFRESH_TYPE == 0 ? "" : lastItemId;
         Call<List<Bookmark>> call = KiipuApplication.mRetrofitService.getBookmarkList(userAccessToken, Constants.PAGE_SIZE, itemId, collectionId);
@@ -451,14 +450,14 @@ public class BookMarkActivity extends BaseActivity
                         mGridLayoutAdapter.loadMoreEnd(false);
                         if (REFRESH_TYPE == Constants.REFRESH_TYPE_PULL) {// when refresh
                             mGridLayoutAdapter.setNewData(mBookmarkList);
-                            mGridLayoutAdapter.setEmptyView(mRequestErrorLayout);
+                            mGridLayoutAdapter.setEmptyView(getEmptyView());
                         }
                     }else{
                         listAdapter.loadMoreComplete();
                         listAdapter.loadMoreEnd(false);
                         if (REFRESH_TYPE == Constants.REFRESH_TYPE_PULL) {// when refresh
                             listAdapter.setNewData(mBookmarkList);
-                            listAdapter.setEmptyView(mRequestErrorLayout);
+                            listAdapter.setEmptyView(getEmptyView());
                         }
                     }
                     if (REFRESH_TYPE == Constants.REFRESH_TYPE_PULL) {
@@ -540,7 +539,9 @@ public class BookMarkActivity extends BaseActivity
      */
     private void createCollection(String collectionName) {
         if(StringUtils.isEmpty(collectionName)){
-            ToastUtil.showToastShort("书签名不能为空");
+            Snackbar.make(mFloatingActionButton, "书签名不能为空~", Snackbar.LENGTH_LONG)
+                    .setDuration(2500)
+                    .show();
             return;
         }
         Call<Collections> call = KiipuApplication.mRetrofitService.createCollection(userAccessToken, collectionName);
@@ -556,7 +557,6 @@ public class BookMarkActivity extends BaseActivity
                     /*添加成功，打开侧边栏*/
                     drawer.openDrawer(Gravity.LEFT);
                 }else{
-                    ToastUtil.showToastShort("");
                     Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~", Snackbar.LENGTH_SHORT).show();
                 }
             }
@@ -624,7 +624,7 @@ public class BookMarkActivity extends BaseActivity
      * 动态添加左侧菜单
      *
      * @param mCollectionList
-     * @param isRequestMenu
+     * @param isRequestMenu true 请求书签；false 添加或修改书签
      * navigationView.setItemIconTintList(resources.getColorStateList(R.drawable.nav_menu_text_color, null)); 设置本地资源图片
      */
     private void addLeftMenu(List<Collections> mCollectionList, final boolean isRequestMenu) {
@@ -754,20 +754,24 @@ public class BookMarkActivity extends BaseActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(data == null){return;}
         switch (resultCode) {
             case Constants.RESULT_MOVE_BOOKMARK_CODE:
-                if (data != null) {
-                    int dataPosition = data.getIntExtra("dataPosition", 0);
-                    String collectionName = data.getStringExtra("collectionName");
-                    requestData.remove(dataPosition);
-                    /*策划菜单选中全部时候，移动书签卡片，界面不更新*/
-                    if(!StringUtils.isEmpty(toolbar.getTitle())){
-                        removeAdapterData(dataPosition);
-                    }
-                    Snackbar.make(mFloatingActionButton, getString(R.string.move_bookmark_to) + collectionName + getString(R.string.success), Snackbar.LENGTH_LONG)
-                            .setDuration(2500)
-                            .show();
+                int dataPosition = data.getIntExtra("dataPosition", 0);
+                String collectionName = data.getStringExtra("collectionName");
+                requestData.remove(dataPosition);
+                /*侧滑菜单选中全部时候，移动书签卡片，界面不更新*/
+                if (!StringUtils.isEmpty(toolbar.getTitle())) {
+                    removeAdapterData(dataPosition);
                 }
+                Snackbar.make(mFloatingActionButton, getString(R.string.move_bookmark_to) + collectionName + getString(R.string.success), Snackbar.LENGTH_LONG)
+                        .setDuration(2500)
+                        .show();
+                break;
+            case Constants.RESULT_ADD_BOOKMARK_CODE:
+                Collections collection = (Collections) data.getSerializableExtra("collection");
+                mCollectionList.add(mCollectionList.size(), collection);
+                addLeftMenu(mCollectionList, false);
                 break;
         }
     }
@@ -903,14 +907,12 @@ public class BookMarkActivity extends BaseActivity
                     addLeftMenu(mCollectionList, false);
                     return;
                 }
-                Snackbar.make(mFloatingActionButton, getString(R.string.modify_collection_fail), Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(mFloatingActionButton, getString(R.string.modify_collection_fail), Snackbar.LENGTH_LONG).show();
             }
 
             @Override
             public void onFailure(Call<Collections> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, getString(R.string.modify_collection_fail)+" "+t.getMessage(), Snackbar.LENGTH_LONG)
-                        .setDuration(2500)
-                        .show();
+                Snackbar.make(mFloatingActionButton, getString(R.string.modify_collection_fail)+" "+t.getMessage(), Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -965,6 +967,9 @@ public class BookMarkActivity extends BaseActivity
                 mRecyclerView.setAdapter(mGridLayoutAdapter);
                 /*侧滑菜单切换书签夹后切换布局样式，数据错乱问题*/
                 mGridLayoutAdapter.setNewData(requestData);
+                if(CollectionUtils.isEmpty(requestData)){
+                    mGridLayoutAdapter.setEmptyView(getEmptyView());
+                }
                 break;
             case LINEAR_LAYOUT_MANAGER:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -981,6 +986,9 @@ public class BookMarkActivity extends BaseActivity
                 mRecyclerView.setAdapter(listAdapter);
                 /*侧滑菜单切换书签夹后切换布局样式，数据错乱问题*/
                 listAdapter.setNewData(requestData);
+                if(CollectionUtils.isEmpty(requestData)){
+                    listAdapter.setEmptyView(getEmptyView());
+                }
                 break;
             default:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));

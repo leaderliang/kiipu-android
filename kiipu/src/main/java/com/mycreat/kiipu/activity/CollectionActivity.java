@@ -1,14 +1,23 @@
 package com.mycreat.kiipu.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.util.ArrayMap;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.transition.Fade;
 import android.transition.TransitionInflater;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.adapter.CollectionListAdapter;
@@ -16,10 +25,7 @@ import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.Bookmark;
 import com.mycreat.kiipu.model.Collections;
-import com.mycreat.kiipu.utils.CollectionUtils;
-import com.mycreat.kiipu.utils.Constants;
-import com.mycreat.kiipu.utils.StringUtils;
-import com.mycreat.kiipu.utils.ToastUtil;
+import com.mycreat.kiipu.utils.*;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,6 +49,11 @@ public class CollectionActivity extends BaseActivity {
     private String bookmarkId, currentCollectionName;
 
     private int dataPosition;
+
+    private View footer;
+
+    private String inputName;
+    private Button finalButton;
 
     @Override
     protected void onViewClick(View v) {
@@ -101,6 +112,8 @@ public class CollectionActivity extends BaseActivity {
                         }
                     }
                     adapter.addData(mCollectionList);
+                    adapter.setFooterView(getFooterView());
+
                 }else{
                     adapter.setEmptyView(mRequestErrorLayout);
                 }
@@ -115,6 +128,27 @@ public class CollectionActivity extends BaseActivity {
                         .show();
             }
         });
+    }
+
+    private View getFooterView() {
+        footer = LayoutInflater.from(CollectionActivity.this).inflate(R.layout.list_item, (ViewGroup) recyclerView.getParent(), false);
+        TextView addCollectionsTv = (TextView) footer.findViewById(R.id.tv_collection_name);
+        addCollectionsTv.setText(getString(R.string.add_collection));
+        footer.findViewById(R.id.iv_icon).setBackgroundResource(R.drawable.ic_add_collection);
+        footer.setOnClickListener(new FooterClickListener());
+        return footer;
+    }
+
+    private class FooterClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            ArrayMap<Object, Object> arrayMap = new ArrayMap<>();
+            arrayMap.put("title","名称");
+            arrayMap.put("hint","输入你要创建的书签名");
+            arrayMap.put("content","");// 为了当输入框没有文本时，按钮置灰
+            editDialog(Constants.CREATE_COLLECTION, null ,arrayMap);
+        }
     }
 
     /**
@@ -153,4 +187,88 @@ public class CollectionActivity extends BaseActivity {
             requestMoveBookmark(position);
         }
     }
+
+    protected void editDialog(final int toDoTag, DialogInterface.OnClickListener NeutralButtonClick, ArrayMap<Object,Object> arrayMap) {
+        DialogUtil.showEditDialog(this,
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        inputName = s.toString().trim();
+                        if (StringUtils.isEmpty(inputName)) {
+                            if (finalButton != null) {
+                                finalButton.setEnabled(false);
+                            }
+                        } else {
+                            if (finalButton != null) {
+                                finalButton.setEnabled(true);
+                            }
+                        }
+                    }
+                }, new DialogUtil.ButtonCallBack() {
+                    @Override
+                    public void buttonCallBack(Button btn) {
+                        finalButton = btn;
+                        if (StringUtils.isEmpty(inputName)) {
+                            finalButton.setEnabled(false);
+                            return;
+                        }
+                        finalButton.setEnabled(true);
+                    }
+                }, NeutralButtonClick
+                , new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (toDoTag == Constants.CREATE_COLLECTION) {
+                            createCollection(inputName);
+                        }
+                    }
+                }, arrayMap);
+    }
+
+    private void createCollection(String collectionName) {
+        showProgressBar();
+        if(StringUtils.isEmpty(collectionName)){
+            Snackbar.make(mFloatingActionButton, "书签名不能为空~", Snackbar.LENGTH_LONG)
+                    .setDuration(2500)
+                    .show();
+            return;
+        }
+        Call<Collections> call = KiipuApplication.mRetrofitService.createCollection(userAccessToken, collectionName);
+        call.enqueue(new Callback<Collections>() {
+            @Override
+            public void onResponse(Call<Collections> call, Response<Collections> response) {
+                if (response.body() != null) {
+                    Collections collection = response.body();
+                    adapter.addData(mCollectionList.size(), collection);
+                    mCollectionList.add(mCollectionList.size(), collection);
+                    Snackbar.make(mFloatingActionButton, "创建书签成功啦~", Snackbar.LENGTH_SHORT)
+                            .show();
+
+                    Intent intent = new Intent();
+                    intent.putExtra("collection", collection);
+                    setResult(Constants.RESULT_ADD_BOOKMARK_CODE, intent);
+                }else{
+                    Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~", Snackbar.LENGTH_SHORT).show();
+                }
+                dismissProgressBar();
+            }
+
+            @Override
+            public void onFailure(Call<Collections> call, Throwable t) {
+                Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~"+ t.getMessage(), Snackbar.LENGTH_LONG)
+                        .setDuration(2500)
+                        .show();
+            }
+        });
+    }
+
+
 }
