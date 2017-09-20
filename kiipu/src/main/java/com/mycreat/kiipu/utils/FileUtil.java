@@ -83,7 +83,7 @@ public class FileUtil {
 
         RandomAccessFile rf = new RandomAccessFile(file, "rw");
         rf.seek(0);//从零开始写
-        rf.write(str.getBytes());
+        rf.writeUTF(str);
         rf.close();
 
         if(file.exists() && file.length() == str.length()){
@@ -102,7 +102,7 @@ public class FileUtil {
      * @return
      */
     @Nullable
-    public static String readFile(String path){
+    public static String readUtfFromFile(String path){
         File file = new File(path);
         if(file.exists() && file.isFile() && file.canRead() && file.length() > 0){
             RandomAccessFile rf = null;
@@ -117,7 +117,7 @@ public class FileUtil {
                 if(rf != null){
                     try {
                         rf.close();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         LogUtil.e(e.getMessage());
                     }

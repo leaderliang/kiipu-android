@@ -40,7 +40,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
+                android:scrollbarSize="5dp"
                 android:scrollbarStyle="insideInset"
+                android:scrollbarTrackVertical="@drawable/shape_scroll_bar_track"
+                android:scrollbarThumbVertical="@drawable/shape_scroll_bar_thumb"
                 app:bookmark="@{item.bookmark}"
                 app:onLinkClick="@{onLinkClickListener}"
         />

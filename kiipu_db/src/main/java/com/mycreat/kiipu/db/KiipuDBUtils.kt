@@ -35,6 +35,11 @@ class KiipuDBUtils {
            return getSession(context).templateDao.queryBuilder().where(TemplateDao.Properties.Name.eq(name)).build().list()
         }
 
+        fun getTemplate(context:Context, name:String?, versionCode:Int?):List<Template>{
+            if (name == null || versionCode == null) return ArrayList()
+            return getSession(context).templateDao.queryBuilder().where(TemplateDao.Properties.Name.eq(name)).where(TemplateDao.Properties.Version_code.eq(versionCode)).build().list()
+        }
+
         fun saveTemplate(context: Context, template: Template){
             val tmpls = getSession(context).templateDao.queryBuilder().where(TemplateDao.Properties.Name.eq(template.name)).list()
             if(tmpls.size > 0) {

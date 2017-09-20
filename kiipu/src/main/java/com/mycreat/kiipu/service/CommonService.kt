@@ -42,7 +42,7 @@ class CommonService : Service() {
     @RxBusSubscribe(ThreadMode.IO)
     fun onEventStorage(event:TemplateCacheEvent){
         val tFolder = FileUtil.getTemplateCacheDir()
-        val tPath = tFolder + File.separator + event.name
+        val tPath = tFolder + File.separator + event.name + "_" + event.versionCode
         try {
             if(!File(tFolder).exists()) File(tFolder).mkdirs()
             FileUtil.writeToFile( event.template, tPath)
@@ -58,5 +58,9 @@ class CommonService : Service() {
         }
     }
 
-    class TemplateCacheEvent(var template:String, var url:String, var name:String, var versionCode:Int = 1)
+    class TemplateCacheEvent(var template:String, var url:String, var name:String, var versionCode:Int = 1){
+        fun post(){
+            RxBus.getDefault().post(this)
+        }
+    }
 }

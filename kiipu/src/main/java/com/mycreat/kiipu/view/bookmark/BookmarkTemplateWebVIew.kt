@@ -9,11 +9,15 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import com.mycreat.kiipu.core.KiipuApplication
+import com.mycreat.kiipu.db.KiipuDBUtils
 import com.mycreat.kiipu.model.Bookmark
+import com.mycreat.kiipu.service.CommonService
+import com.mycreat.kiipu.utils.FileUtil
 import com.mycreat.kiipu.utils.JsonUtil
 import com.mycreat.kiipu.utils.LogUtil
 import com.samskivert.mustache.Mustache
 import com.samskivert.mustache.MustacheException
+import java.io.File
 import java.io.IOException
 import java.nio.charset.Charset
 
@@ -25,6 +29,7 @@ import java.nio.charset.Charset
 class BookmarkTemplateWebVIew : WebView {
     val replacePrefix = "http://tmpl_replace.kiipu.com/"
     val localHtmlPrefix = "http://local_html_prefix.kiipu.com/"
+    val defaultTemplate = "common"
     var mBookMark: Bookmark? = null
     var onLinkClickListener: OnLinkClickListener? = null
     var onScrollChangeListener:OnScrollChangedListener? = null
@@ -127,12 +132,27 @@ class BookmarkTemplateWebVIew : WebView {
      */
     private fun loadTemplate(htmlPath:String?):String?{
         if(htmlPath == null) return null
+        val t = KiipuDBUtils.getTemplate(context, mBookMark?.tmplName ?:defaultTemplate, mBookMark?.tmplVersion)
+        if(t.isNotEmpty() && File(t[0].local_path).exists()){
+            val str = FileUtil.readUtfFromFile(t[0].local_path)
+            if(!str.isNullOrEmpty()){
+                return str
+            }
+        }
         val call = KiipuApplication.mRetrofitTemplateService.requestHtml(htmlPath)
-        try {
+        return try {
             val rep = call.execute()
-            return if(rep.isSuccessful) rep.body().toString() else null
+            if(rep.isSuccessful) {
+                val str = rep.body().toString()
+                if(mBookMark != null) {
+                    CommonService.TemplateCacheEvent(str, htmlPath, mBookMark!!.tmplName ?:defaultTemplate , mBookMark!!.tmplVersion).post()
+                }
+                str
+            }else{
+                null
+            }
         }catch (e:IOException){
-            return null
+            null
         }
     }
 
@@ -177,7 +197,7 @@ class BookmarkTemplateWebVIew : WebView {
         if(bookmark.tmplName != null) {
             loadUrl("$replacePrefix${bookmark.tmplName}/${mBookMark!!.tmplVersion}.html")
         }else{
-            loadUrl("${replacePrefix}common/1.html" )
+            loadUrl("${replacePrefix}$defaultTemplate/1.html" )
         }
     }
 

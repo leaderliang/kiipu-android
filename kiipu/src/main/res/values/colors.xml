@@ -40,4 +40,5 @@
     <color name="yalantis_sienna">#EB6460</color>
 
     <color name="bookmark_detail_translucent" >#7d000000</color>
+    <color name="bookmark_web_scroll_bar">#ebd4d4d4</color>
 </resources>
