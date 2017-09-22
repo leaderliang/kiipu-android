@@ -83,6 +83,7 @@ public class LoginActivity extends BaseActivity {
                 public void run() {
                     SocializeUtils.safeCloseDialog(dialog);
                     startActivity(new Intent(mContext, BookMarkActivity.class));
+                    finish();
                 }
             }, 300);
         }

@@ -54,7 +54,7 @@
         <activity
                 android:name=".activity.BookMarkActivity"
                 android:screenOrientation="portrait"
-
+                android:launchMode="singleInstance"
                  />
         <activity
                 android:name=".activity.WebViewActivity"

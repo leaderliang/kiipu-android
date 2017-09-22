@@ -121,14 +121,13 @@ public class DialogUtil {
                                         String positiveStr,
                                         String negativeStr,
                                         boolean isCancelable,
-                                        DialogInterface.OnClickListener positiveButtonClick,
-                                        DialogInterface.OnClickListener negativeButtonClick) {
+                                        DialogInterface.OnClickListener positiveButtonClick) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title)
                 .setMessage(message)
                 .setCancelable(isCancelable)
                 .setPositiveButton(positiveStr, positiveButtonClick)
-                .setNegativeButton(negativeStr, negativeButtonClick);
+                .setNegativeButton(negativeStr, null);
         builder.show();
     }
 

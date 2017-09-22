@@ -78,6 +78,10 @@ public interface RetrofitService {
                                 @Path("id") String id,
                                 @Field("name") String collectionName);
 
+    @DELETE(RetrofitApi.DELETE_COLLECTIONS + "{id}")
+    Call<Collections> deleteCollections(@Header("Authorization") String value,
+                                  @Path("id") String collectionsId);
+
     /**
      * @param value
      * @param defaultExt
@@ -104,6 +108,7 @@ public interface RetrofitService {
                                            @Path("id") String id,
                                            @Query("ext") String defaultExt
     );
+
     /**
      * 请求模板 html 中的样式数据,在书签列表 bean 中拼凑链接
      * http://static.kiipu.com/tmpl/{tmpl}/{tmpl_ver}.html

@@ -47,6 +47,14 @@ public class RetrofitApi {
      */
     public static final String CREATE_COLLECTION = BASE_URL + "collections";
     /**
+     * /collections/:id
+     */
+    public static final String MODIFY_COLLECTION_NAME = BASE_URL + "collections/";
+    /**
+     * 删除收藏夹
+     */
+    public static final String DELETE_COLLECTIONS = BASE_URL + "collections/";
+    /**
      * user
      * 参数：
      * header : access_token
@@ -65,11 +73,6 @@ public class RetrofitApi {
      * /bookmarks/:id?ext=1&tmpl=1
      */
     public static final String CARD_TEMPLATE = BASE_URL + "bookmarks/";
-
-    /**
-     * /collections/:id
-     */
-    public static final String MODIFY_COLLECTION_NAME = BASE_URL + "collections/";
 
     /**
      * POST

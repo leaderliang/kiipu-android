@@ -67,6 +67,8 @@ public class Constants {
 
     public static final String KEY_LAYOUT_MANAGER = "layoutManager";
 
+    public static final String CLIPBOAR_DATA = "clipboar_data";
+
 
 
 }
