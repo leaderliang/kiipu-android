@@ -34,9 +34,9 @@ public interface RetrofitService {
 
     @GET(RetrofitApi.BOOK_MARKS_LIST)
     Observable<List<Bookmark>> getBookmarkLists(@Header("Authorization") String value,
-                                               @Query("count") Integer number,
-                                               @Query("since_id") String id,
-                                               @Query("collection_id") String collectionId);
+                                                @Query("count") Integer number,
+                                                @Query("since_id") String id,
+                                                @Query("collection_id") String collectionId);
 
 
     @DELETE(RetrofitApi.DELETE_BOOK_MARKS + "{id}")
@@ -75,12 +75,12 @@ public interface RetrofitService {
     @FormUrlEncoded
     @PATCH(RetrofitApi.MODIFY_COLLECTION_NAME + "{id}")
     Call<Collections> modifyCollection(@Header("Authorization") String value,
-                                @Path("id") String id,
-                                @Field("name") String collectionName);
+                                       @Path("id") String id,
+                                       @Field("name") String collectionName);
 
     @DELETE(RetrofitApi.DELETE_COLLECTIONS + "{id}")
     Call<Collections> deleteCollections(@Header("Authorization") String value,
-                                  @Path("id") String collectionsId);
+                                        @Path("id") String collectionsId);
 
     /**
      * @param value
@@ -116,10 +116,18 @@ public interface RetrofitService {
     @GET(RetrofitApi.BASE_TEMPLATE_URL + "{htmlPath}")
     Call<String> requestHtml(@Path("htmlPath") String htmlPath);
 
-
+    /**
+     * 添加书签
+     *
+     * @param value token
+     * @param collectionId 要添加到的书签夹 id
+     * @param shareData url
+     * @return
+     */
     @FormUrlEncoded
     @POST(RetrofitApi.ADD_BOOK_MARKS)
     Call<Bookmark> addBookmark(@Header("Authorization") String value,
-                                  @Field("data") String shareData);
+                               @Field("collection_id") String collectionId,
+                               @Field("data") String shareData);
 
 }

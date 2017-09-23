@@ -166,7 +166,7 @@ public class CollectionActivity extends BaseActivity {
 //                requestData.remove(dataPosition);
 //                adapter.remove(collectionPosition);
                 Intent intent = new Intent();
-                intent.putExtra("dataPosition",dataPosition);
+                intent.putExtra("dataPosition", dataPosition);
                 intent.putExtra("collectionName", mCollectionList.get(collectionPosition).collectionName);
                 setResult(Constants.RESULT_MOVE_BOOKMARK_CODE, intent);
                 finish();
@@ -189,7 +189,7 @@ public class CollectionActivity extends BaseActivity {
     }
 
     protected void editDialog(final int toDoTag, DialogInterface.OnClickListener NeutralButtonClick, ArrayMap<Object,Object> arrayMap) {
-        DialogUtil.showEditDialog(this,
+        DialogUtil.showEditDialog(this, Constants.INPUT_MAX_LENGTH,
                 new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -235,7 +235,7 @@ public class CollectionActivity extends BaseActivity {
 
     private void createCollection(String collectionName) {
         showProgressBar();
-        if(StringUtils.isEmpty(collectionName)){
+        if (StringUtils.isEmpty(collectionName)) {
             Snackbar.make(mFloatingActionButton, "书签名不能为空~", Snackbar.LENGTH_LONG)
                     .setDuration(2500)
                     .show();
@@ -255,7 +255,7 @@ public class CollectionActivity extends BaseActivity {
                     Intent intent = new Intent();
                     intent.putExtra("collection", collection);
                     setResult(Constants.RESULT_ADD_BOOKMARK_CODE, intent);
-                }else{
+                } else {
                     Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~", Snackbar.LENGTH_SHORT).show();
                 }
                 dismissProgressBar();
@@ -263,7 +263,7 @@ public class CollectionActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<Collections> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~"+ t.getMessage(), Snackbar.LENGTH_LONG)
+                Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~" + t.getMessage(), Snackbar.LENGTH_LONG)
                         .setDuration(2500)
                         .show();
             }

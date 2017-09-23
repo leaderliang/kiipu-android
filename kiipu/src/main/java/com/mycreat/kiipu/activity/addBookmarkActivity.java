@@ -134,7 +134,6 @@ public class addBookmarkActivity extends BaseActivity {
             Snackbar.make(mContainer, "保存的网页数据异常，请稍后重试~", Snackbar.LENGTH_LONG).show();
             return;
         }
-
         try {
             jsonObject = new JSONObject();
             jsonObject.put("url", url);
@@ -142,7 +141,7 @@ public class addBookmarkActivity extends BaseActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Call<Bookmark> call = KiipuApplication.mRetrofitService.addBookmark(userAccessToken, jsonObject.toString());
+        Call<Bookmark> call = KiipuApplication.mRetrofitService.addBookmark(userAccessToken, "", jsonObject.toString());
         call.enqueue(new Callback<Bookmark>() {
             @Override
             public void onResponse(Call<Bookmark> call, Response<Bookmark> response) {

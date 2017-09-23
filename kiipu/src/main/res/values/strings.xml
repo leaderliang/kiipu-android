@@ -5,6 +5,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <!-- BookMarkActivity-->
     <string name="action_settings">切换布局</string>
     <string name="favorites">收藏夹</string>
     <string name="all">全部</string>
@@ -30,4 +31,8 @@
     <string name="move_to">移动到</string>
     <string name="confirm_delete_current_collections">确认删除该收藏夹？</string>
     <string name="delete_collections_content">删除后，该收藏夹下的所有书签，都将移动到“收件箱”中</string>
+    <string name="confirm">确定</string>
+    <string name="cancle">取消</string>
+
+
 </resources>

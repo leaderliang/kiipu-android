@@ -41,6 +41,8 @@ public class Constants {
 
     public static final int MODIFY_COLLECTION_NAME = 0x002;
 
+    public static final int ADD_COLLECTION = 0x003;
+
     public static final float THUMB_SIZE = 0.5f; //0-1之间  10%原图的大小
 
     public static final String ALL_COLLECTION = "0";
@@ -69,6 +71,5 @@ public class Constants {
 
     public static final String CLIPBOAR_DATA = "clipboar_data";
 
-
-
+    public static final int INPUT_MAX_LENGTH = 24;//修改/添加书签夹 输入框字数限制
 }

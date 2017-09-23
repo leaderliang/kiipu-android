@@ -26,6 +26,7 @@ public class DialogUtil {
     }
 
     public static void showEditDialog(final Context context,
+                                      int inputLength,
                                       TextWatcher textWatcher,
                                       ButtonCallBack callBack,
                                       DialogInterface.OnClickListener NeutralButtonClick,
@@ -34,7 +35,7 @@ public class DialogUtil {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.view_edit_dialog, null);
         final EditText editText = (EditText) view.findViewById(R.id.et_name);
-        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(24)});
+        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(inputLength)});
         editText.addTextChangedListener(textWatcher);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle((String) arrayMap.get("title"));
@@ -48,7 +49,7 @@ public class DialogUtil {
                 KeyBoardUtils.closeKeyboard(editText,context);
             }
         });
-        builder.setCancelable(false);
+        builder.setCancelable(true);
         builder.setView(view);
         String hint = (String) arrayMap.get("hint");
         String content = (String) arrayMap.get("content");
@@ -120,12 +121,11 @@ public class DialogUtil {
                                         String message,
                                         String positiveStr,
                                         String negativeStr,
-                                        boolean isCancelable,
                                         DialogInterface.OnClickListener positiveButtonClick) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title)
                 .setMessage(message)
-                .setCancelable(isCancelable)
+                .setCancelable(true)
                 .setPositiveButton(positiveStr, positiveButtonClick)
                 .setNegativeButton(negativeStr, null);
         builder.show();
@@ -134,32 +134,16 @@ public class DialogUtil {
     public static void showCommonDialog(Context context,
                                         String title,
                                         String message,
-                                        boolean isCancelable,
                                         DialogInterface.OnClickListener positiveButtonClick,
                                         DialogInterface.OnClickListener negativeButtonClick) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title)
                 .setMessage(message)
-                .setCancelable(isCancelable)
+                .setCancelable(true)
                 .setPositiveButton("确定", positiveButtonClick)
                 .setNegativeButton("取消", negativeButtonClick);
         builder.show();
     }
-
-    public static void showCommonDialog(Context context,
-                                        String title,
-                                        String message,
-                                        DialogInterface.OnClickListener positiveButtonClick,
-                                        DialogInterface.OnClickListener negativeButtonClick) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(title)
-                .setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton("确定", positiveButtonClick)
-                .setNegativeButton("取消", negativeButtonClick);
-        builder.show();
-    }
-
 
     public static ListPopupWindow showPopupWindow(Context mContext, View view, AdapterView.OnItemClickListener listener) {
         final ListPopupWindow listPopupWindow = new ListPopupWindow(mContext);
