@@ -1211,11 +1211,16 @@ public class BookMarkActivity extends BaseActivity
         try {
             jsonObject = new JSONObject();
             jsonObject.put("url", url);
-            jsonObject.put("note", "");
+//          jsonObject.put("note", "");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Call<Bookmark> call = KiipuApplication.mRetrofitService.addBookmark(userAccessToken, addCollectionId, jsonObject.toString());
+        Call<Bookmark> call;
+        if(collectionId == Constants.ALL_COLLECTION || collectionId == Constants.INBOX) {
+            call = KiipuApplication.mRetrofitService.addBookmark(userAccessToken, null, jsonObject.toString());
+        }else {
+            call = KiipuApplication.mRetrofitService.addBookmark(userAccessToken, addCollectionId, jsonObject.toString());
+        }
         call.enqueue(new Callback<Bookmark>() {
             @Override
             public void onResponse(Call<Bookmark> call, Response<Bookmark> response) {

@@ -137,7 +137,7 @@ public class addBookmarkActivity extends BaseActivity {
         try {
             jsonObject = new JSONObject();
             jsonObject.put("url", url);
-            jsonObject.put("note", note);
+//            jsonObject.put("note", note);
         } catch (JSONException e) {
             e.printStackTrace();
         }
