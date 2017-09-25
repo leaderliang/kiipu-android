@@ -35,7 +35,7 @@
                 android:value="5911e1a21c5dd0604e000e04"/>
         <meta-data
                 android:name="UMENG_CHANNEL"
-                android:value="Umeng"/>
+                android:value="Official"/>
         <!-- okHttp 默认缓存，也可以自定义  default path: android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule" -->
         <meta-data
                 android:name="com.mycreat.kiipu.core.GlideModelConfig"

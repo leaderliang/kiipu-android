@@ -7,11 +7,13 @@ import android.support.multidex.MultiDexApplication;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
+import com.mycreat.kiipu.BuildConfig;
 import com.mycreat.kiipu.retrofit.RetrofitClient;
 import com.mycreat.kiipu.retrofit.RetrofitService;
 import com.mycreat.kiipu.service.CommonService;
+import com.mycreat.kiipu.utils.AppUtils;
 import com.mycreat.kiipu.utils.LogUtil;
-import com.mycreat.kiipu.utils.NetChangeReceiver;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.Config;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.common.QueuedWork;
@@ -22,8 +24,6 @@ import com.umeng.socialize.common.QueuedWork;
  * TODO
  */
 public class KiipuApplication extends MultiDexApplication implements Thread.UncaughtExceptionHandler{
-
-    private NetChangeReceiver mNetChangeReceiver;
 
     /*各个平台的配置，建议放在全局Application或者程序入口*/
     {
@@ -62,6 +62,13 @@ public class KiipuApplication extends MultiDexApplication implements Thread.Unca
         mRetrofitService = RetrofitClient.getInstance().create(RetrofitService.class);
         mRetrofitTemplateService = RetrofitClient.getTemplateInstance().create(RetrofitService.class);
         startService(new Intent(getApplicationContext(), CommonService.class)); //启动公用的线程
+
+        //添加友盟相关信息
+        MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL);
+        String channel = AppUtils.getMetaData(this, "UMENG_CHANNEL");
+        MobclickAgent.UMAnalyticsConfig config = new MobclickAgent.UMAnalyticsConfig(appContext, "5911e1a21c5dd0604e000e04", channel == null ? "UNKNOWN": channel);
+        MobclickAgent.startWithConfigure(config);
+        MobclickAgent.setDebugMode(Config.DEBUG);
     }
 
     @Override
@@ -90,6 +97,7 @@ public class KiipuApplication extends MultiDexApplication implements Thread.Unca
 
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
+        MobclickAgent.reportError(appContext, ex);
         ex.printStackTrace();
         StackTraceElement[] sts = thread.getStackTrace().clone();
         StringBuilder sb = new StringBuilder();

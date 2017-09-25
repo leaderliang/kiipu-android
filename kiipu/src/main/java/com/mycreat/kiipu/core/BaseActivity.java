@@ -21,6 +21,7 @@ import android.widget.*;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.RequestErrorLayout;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created by leaderliang on 2017/3/30.
@@ -318,4 +319,15 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
 }
