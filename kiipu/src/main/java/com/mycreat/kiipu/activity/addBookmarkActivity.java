@@ -47,7 +47,7 @@ public class addBookmarkActivity extends BaseActivity {
         setContentView(R.layout.activity_add_bookmark);
         initViews();
         initData();
-        registerReceiver();
+        registerKiipuNetReceiver();
     }
 
     @Override

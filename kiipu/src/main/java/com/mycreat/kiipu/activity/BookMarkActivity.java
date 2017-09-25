@@ -146,7 +146,7 @@ public class BookMarkActivity extends BaseActivity
         initViews();
         initData();
         initListener();
-        registerReceiver();
+        registerKiipuNetReceiver();
         RxBus.Companion.getDefault().register(this);
 
     }

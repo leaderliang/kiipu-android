@@ -2,12 +2,9 @@ package com.mycreat.kiipu.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -62,7 +59,7 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         initViews();
         initData();
-        registerReceiver();
+        registerKiipuNetReceiver();
     }
 
     @Override

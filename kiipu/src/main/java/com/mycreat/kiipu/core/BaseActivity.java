@@ -277,7 +277,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     /**
      * register net receiver
      */
-    protected void registerReceiver() {
+    protected void registerKiipuNetReceiver() {
         // net callback
         if (mNetChangeReceiver == null) {
             mNetChangeReceiver = new NetChangeReceiver();
