@@ -2,8 +2,12 @@ package com.mycreat.kiipu.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +17,7 @@ import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.LoginInfo;
 import com.mycreat.kiipu.utils.Constants;
+import com.mycreat.kiipu.utils.NetChangeReceiver;
 import com.mycreat.kiipu.utils.SharedPreferencesUtil;
 import com.mycreat.kiipu.utils.ToastUtil;
 import com.umeng.socialize.UMAuthListener;
@@ -48,6 +53,8 @@ public class LoginActivity extends BaseActivity {
 
     private boolean isUseClient = false;
 
+    private CoordinatorLayout mContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         useBaseLayout = false;
@@ -55,13 +62,14 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         initViews();
         initData();
+        registerReceiver();
     }
 
     @Override
     protected void initViews() {
 
         mRlSinaAuth = (RelativeLayout) findViewById(R.id.rl_sina_auth);
-
+        mContainer = initViewById(R.id.container);
         dialog = new ProgressDialog(this);
         mRlSinaAuth.setOnClickListener(this);
         for (SHARE_MEDIA e : list) {
@@ -77,6 +85,10 @@ public class LoginActivity extends BaseActivity {
         String accessToken = (String) SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN, "");
         String userId = (String) SharedPreferencesUtil.getData(mContext, Constants.USER_ID, "");
         if (!TextUtils.isEmpty(accessToken) && !TextUtils.isEmpty(userId)) {
+            if (!NetChangeReceiver.isNetWorkAvailable(this)) {
+                showNetSettingView(mContainer);
+                return;
+            }
             SocializeUtils.safeShowDialog(dialog);
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -148,7 +160,7 @@ public class LoginActivity extends BaseActivity {
         Log.e(TAG, "onActivityResult " + data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
         if (data != null) {
-            if(!isUseClient) {
+            if (!isUseClient) {
                 isUseClient = true;
                 Bundle bundle = data.getExtras();
                 access_token = bundle.getString("access_token");
@@ -168,7 +180,11 @@ public class LoginActivity extends BaseActivity {
             public void onResponse(Call<LoginInfo> call, Response<LoginInfo> response) {
                 SocializeUtils.safeCloseDialog(dialog);
                 LoginInfo loginInfo = response.body();
-                if(loginInfo != null) {
+                if (loginInfo != null) {
+                    if (!NetChangeReceiver.isNetWorkAvailable(LoginActivity.this)) {
+                        showNetSettingView(mContainer);
+                        return;
+                    }
                     String accessToken = loginInfo.accessToken;
                     String userId = loginInfo.userId;
                     SharedPreferencesUtil.saveData(mContext, Constants.ACCESS_TOKEN, accessToken);
@@ -176,7 +192,7 @@ public class LoginActivity extends BaseActivity {
                     Log.e(TAG, "loginInfo userId " + loginInfo.userId + " token " + loginInfo.accessToken);
                     startActivity(new Intent(mContext, BookMarkActivity.class));
                     finish();
-                }else{
+                } else {
                     ToastUtil.showToastShort(getString(R.string.login_fail));
                 }
             }
@@ -187,6 +203,14 @@ public class LoginActivity extends BaseActivity {
                 ToastUtil.showToastShort(t.getMessage());
             }
         });
-
     }
+
+    @Override
+    protected void netStateChanged(boolean state) {
+        super.netStateChanged(state);
+        if(!state){
+            showNetSettingView(mContainer);
+        }
+    }
+
 }

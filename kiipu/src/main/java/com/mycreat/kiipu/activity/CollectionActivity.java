@@ -65,6 +65,7 @@ public class CollectionActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collection);
         initViews();
+        registerReceiver();
         initData();
         getCollectionList();
     }
@@ -78,7 +79,7 @@ public class CollectionActivity extends BaseActivity {
         setFloatingVisibile(false);
         recyclerView = initViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mFloatingActionButton.hide();
+        mBaseFloatingActionButton.hide();
     }
 
     @Override
@@ -123,7 +124,7 @@ public class CollectionActivity extends BaseActivity {
             @Override
             public void onFailure(Call<List<Collections>> call, Throwable t) {
                 dismissProgressBar();
-                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
+                Snackbar.make(mBaseFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
                         .setDuration(2500)
                         .show();
             }
@@ -174,7 +175,7 @@ public class CollectionActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<Bookmark> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
+                Snackbar.make(mBaseFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
                         .setDuration(2500)
                         .show();
             }
@@ -236,7 +237,7 @@ public class CollectionActivity extends BaseActivity {
     private void createCollection(String collectionName) {
         showProgressBar();
         if (StringUtils.isEmpty(collectionName)) {
-            Snackbar.make(mFloatingActionButton, "书签名不能为空~", Snackbar.LENGTH_LONG)
+            Snackbar.make(mBaseFloatingActionButton, "书签名不能为空~", Snackbar.LENGTH_LONG)
                     .setDuration(2500)
                     .show();
             return;
@@ -249,26 +250,31 @@ public class CollectionActivity extends BaseActivity {
                     Collections collection = response.body();
                     adapter.addData(mCollectionList.size(), collection);
                     mCollectionList.add(mCollectionList.size(), collection);
-                    Snackbar.make(mFloatingActionButton, "创建书签成功啦~", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(mBaseFloatingActionButton, "创建书签成功啦~", Snackbar.LENGTH_SHORT)
                             .show();
 
                     Intent intent = new Intent();
                     intent.putExtra("collection", collection);
                     setResult(Constants.RESULT_ADD_BOOKMARK_CODE, intent);
                 } else {
-                    Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(mBaseFloatingActionButton, "创建书签失败，请稍后重试~", Snackbar.LENGTH_SHORT).show();
                 }
                 dismissProgressBar();
             }
 
             @Override
             public void onFailure(Call<Collections> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~" + t.getMessage(), Snackbar.LENGTH_LONG)
+                Snackbar.make(mBaseFloatingActionButton, "创建书签失败，请稍后重试~" + t.getMessage(), Snackbar.LENGTH_LONG)
                         .setDuration(2500)
                         .show();
             }
         });
     }
 
-
+    @Override
+    protected void netStateChanged(boolean state) {
+        if(!state){
+            showNetSettingView(mBaseFloatingActionButton);
+        }
+    }
 }

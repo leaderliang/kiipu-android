@@ -86,6 +86,13 @@
                 android:theme="@style/NoActionBar"/>
 
         <service android:name=".service.CommonService" />
+
+        <!-- receiver -->
+        <receiver android:name="com.mycreat.kiipu.utils.NetChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

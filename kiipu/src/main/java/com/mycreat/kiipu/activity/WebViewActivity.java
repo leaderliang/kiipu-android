@@ -34,7 +34,7 @@ public class WebViewActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webview);
         setBackClickListener(new BackClickListener());
-        mFloatingActionButton.hide();
+        mBaseFloatingActionButton.hide();
         String url = getIntent().getStringExtra(EXTRA_URL);
         webView = (WebView) findViewById(R.id.webView);
         progressbar = (ProgressBar) findViewById(R.id.progressbar);

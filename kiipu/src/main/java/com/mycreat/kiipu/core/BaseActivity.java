@@ -1,28 +1,25 @@
 package com.mycreat.kiipu.core;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.*;
 import com.mycreat.kiipu.R;
-import com.mycreat.kiipu.activity.BookMarkActivity;
-import com.mycreat.kiipu.utils.Constants;
-import com.mycreat.kiipu.utils.DialogUtil;
-import com.mycreat.kiipu.utils.LogUtil;
-import com.mycreat.kiipu.utils.SharedPreferencesUtil;
+import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.RequestErrorLayout;
 
 /**
@@ -30,7 +27,7 @@ import com.mycreat.kiipu.view.RequestErrorLayout;
  * email: leaderliang.dev@gmail.com
  * TODO
  */
-public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
+public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener, NetChangeReceiver.CallBackState {
 
     protected TextView baseTitle;
 
@@ -54,18 +51,21 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     protected RequestErrorLayout mRequestErrorLayout;
 
-    protected FloatingActionButton mFloatingActionButton;
+    protected FloatingActionButton mBaseFloatingActionButton;
 
     protected ProgressBar mProgressView;
 
-    protected void initViews() {
-    }
+    private NetChangeReceiver mNetChangeReceiver;
 
-    protected void initData() {
-    }
+    protected boolean kiipuNetState;
 
-    protected void initListener() {
-    }
+    protected void initViews() {}
+
+    protected void initData() {}
+
+    protected void initListener() {}
+
+    protected void netStateChanged(boolean state){}
 
     protected abstract void onViewClick(View v);
 
@@ -97,9 +97,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     private void initBaseView() {
-        mFloatingActionButton = initViewById(R.id.floating_action_bt);
+        mBaseFloatingActionButton = initViewById(R.id.floating_action_bt);
         mProgressView = initViewById(R.id.pb_view);
-        setOnClick(mFloatingActionButton);
+        setOnClick(mBaseFloatingActionButton);
     }
 
     private void initToolbar() {
@@ -120,8 +120,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
      *
      * @param flags
      */
-    protected void setToolbarScrollFlags(int flags){
-        if(toolbar == null){
+    protected void setToolbarScrollFlags(int flags) {
+        if (toolbar == null) {
             toolbar = (Toolbar) findViewById(R.id.toolbar);
         }
         AppBarLayout.LayoutParams params =
@@ -171,6 +171,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             baseTitle.setText(msg);
         }
     }
+
     /**
      * sometime you want to define back event
      */
@@ -188,26 +189,26 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    protected void setBackIcon(int resId){
-        if(mImgBack != null){
+    protected void setBackIcon(int resId) {
+        if (mImgBack != null) {
             mImgBack.setImageResource(resId);
-        }else{
+        } else {
             LogUtil.e(TAG, "back img is null , please check out");
         }
     }
 
-    protected void showProgressBar(){
-        if(mProgressView != null){
+    protected void showProgressBar() {
+        if (mProgressView != null) {
             mProgressView.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             LogUtil.e(TAG, "ProgressBar is null , please check out");
         }
     }
 
-    protected void dismissProgressBar(){
-        if(mProgressView != null){
+    protected void dismissProgressBar() {
+        if (mProgressView != null) {
             mProgressView.setVisibility(View.GONE);
-        }else{
+        } else {
             LogUtil.e(TAG, "ProgressBar is null , please check out");
         }
     }
@@ -234,16 +235,16 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     protected void setFloatingVisibile(boolean isVisible) {
-//        mFloatingActionButton.hide(isVisible);
+//        mBaseFloatingActionButton.hide(isVisible);
 //        if(isVisible){
 //            // 在 baseLayout 上展示
-//            mFloatingActionButton.hide(false);
+//            mBaseFloatingActionButton.hide(false);
 //            new Handler().postDelayed(new Runnable() {
 //                @Override
 //                public void run() {
-//                    mFloatingActionButton.show(true);
-//                    mFloatingActionButton.setShowAnimation(AnimationUtils.loadAnimation(BaseActivity.this, R.anim.show_from_bottom));
-//                    mFloatingActionButton.setHideAnimation(AnimationUtils.loadAnimation(BaseActivity.this, R.anim.hide_to_bottom));
+//                    mBaseFloatingActionButton.show(true);
+//                    mBaseFloatingActionButton.setShowAnimation(AnimationUtils.loadAnimation(BaseActivity.this, R.anim.show_from_bottom));
+//                    mBaseFloatingActionButton.setHideAnimation(AnimationUtils.loadAnimation(BaseActivity.this, R.anim.hide_to_bottom));
 //                }
 //            }, 300);
 //        }
@@ -262,6 +263,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mNetChangeReceiver != null) {
+            unregisterReceiver(mNetChangeReceiver);
+        }
         AppManager.getAppManager().finishActivity(this);
     }
 
@@ -269,12 +273,47 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         userAccessToken = "Bearer " + SharedPreferencesUtil.getData(mContext, Constants.ACCESS_TOKEN, "");
     }
 
+    /**
+     * register net receiver
+     */
+    protected void registerReceiver() {
+        // net callback
+        if (mNetChangeReceiver == null) {
+            mNetChangeReceiver = new NetChangeReceiver();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(mNetChangeReceiver, filter);
+            mNetChangeReceiver.setNetCallBackListener(BaseActivity.this);
+        }
+    }
+
+    @Override
+    public void getNetState(boolean state) {
+        this.kiipuNetState = state;
+        netStateChanged(kiipuNetState);
+        if(!kiipuNetState && useBaseLayout){
+            showNetSettingView(mBaseFloatingActionButton);
+        }
+    }
+
+    protected void showNetSettingView(View view) {
+        Snackbar.make(view, "网络连接不可用", Snackbar.LENGTH_LONG)
+                .setAction("设置", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(Settings.ACTION_SETTINGS));
+                    }
+                })
+                .setActionTextColor(Color.parseColor("#FFB74D"))
+                .show();
+    }
+
     @Override
     public void onClick(View v) {
         onViewClick(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.floating_action_bt:
-                Snackbar.make(mFloatingActionButton,"Replace with your own action",Snackbar.LENGTH_LONG).setDuration(2000).show();
+                Snackbar.make(mBaseFloatingActionButton, "Replace with your own action", Snackbar.LENGTH_LONG).setDuration(2000).show();
                 break;
         }
     }

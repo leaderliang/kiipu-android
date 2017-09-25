@@ -11,6 +11,7 @@ import com.mycreat.kiipu.retrofit.RetrofitClient;
 import com.mycreat.kiipu.retrofit.RetrofitService;
 import com.mycreat.kiipu.service.CommonService;
 import com.mycreat.kiipu.utils.LogUtil;
+import com.mycreat.kiipu.utils.NetChangeReceiver;
 import com.umeng.socialize.Config;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.common.QueuedWork;
@@ -21,6 +22,8 @@ import com.umeng.socialize.common.QueuedWork;
  * TODO
  */
 public class KiipuApplication extends MultiDexApplication implements Thread.UncaughtExceptionHandler{
+
+    private NetChangeReceiver mNetChangeReceiver;
 
     /*各个平台的配置，建议放在全局Application或者程序入口*/
     {

@@ -47,7 +47,7 @@ public class addBookmarkActivity extends BaseActivity {
         setContentView(R.layout.activity_add_bookmark);
         initViews();
         initData();
-//        initListener();
+        registerReceiver();
     }
 
     @Override
@@ -162,6 +162,13 @@ public class addBookmarkActivity extends BaseActivity {
 //                finish();
             }
         });
+    }
+
+    @Override
+    protected void netStateChanged(boolean state) {
+        if(!state){
+            showNetSettingView(mContainer);
+        }
     }
 
 

@@ -146,6 +146,7 @@ public class BookMarkActivity extends BaseActivity
         initViews();
         initData();
         initListener();
+        registerReceiver();
         RxBus.Companion.getDefault().register(this);
 
     }
@@ -868,9 +869,11 @@ public class BookMarkActivity extends BaseActivity
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                     }
+
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                     }
+
                     @Override
                     public void afterTextChanged(Editable s) {
                         inputContent = s.toString().trim();
@@ -902,7 +905,7 @@ public class BookMarkActivity extends BaseActivity
                             createCollection(inputContent);
                         } else if (toDoTag == Constants.MODIFY_COLLECTION_NAME) {
                             modifyCollectionName(inputContent);
-                        } else if(toDoTag == Constants.ADD_COLLECTION){
+                        } else if (toDoTag == Constants.ADD_COLLECTION) {
                             requestAddCollection(inputContent, collectionId);
                         }
                     }
@@ -1216,9 +1219,9 @@ public class BookMarkActivity extends BaseActivity
             e.printStackTrace();
         }
         Call<Bookmark> call;
-        if(collectionId == Constants.ALL_COLLECTION || collectionId == Constants.INBOX) {
+        if (collectionId == Constants.ALL_COLLECTION || collectionId == Constants.INBOX) {
             call = KiipuApplication.mRetrofitService.addBookmark(userAccessToken, null, jsonObject.toString());
-        }else {
+        } else {
             call = KiipuApplication.mRetrofitService.addBookmark(userAccessToken, addCollectionId, jsonObject.toString());
         }
         call.enqueue(new Callback<Bookmark>() {
@@ -1293,5 +1296,13 @@ public class BookMarkActivity extends BaseActivity
     protected void onDestroy() {
         super.onDestroy();
         RxBus.Companion.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void netStateChanged(boolean state) {
+        super.netStateChanged(state);
+        if (!state) {
+            showNetSettingView(mFloatingActionButton);
+        }
     }
 }
