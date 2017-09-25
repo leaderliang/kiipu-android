@@ -29,6 +29,7 @@ import com.mycreat.kiipu.utils.DensityUtils;
 import com.mycreat.kiipu.utils.ViewUtils;
 import com.mycreat.kiipu.utils.bind.BindOnclick;
 import com.mycreat.kiipu.utils.bind.BindView;
+import com.umeng.analytics.MobclickAgent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -264,4 +265,15 @@ public class BookmarkDetailDialog extends DialogFragment implements PaperLikeRec
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("BookmarkDetailDialog");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("BookmarkDetailDialog");
+    }
 }

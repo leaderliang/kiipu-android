@@ -24,6 +24,7 @@ import com.mycreat.kiipu.utils.DialogUtil;
 import com.mycreat.kiipu.utils.LogUtil;
 import com.mycreat.kiipu.utils.SharedPreferencesUtil;
 import com.mycreat.kiipu.view.RequestErrorLayout;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created by leaderliang on 2017/3/30.
@@ -279,4 +280,15 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
 }
