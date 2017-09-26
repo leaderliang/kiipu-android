@@ -805,7 +805,8 @@ public class BookMarkActivity extends BaseActivity
                 return false;
             }
             /**
-             * 仅当activity为task根（即首个启动activity）时才生效,这个方法不会改变task中的activity状态，按下返回键的作用跟按下HOME效果一样；重新点击应用还是回到应用退出前的状态；
+             * 仅当activity为task根（即首个启动activity）时才生效,这个方法不会改变task中的activity状态，
+             * 按下返回键的作用跟按下HOME效果一样；重新点击应用还是回到应用退出前的状态；
              */
             moveTaskToBack(false);
             return true;
