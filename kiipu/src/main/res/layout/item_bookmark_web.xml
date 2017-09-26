@@ -41,10 +41,10 @@
                 card_view:cardBackgroundColor="@android:color/white"
                 card_view:cardCornerRadius="6dp"
                 card_view:cardElevation="@dimen/recycle_card_Elevation"
-                android:clickable="true"
                 android:layout_marginRight="6dp"
                 android:layout_marginLeft="6dp"
                 android:layout_marginTop="12dp"
+                android:clickable="false"
         >
 
             <LinearLayout
@@ -116,7 +116,6 @@
                     android:id="@+id/tv_url"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="www.zhihu.com"
                     android:textColor="@color/color_c5c5c5"
                     android:layout_centerVertical="true"
                     android:textSize="9sp"
