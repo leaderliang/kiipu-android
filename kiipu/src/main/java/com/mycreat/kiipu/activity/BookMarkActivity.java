@@ -804,18 +804,12 @@ public class BookMarkActivity extends BaseActivity
                 drawer.closeDrawer(GravityCompat.START);
                 return false;
             }
-            moveTaskToBack(true);
+            /**
+             * 仅当activity为task根（即首个启动activity）时才生效,这个方法不会改变task中的activity状态，按下返回键的作用跟按下HOME效果一样；重新点击应用还是回到应用退出前的状态；
+             */
+            moveTaskToBack(false);
             return true;
         }
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            if ((System.currentTimeMillis() - nowTime) > Constants.ON_KEY_BACK_TIME) {
-//                Toast.makeText(this, getString(R.string.double_back_click_info), Toast.LENGTH_SHORT).show();
-//                nowTime = System.currentTimeMillis();
-//            } else {
-//                AppUtils.logOutApp(mContext);
-//            }
-//            return true;
-//        }
         return super.onKeyDown(keyCode, event);
     }
 
