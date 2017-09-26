@@ -42,7 +42,6 @@ public class GlideUtil {
     /**
      * 常规加载图片
      *
-     * @param mContext
      * @param imageView 图片容器
      * @param imgUrl    图片地址
      * @param isFade    是否需要动画 淡入淡出动画，显得更加平滑

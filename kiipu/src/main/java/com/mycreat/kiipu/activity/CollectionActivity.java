@@ -131,7 +131,7 @@ public class CollectionActivity extends BaseActivity {
     private View getFooterView() {
         footer = LayoutInflater.from(CollectionActivity.this).inflate(R.layout.list_item, (ViewGroup) recyclerView.getParent(), false);
         TextView addCollectionsTv = (TextView) footer.findViewById(R.id.tv_collection_name);
-        addCollectionsTv.setText(getString(R.string.add_collection));
+        addCollectionsTv.setText(getString(R.string.add_collections));
         footer.findViewById(R.id.iv_icon).setBackgroundResource(R.drawable.ic_add_collection);
         footer.setOnClickListener(new FooterClickListener());
         return footer;

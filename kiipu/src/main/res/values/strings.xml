@@ -22,7 +22,7 @@
     <string name="success">" 成功"</string>
     <string name="move_bookmark_to">"移动书签到 "</string>
     <string name="add_bookmark">添加书签</string>
-    <string name="add_collection">添加书签</string>
+    <string name="add_collections">添加收藏夹</string>
     <string name="collection_box">收藏夹</string>
     <string name="login_fail">登录失败，请稍后重试</string>
     <string name="no_more_bookmark">没有更多书签了！</string>
@@ -33,6 +33,7 @@
     <string name="delete_collections_content">删除后，该收藏夹下的所有书签，都将移动到“收件箱”中</string>
     <string name="confirm">确定</string>
     <string name="cancle">取消</string>
+    <string name="inputCollectionUrl">请输入您要添加的书签链接</string>
 
 
 </resources>

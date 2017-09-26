@@ -561,10 +561,10 @@ public class BookMarkActivity extends BaseActivity
                     Collections collection = response.body();
                     mCollectionList.add(mCollectionList.size(), collection);
                     addLeftMenu(mCollectionList, false);
-                    Snackbar.make(mFloatingActionButton, "创建书签成功啦~", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(mFloatingActionButton, "创建书签成功啦~", Snackbar.LENGTH_LONG)
                             .show();
                     /*添加成功，打开侧边栏  可延迟打开*/
-                    drawer.openDrawer(Gravity.LEFT);
+//                    drawer.openDrawer(Gravity.LEFT);
                 } else {
                     Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~", Snackbar.LENGTH_SHORT).show();
                 }
@@ -677,11 +677,11 @@ public class BookMarkActivity extends BaseActivity
         /* 添加书签按钮事件操作*/
         MenuItem lastMenu = navigationView.getMenu().findItem(mCollectionList.size());
         if (lastMenu == null) {// 因为修改的书签夹时导致的
-            navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), getString(R.string.add_bookmark))
+            navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), getString(R.string.add_collections))
                     .setIcon(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_add))
                     .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
-        } else if (lastMenu != null && !navigationView.getMenu().findItem(mCollectionList.size()).getTitle().equals(getString(R.string.add_bookmark))) {
-            navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), getString(R.string.add_bookmark))
+        } else if (lastMenu != null && !navigationView.getMenu().findItem(mCollectionList.size()).getTitle().equals(getString(R.string.add_collections))) {
+            navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), getString(R.string.add_collections))
                     .setIcon(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_add))
                     .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
         }
@@ -821,16 +821,21 @@ public class BookMarkActivity extends BaseActivity
         startActivity(new Intent(this, LoginActivity.class));
     }
 
+    /**
+     * return
+     *  false ：关闭侧滑菜单
+     *  true  ：不关闭，直接弹出添加提示框
+     */
     private class OnAddMenuItemClickListener implements MenuItem.OnMenuItemClickListener {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             //@return Return true to consume this click and prevent others from executing
             ArrayMap<Object, Object> arrayMap = new ArrayMap<>();
             arrayMap.put("title", "名称");
-            arrayMap.put("hint", "输入你要创建的书签名");
+            arrayMap.put("hint", "输入你要创建的书签夹名称");
             arrayMap.put("content", "");// 为了当输入框没有文本时，按钮置灰
             editDialog(Constants.CREATE_COLLECTION, Constants.INPUT_MAX_LENGTH, null, arrayMap);
-            return false;
+            return true;
         }
     }
 
@@ -1281,8 +1286,8 @@ public class BookMarkActivity extends BaseActivity
 
     private void floatingActionClick() {
         ArrayMap<Object, Object> arrayMap = new ArrayMap<>();
-        arrayMap.put("title", "添加书签");
-        arrayMap.put("hint", "请输入您要添加的链接");
+        arrayMap.put("title", getString(R.string.add_collections));
+        arrayMap.put("hint", getString(R.string.inputCollectionUrl));
         arrayMap.put("content", "");// 为了当输入框没有文本时，按钮置灰
         editDialog(Constants.ADD_COLLECTION, Integer.MAX_VALUE, null, arrayMap);
     }
