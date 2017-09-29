@@ -1,6 +1,8 @@
 package com.mycreat.kiipu.core;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -14,14 +16,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseArray;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
+import android.view.*;
 import android.widget.*;
 import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.utils.*;
 import com.mycreat.kiipu.view.RequestErrorLayout;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.socialize.utils.Log;
 
 /**
  * Created by leaderliang on 2017/3/30.
@@ -29,6 +30,8 @@ import com.umeng.analytics.MobclickAgent;
  * TODO
  */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener, NetChangeReceiver.CallBackState {
+
+    private static Dialog loadingDialog;
 
     protected TextView baseTitle;
 
@@ -215,6 +218,51 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             LogUtil.e(TAG, "ProgressBar is null , please check out");
         }
     }
+
+    public Dialog createLoadingDialog(String str) {
+        LayoutInflater inflater = LayoutInflater.from(KiipuApplication.appContext);
+        View v = inflater.inflate(R.layout.view_loading_dialog, null);// 得到加载view
+        TextView loadingContent = (TextView) v.findViewById(R.id.loading_content);
+        Dialog loadingDialog = new Dialog(mContext, R.style.loading_dialog);// 创建自定义样式dialog
+        loadingDialog.setCancelable(false);// 不可以用“返回键”取消
+        loadingDialog.setContentView(v);// 设置布局
+        /**
+         * 设置Dialog的宽度为屏幕宽度的61.8%，高度为自适应
+         */
+        WindowManager.LayoutParams lp = loadingDialog.getWindow().getAttributes();
+        lp.width = (int) (DensityUtils.getScreenWidth(mContext) * 0.7f);
+        lp.height = lp.WRAP_CONTENT;
+        loadingDialog.getWindow().setAttributes(lp);
+        if(!StringUtils.isEmpty(str)){
+            loadingContent.setText(str);
+        }
+        return loadingDialog;
+    }
+
+    protected void showLoadingDialog(final String loadingContent){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(loadingDialog == null){
+                    loadingDialog = createLoadingDialog(loadingContent);
+                }
+                try {
+                    if(loadingDialog != null && !loadingDialog.isShowing()) {
+                        loadingDialog.show();
+                    }
+                } catch (Exception e) {
+                    LogUtil.e("showLoadingDialog", "dialog show error "+ e.getMessage());
+                }
+            }
+        });
+    }
+
+    protected static void dismissLoadingDialog(){
+        if(loadingDialog != null){
+            loadingDialog.dismiss();
+        }
+    }
+
 
     protected void setBackClickListener(View.OnClickListener l) {
         if (mImgBack != null) {

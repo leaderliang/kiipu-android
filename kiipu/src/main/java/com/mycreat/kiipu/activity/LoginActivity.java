@@ -1,6 +1,5 @@
 package com.mycreat.kiipu.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,10 +12,7 @@ import com.mycreat.kiipu.R;
 import com.mycreat.kiipu.core.BaseActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.LoginInfo;
-import com.mycreat.kiipu.utils.Constants;
-import com.mycreat.kiipu.utils.NetChangeReceiver;
-import com.mycreat.kiipu.utils.SharedPreferencesUtil;
-import com.mycreat.kiipu.utils.ToastUtil;
+import com.mycreat.kiipu.utils.*;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -44,7 +40,7 @@ public class LoginActivity extends BaseActivity {
 
     public ArrayList<SnsPlatform> platforms = new ArrayList<>();
 
-    private ProgressDialog dialog;
+//    private ProgressDialog dialog;
 
     private String access_token, userName, uid;
 
@@ -67,7 +63,7 @@ public class LoginActivity extends BaseActivity {
 
         mRlSinaAuth = (RelativeLayout) findViewById(R.id.rl_sina_auth);
         mContainer = initViewById(R.id.container);
-        dialog = new ProgressDialog(this);
+//        dialog = new ProgressDialog(this);
         mRlSinaAuth.setOnClickListener(this);
         for (SHARE_MEDIA e : list) {
             if (!e.toString().equals(SHARE_MEDIA.GENERIC.toString())) {
@@ -86,11 +82,11 @@ public class LoginActivity extends BaseActivity {
                 showNetSettingView(mContainer);
                 return;
             }
-            SocializeUtils.safeShowDialog(dialog);
+            showLoadingDialog(null);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    SocializeUtils.safeCloseDialog(dialog);
+                    dismissLoadingDialog();
                     startActivity(new Intent(mContext, BookMarkActivity.class));
                     finish();
                 }
@@ -112,15 +108,17 @@ public class LoginActivity extends BaseActivity {
     UMAuthListener authListener = new UMAuthListener() {
         @Override
         public void onStart(SHARE_MEDIA platform) {
-            SocializeUtils.safeShowDialog(dialog);
+//            SocializeUtils.safeShowDialog(dialog);
 //            ToastUtil.showToastShort("授权开始");
+            showLoadingDialog("正在登录...");
         }
 
         @Override
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
 
-            SocializeUtils.safeCloseDialog(dialog);
+//            SocializeUtils.safeCloseDialog(dialog);
 //            ToastUtil.showToastShort("授权成功");
+            dismissLoadingDialog();
             Log.e(TAG, "onComplete data" + data);
             if (!isUseClient) {
                 isUseClient = true;
@@ -133,13 +131,15 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onError(SHARE_MEDIA platform, int action, Throwable t) {
-            SocializeUtils.safeCloseDialog(dialog);
+//            SocializeUtils.safeCloseDialog(dialog);
+            dismissLoadingDialog();
             ToastUtil.showToastShort("授权失败：" + t.getMessage());
         }
 
         @Override
         public void onCancel(SHARE_MEDIA platform, int action) {
-            SocializeUtils.safeCloseDialog(dialog);
+//            SocializeUtils.safeCloseDialog(dialog);
+            dismissLoadingDialog();
             ToastUtil.showToastShort("授权取消");
         }
     };
@@ -170,12 +170,13 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void requestLogin(String accessToken, String userId) {
-        SocializeUtils.safeShowDialog(dialog);
+//        SocializeUtils.safeShowDialog(dialog);
+        showLoadingDialog(null);
         Call<LoginInfo> call = KiipuApplication.mRetrofitService.loginBookmark(accessToken, userId);
         call.enqueue(new Callback<LoginInfo>() {
             @Override
             public void onResponse(Call<LoginInfo> call, Response<LoginInfo> response) {
-                SocializeUtils.safeCloseDialog(dialog);
+                dismissLoadingDialog();
                 LoginInfo loginInfo = response.body();
                 if (loginInfo != null) {
                     if (!NetChangeReceiver.isNetWorkAvailable(LoginActivity.this)) {
@@ -196,7 +197,7 @@ public class LoginActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<LoginInfo> call, Throwable t) {
-                SocializeUtils.safeCloseDialog(dialog);
+                dismissLoadingDialog();
                 ToastUtil.showToastShort(t.getMessage());
             }
         });

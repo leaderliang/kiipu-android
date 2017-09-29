@@ -34,6 +34,7 @@
     <string name="confirm">确定</string>
     <string name="cancle">取消</string>
     <string name="inputCollectionUrl">请输入您要添加的书签链接</string>
+    <string name="logIn">正在登录...</string>
 
 
 </resources>

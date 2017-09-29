@@ -643,7 +643,8 @@ public class BookMarkActivity extends BaseActivity
         for (int i = 1; i < mCollectionList.size(); i++) {
             final String firstName = mCollectionList.get(0).collectionName;
             final String collectionName = mCollectionList.get(i).collectionName;
-            final int finalI = i;
+//            final String collectionId = mCollectionList.get(i).collectionId;
+            final int orderId = i;
             Glide.with(BookMarkActivity.this)
                     .load(mCollectionList.get(i).menuIcon)
                     .into(new SimpleTarget<GlideDrawable>() { // 图片加载回调的Target实现类
@@ -656,18 +657,18 @@ public class BookMarkActivity extends BaseActivity
                                     .setOnMenuItemClickListener(new OnMenuItemClickListener());
                             // 图片加载成功时回调的方法
                             if (isRequestMenu) {
-                                navigationView.getMenu().add(0, finalI, finalI, collectionName)
+                                navigationView.getMenu().add(0, orderId, orderId, collectionName)
                                         .setIcon(resource)//动态添加menu
                                         .setOnMenuItemClickListener(new OnMenuItemClickListener());
                             } else {
-                                System.out.println("collectionName " + collectionName + " finalI " + finalI + "  navigationView.getMenu().findItem(finalI) " + navigationView.getMenu().findItem(finalI) + " menu size " + navigationView.getMenu().size());
-                                MenuItem menuItem = navigationView.getMenu().findItem(finalI);
+                                System.out.println("collectionName " + collectionName + " orderId " + orderId + "  navigationView.getMenu().findItem(orderId) " + navigationView.getMenu().findItem(orderId) + " menu size " + navigationView.getMenu().size());
+                                MenuItem menuItem = navigationView.getMenu().findItem(orderId);
                                 if (menuItem == null) {//因为操作了删除书签夹后，数据少了一条
-                                    navigationView.getMenu().add(0, finalI, finalI, collectionName)
+                                    navigationView.getMenu().add(0, orderId, orderId, collectionName)
                                             .setIcon(resource)
                                             .setOnMenuItemClickListener(new OnMenuItemClickListener());
                                 }
-                                navigationView.getMenu().findItem(finalI).setTitle(collectionName)
+                                navigationView.getMenu().findItem(orderId).setTitle(collectionName)
                                         .setIcon(resource)//动态添加menu
                                         .setOnMenuItemClickListener(new OnMenuItemClickListener());
                             }
@@ -848,9 +849,23 @@ public class BookMarkActivity extends BaseActivity
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
+
             item.setCheckable(true);
             item.setChecked(true);
             toolbar.setTitle(item.getTitle());
+//            if(!CollectionUtils.isEmpty(mCollectionList)){
+//                for(int i = 0; i < mCollectionList.size(); i++){
+//                    if(mCollectionList.get(i).collectionName.equals(item.getTitle())){
+//                        collectionId = mCollectionList.get(i).collectionId;
+//                        System.out.println(TAG+" onMenuItemClick collectionId "+collectionId);
+//                        break;
+//                    }
+//                }
+//            }
+//            if(item.getItemId() == R.id.nav_share){
+//                collectionId = mCollectionList.get(0).collectionId;
+//            }
+
             collectionId = (item.getItemId() == R.id.nav_share) ? mCollectionList.get(0).collectionId : mCollectionList.get(item.getItemId()).collectionId;
             collectionPosition = item.getItemId();
             mSwipeRefreshLayout.setRefreshing(true);

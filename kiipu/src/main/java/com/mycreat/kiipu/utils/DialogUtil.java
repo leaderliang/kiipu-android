@@ -9,15 +9,18 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import com.mycreat.kiipu.R;
 
 /**
  * DialogUtil
+ *
  * @author leaderliang
- * dialog 详细介绍可参考 http://www.jianshu.com/p/6caffdbcd5db
+ *         dialog 详细介绍可参考 http://www.jianshu.com/p/6caffdbcd5db
  */
 public class DialogUtil {
 
@@ -39,14 +42,14 @@ public class DialogUtil {
         editText.addTextChangedListener(textWatcher);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle((String) arrayMap.get("title"));
-        if(NeutralButtonClick != null) {
+        if (NeutralButtonClick != null) {
             builder.setNeutralButton("删除", NeutralButtonClick);
         }
         builder.setPositiveButton("确定", positiveButtonClick);
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                KeyBoardUtils.closeKeyboard(editText,context);
+                KeyBoardUtils.closeKeyboard(editText, context);
             }
         });
         builder.setCancelable(true);
@@ -66,7 +69,7 @@ public class DialogUtil {
         }
     }
 
-    public static View showCanSetViewDialog(final Context context,int viewId, DialogInterface.OnClickListener positiveButtonClick){
+    public static View showCanSetViewDialog(final Context context, int viewId, DialogInterface.OnClickListener positiveButtonClick) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(viewId, null);
 
@@ -81,7 +84,7 @@ public class DialogUtil {
         return view;
     }
 
-    public static View showCanSetViewDialogFragment(final Context context,int viewId, DialogInterface.OnClickListener positiveButtonClick){
+    public static View showCanSetViewDialogFragment(final Context context, int viewId, DialogInterface.OnClickListener positiveButtonClick) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(viewId, null);
 
@@ -145,6 +148,7 @@ public class DialogUtil {
         builder.show();
     }
 
+
     public static ListPopupWindow showPopupWindow(Context mContext, View view, AdapterView.OnItemClickListener listener) {
         final ListPopupWindow listPopupWindow = new ListPopupWindow(mContext);
 
@@ -153,18 +157,14 @@ public class DialogUtil {
                 new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, Constants.ITEMS));
         // 选择item的监听事件
         listPopupWindow.setOnItemClickListener(listener);
-
         // 对话框的宽高
         listPopupWindow.setWidth(500);
         listPopupWindow.setHeight(ListPopupWindow.WRAP_CONTENT);
-
         // ListPopupWindow 相对的View
         listPopupWindow.setAnchorView(view);
-
         // ListPopupWindow 相对按钮横向 和纵向 的距离
         listPopupWindow.setHorizontalOffset(50);
         listPopupWindow.setVerticalOffset(1);
-
         //  Set whether this window should be modal when shown.
         // If a popup window is modal, it will receive all touch and key input. If the user touches outside the popup window's content area the popup window will be dismissed.
         // modal boolean: true if the popup window should be modal, false otherwise.
