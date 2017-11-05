@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- single 设定一组菜单项为至多只有一个可被选中 -->
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+            android:id="@+id/default_collection"
+    >
         <item
                 android:id="@+id/nav_all_bookmark"
                 android:icon="@drawable/ic_menu_all"
@@ -21,27 +23,17 @@
                 <!--android:title="Tools"/>-->
 
     </group>
-        <item android:title="@string/favorites" android:id="@+id/item_collection"
+    <item android:title="@string/favorites" android:id="@+id/item_collection"
+          android:enabled="false"
+          android:icon="@null"
         >
-            <menu>
-                <group android:checkableBehavior="single">
-                    <item
-                            android:id="@+id/nav_share"
-                            android:icon="@drawable/ic_menu_share"
-                            android:title="Share"
-                    />
-                    <!--<item-->
-                        <!--android:id="@+id/nav_send"-->
-                        <!--android:icon="@drawable/ic_menu_send"-->
-                    <!--android:title="Send"/>-->
-                    </group>
-            </menu>
-        </item>
+
+    </item>
 
     <!--<item android:id="@+id/add_collection"-->
-          <!--android:title="添加书签"-->
-          <!--android:icon="@drawable/ic_add"
-          android:orderInCategory="1"-->
+          <!--android:title="@string/add_collections"-->
+          <!--android:icon="@drawable/ic_add"-->
+          <!--android:orderInCategory="1"-->
     <!--/>-->
 
 

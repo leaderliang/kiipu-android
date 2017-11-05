@@ -1,5 +1,8 @@
 package com.mycreat.kiipu.utils;
 
+import android.support.annotation.StringRes;
+import com.mycreat.kiipu.core.KiipuApplication;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,4 +37,7 @@ public class StringUtils {
         return c == null || c.equals("") || c.equals("null") ? "" : c.toString();
     }
 
+    public static String getString(@StringRes int id) {
+        return KiipuApplication.appContext.getString(id);
+    }
 }

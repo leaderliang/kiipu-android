@@ -25,16 +25,13 @@ import android.util.Log;
 import android.view.*;
 import android.view.animation.AnimationUtils;
 import android.widget.*;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.cocosw.bottomsheet.BottomSheetHelper;
 import com.github.clans.fab.FloatingActionButton;
 import com.mycreat.kiipu.R;
+import com.mycreat.kiipu.activity.presenter.LeftMenuPresenter;
 import com.mycreat.kiipu.adapter.BookMarkAdapter;
 import com.mycreat.kiipu.adapter.BookMarkListAdapter;
 import com.mycreat.kiipu.core.BaseActivity;
@@ -68,7 +65,9 @@ import java.util.regex.Pattern;
  */
 public class BookMarkActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener, SearchView.OnQueryTextListener {
+        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener,
+        SearchView.OnQueryTextListener, MenuItem.OnMenuItemClickListener  {
+
 
     /* 0 pull; 1 load more */
     private int REFRESH_TYPE = Constants.REFRESH_TYPE_PULL;
@@ -80,8 +79,7 @@ public class BookMarkActivity extends BaseActivity
     private Toolbar toolbar;
 
     private DrawerLayout drawer;
-    /* left menu */
-    private NavigationView navigationView;
+
 
     private BookMarkAdapter mGridLayoutAdapter;
 
@@ -109,9 +107,7 @@ public class BookMarkActivity extends BaseActivity
 
     private Button finalButton;
 
-    private String inputContent, collectionId = Constants.ALL_COLLECTION, viewTheme;
-    /*侧滑菜单选中的 position*/
-    private int collectionPosition;
+    private String inputContent, viewTheme;
 
     private MenuItem menuAllItem;
 
@@ -136,6 +132,7 @@ public class BookMarkActivity extends BaseActivity
     private String clipUrl;
 
     private JSONObject jsonObject;
+    private LeftMenuPresenter lp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,18 +158,6 @@ public class BookMarkActivity extends BaseActivity
     public void initViews() {
         /*  main layout*/
         drawer = initViewById(R.id.drawer_layout);
-        /* left menu */
-        navigationView = initViewById(R.id.nav_view);
-
-        headerView = navigationView.getHeaderView(0);
-
-        menuAllItem = navigationView.getMenu().findItem(R.id.nav_all_bookmark);
-
-        mIvUserHeader = (ImageView) headerView.findViewById(R.id.iv_user_icon);
-
-        mTvUserName = (TextView) headerView.findViewById(R.id.tv_user_name);
-
-        mBtLogOut = (Button) headerView.findViewById(R.id.bt_log_out);
 
         toolbar = initViewById(R.id.toolbar);
 
@@ -230,8 +215,7 @@ public class BookMarkActivity extends BaseActivity
         toolbar.setTitle("");// default null
         toolbar.setLogo(R.drawable.login_logo_text);
         setSupportActionBar(toolbar);
-        /* set item all checked default */
-        menuAllItem.setChecked(true);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -241,19 +225,36 @@ public class BookMarkActivity extends BaseActivity
         mRecyclerView.setHasFixedSize(true);
         setRecyclerViewLayoutManager(LayoutManagerType.GRID_LAYOUT_MANAGER);
         mRecyclerView.addOnItemTouchListener(new onBookmarkItemClickListener());
+
+         /* left menu */
+        lp = new LeftMenuPresenter((NavigationView) initViewById(R.id.nav_view), this, this, userAccessToken,
+                mCollectionList, mFloatingActionButton, getSupportActionBar(), this, finalButton);
+
+        headerView = lp.getHeaderView(0);
+
+        menuAllItem = lp.findItem(R.id.nav_all_bookmark);
+        // 左侧菜单显示隐藏事件监听，左侧菜单点击选中 selector
+        lp.setNavigationItemSelectedListener(this);
+
+        mIvUserHeader = (ImageView) headerView.findViewById(R.id.iv_user_icon);
+
+        mTvUserName = (TextView) headerView.findViewById(R.id.tv_user_name);
+
+        mBtLogOut = (Button) headerView.findViewById(R.id.bt_log_out);
+
+         /* set item all checked default */
+        menuAllItem.setChecked(true);
     }
 
     public void initListener() {
         setOnClick(mFloatingActionButton);
         setOnClick(mBtLogOut);
-        // 左侧菜单显示隐藏事件监听，左侧菜单点击选中 selector
-        navigationView.setNavigationItemSelectedListener(this);
         mSwipeRefreshLayout.setOnRefreshListener(this);
     }
 
     public void initData() {
         onRefresh();
-        getCollectionList();
+        lp.getCollectionList();
         getUserInfo();
     }
 
@@ -321,7 +322,7 @@ public class BookMarkActivity extends BaseActivity
                 }
                 return true;
             case R.id.action_setting:
-                modifyCollectionsName();
+                lp.modifyCollectionsName();
                 return true;
             case R.id.action_search:
 
@@ -343,7 +344,7 @@ public class BookMarkActivity extends BaseActivity
                 // Handle the camera action
 //                startActivity(new Intent(this, RecycleViewActivity.class));
                 mSwipeRefreshLayout.setRefreshing(true);
-                collectionId = Constants.ALL_COLLECTION;
+                lp.setCollectionId(Constants.ALL_COLLECTION);
                 toolbar.setTitle("");
                 toolbar.setLogo(R.drawable.login_logo_text);
                 getBookmarkList();
@@ -351,7 +352,7 @@ public class BookMarkActivity extends BaseActivity
                 menuSetting.setVisible(false);
                 break;
             case R.id.nav_inbox:
-                collectionId = Constants.INBOX;
+                lp.setCollectionId(Constants.INBOX);
                 toolbar.setTitle(getString(R.string.inbox));
                 mSwipeRefreshLayout.setRefreshing(true);
                 getBookmarkList();
@@ -391,7 +392,7 @@ public class BookMarkActivity extends BaseActivity
     private void getBookmarkList() {
         String lastItemId = mBookmarkList.size() > 0 ? mBookmarkList.get(mBookmarkList.size() - 1).id : "";
         itemId = REFRESH_TYPE == 0 ? "" : lastItemId;
-        Call<List<Bookmark>> call = KiipuApplication.mRetrofitService.getBookmarkList(userAccessToken, Constants.PAGE_SIZE, itemId, collectionId);
+        Call<List<Bookmark>> call = KiipuApplication.mRetrofitService.getBookmarkList(userAccessToken, Constants.PAGE_SIZE, itemId, lp.getCollectionId());
         call.enqueue(new Callback<List<Bookmark>>() {
             @Override
             public void onResponse(Call<List<Bookmark>> call, Response<List<Bookmark>> response) {
@@ -491,30 +492,6 @@ public class BookMarkActivity extends BaseActivity
     }
 
     /**
-     * 获取收藏夹列表
-     */
-    private void getCollectionList() {
-        Call<List<Collections>> call = KiipuApplication.mRetrofitService.getCollectionList(userAccessToken);
-        call.enqueue(new Callback<List<Collections>>() {
-            @Override
-            public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
-                mCollectionList = response.body();
-                if (!CollectionUtils.isEmpty(mCollectionList)) {
-                    addLeftMenu(mCollectionList, true);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Collections>> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
-                        .setDuration(2500)
-                        .show();
-            }
-        });
-    }
-
-
-    /**
      * 获取用户信息
      */
     private void getUserInfo() {
@@ -539,44 +516,6 @@ public class BookMarkActivity extends BaseActivity
             }
         });
 
-    }
-
-    /**
-     * 创建书签
-     *
-     * @param collectionName 书签名
-     */
-    private void createCollection(String collectionName) {
-        if (StringUtils.isEmpty(collectionName)) {
-            Snackbar.make(mFloatingActionButton, "书签名不能为空~", Snackbar.LENGTH_LONG)
-                    .setDuration(2500)
-                    .show();
-            return;
-        }
-        Call<Collections> call = KiipuApplication.mRetrofitService.createCollection(userAccessToken, collectionName);
-        call.enqueue(new Callback<Collections>() {
-            @Override
-            public void onResponse(Call<Collections> call, Response<Collections> response) {
-                if (response.body() != null) {
-                    Collections collection = response.body();
-                    mCollectionList.add(mCollectionList.size(), collection);
-                    addLeftMenu(mCollectionList, false);
-                    Snackbar.make(mFloatingActionButton, "创建书签成功啦~", Snackbar.LENGTH_LONG)
-                            .show();
-                    /*添加成功，打开侧边栏  可延迟打开*/
-//                    drawer.openDrawer(Gravity.LEFT);
-                } else {
-                    Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~", Snackbar.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Collections> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, "创建书签失败，请稍后重试~" + t.getMessage(), Snackbar.LENGTH_LONG)
-                        .setDuration(2500)
-                        .show();
-            }
-        });
     }
 
     /**
@@ -630,63 +569,6 @@ public class BookMarkActivity extends BaseActivity
         });
     }
 
-
-    /**
-     * 动态添加左侧菜单
-     *
-     * @param mCollectionList
-     * @param isRequestMenu   true 请求书签；false 添加或修改书签
-     *                        navigationView.setItemIconTintList(resources.getColorStateList(R.drawable.nav_menu_text_color, null)); 设置本地资源图片
-     */
-    private void addLeftMenu(List<Collections> mCollectionList, final boolean isRequestMenu) {
-        navigationView.getMenu().findItem(R.id.item_collection).setTitle(getString(R.string.collection_box));
-        for (int i = 1; i < mCollectionList.size(); i++) {
-            final String firstName = mCollectionList.get(0).collectionName;
-            final String collectionName = mCollectionList.get(i).collectionName;
-//            final String collectionId = mCollectionList.get(i).collectionId;
-            final int orderId = i;
-            Glide.with(BookMarkActivity.this)
-                    .load(mCollectionList.get(i).menuIcon)
-                    .into(new SimpleTarget<GlideDrawable>() { // 图片加载回调的Target实现类
-                        @Override
-                        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                            // the first menu view
-                            navigationView.getMenu().findItem(R.id.nav_share)
-                                    .setTitle(firstName)
-                                    .setIcon(resource)//动态添加menu
-                                    .setOnMenuItemClickListener(new OnMenuItemClickListener());
-                            // 图片加载成功时回调的方法
-                            if (isRequestMenu) {
-                                navigationView.getMenu().add(0, orderId, orderId, collectionName)
-                                        .setIcon(resource)//动态添加menu
-                                        .setOnMenuItemClickListener(new OnMenuItemClickListener());
-                            } else {
-                                System.out.println("collectionName " + collectionName + " orderId " + orderId + "  navigationView.getMenu().findItem(orderId) " + navigationView.getMenu().findItem(orderId) + " menu size " + navigationView.getMenu().size());
-                                MenuItem menuItem = navigationView.getMenu().findItem(orderId);
-                                if (menuItem == null) {//因为操作了删除书签夹后，数据少了一条
-                                    navigationView.getMenu().add(0, orderId, orderId, collectionName)
-                                            .setIcon(resource)
-                                            .setOnMenuItemClickListener(new OnMenuItemClickListener());
-                                }
-                                navigationView.getMenu().findItem(orderId).setTitle(collectionName)
-                                        .setIcon(resource)//动态添加menu
-                                        .setOnMenuItemClickListener(new OnMenuItemClickListener());
-                            }
-                        }
-                    });
-        }
-        /* 添加书签按钮事件操作*/
-        MenuItem lastMenu = navigationView.getMenu().findItem(mCollectionList.size());
-        if (lastMenu == null) {// 因为修改的书签夹时导致的
-            navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), getString(R.string.add_collections))
-                    .setIcon(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_add))
-                    .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
-        } else if (lastMenu != null && !navigationView.getMenu().findItem(mCollectionList.size()).getTitle().equals(getString(R.string.add_collections))) {
-            navigationView.getMenu().add(0, mCollectionList.size(), mCollectionList.size(), getString(R.string.add_collections))
-                    .setIcon(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_add))
-                    .setOnMenuItemClickListener(new OnAddMenuItemClickListener());
-        }
-    }
 
     private void showBookmarkDetailDialog(final int position) {
         List<Bookmark> bookmarks;
@@ -792,7 +674,7 @@ public class BookMarkActivity extends BaseActivity
             case Constants.RESULT_ADD_BOOKMARK_CODE:
                 Collections collection = (Collections) data.getSerializableExtra("collection");
                 mCollectionList.add(mCollectionList.size(), collection);
-                addLeftMenu(mCollectionList, false);
+                lp.updateLeftMenu(mCollectionList, false);
                 break;
         }
     }
@@ -822,37 +704,20 @@ public class BookMarkActivity extends BaseActivity
         startActivity(new Intent(this, LoginActivity.class));
     }
 
-    /**
-     * return
-     *  false ：关闭侧滑菜单
-     *  true  ：不关闭，直接弹出添加提示框
-     */
-    private class OnAddMenuItemClickListener implements MenuItem.OnMenuItemClickListener {
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            //@return Return true to consume this click and prevent others from executing
-            ArrayMap<Object, Object> arrayMap = new ArrayMap<>();
-            arrayMap.put("title", "名称");
-            arrayMap.put("hint", "输入你要创建的书签夹名称");
-            arrayMap.put("content", "");// 为了当输入框没有文本时，按钮置灰
-            editDialog(Constants.CREATE_COLLECTION, Constants.INPUT_MAX_LENGTH, null, arrayMap);
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        if(menuItem.getItemId() == Short.MAX_VALUE){
+            lp.showAddCollectionsDialog();
             return true;
-        }
-    }
-
-    /**
-     * leftMenu clickListener
-     * collectionPosition 或 item.getItemId() 从收藏夹下的第二个开始 id 为  1 - itemList.size()
-     * 第一个为 R.id.nav_share ，id 可打印查看
-     */
-    private class OnMenuItemClickListener implements MenuItem.OnMenuItemClickListener {
-
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-
-            item.setCheckable(true);
-            item.setChecked(true);
-            toolbar.setTitle(item.getTitle());
+        }else{
+            /**
+             * return
+             *  false ：关闭侧滑菜单
+             *  true  ：不关闭，直接弹出添加提示框
+             */
+            menuItem.setCheckable(true);
+            menuItem.setChecked(true);
+            toolbar.setTitle(menuItem.getTitle());
 //            if(!CollectionUtils.isEmpty(mCollectionList)){
 //                for(int i = 0; i < mCollectionList.size(); i++){
 //                    if(mCollectionList.get(i).collectionName.equals(item.getTitle())){
@@ -865,9 +730,9 @@ public class BookMarkActivity extends BaseActivity
 //            if(item.getItemId() == R.id.nav_share){
 //                collectionId = mCollectionList.get(0).collectionId;
 //            }
-
-            collectionId = (item.getItemId() == R.id.nav_share) ? mCollectionList.get(0).collectionId : mCollectionList.get(item.getItemId()).collectionId;
-            collectionPosition = item.getItemId();
+            Collections nCollections = lp.getCollection(menuItem.getItemId());
+            lp.setCollectionId(nCollections == null ? mCollectionList.get(0).collectionId : nCollections.collectionId);
+            lp.setCollection(nCollections);
             mSwipeRefreshLayout.setRefreshing(true);
             setEnableLoadMore(false);
             REFRESH_TYPE = Constants.REFRESH_TYPE_PULL;
@@ -916,78 +781,11 @@ public class BookMarkActivity extends BaseActivity
                 , new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (toDoTag == Constants.CREATE_COLLECTION) {
-                            createCollection(inputContent);
-                        } else if (toDoTag == Constants.MODIFY_COLLECTION_NAME) {
-                            modifyCollectionName(inputContent);
-                        } else if (toDoTag == Constants.ADD_COLLECTION) {
-                            requestAddCollection(inputContent, collectionId);
+                        if (toDoTag == Constants.ADD_COLLECTION) {
+                            requestAddCollection(inputContent, lp.getCollectionId());
                         }
                     }
                 }, arrayMap);
-    }
-
-    /**
-     * 修改书签夹名字
-     *
-     * @param inputName
-     */
-    private void modifyCollectionName(String inputName) {
-        Call<Collections> call = KiipuApplication.mRetrofitService.modifyCollection(userAccessToken, collectionId, inputName);
-        call.enqueue(new Callback<Collections>() {
-            @Override
-            public void onResponse(Call<Collections> call, Response<Collections> response) {
-                Collections collections = response.body();
-                if (collections != null) {
-                    Snackbar.make(mFloatingActionButton, getString(R.string.modify_collection_success), Snackbar.LENGTH_SHORT).show();
-                    toolbar.setTitle(collections.collectionName);
-                    for (int i = 0; i < mCollectionList.size(); i++) {
-                        if (mCollectionList.get(i).collectionId.equals(collections.collectionId)) {
-                            mCollectionList.get(i).collectionName = collections.collectionName;
-                            break;
-                        }
-                    }
-                    // update left sliding menu
-                    addLeftMenu(mCollectionList, false);
-                    return;
-                }
-                Snackbar.make(mFloatingActionButton, getString(R.string.modify_collection_fail), Snackbar.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(Call<Collections> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, getString(R.string.modify_collection_fail) + " " + t.getMessage(), Snackbar.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    /**
-     * 修改书签夹名字
-     */
-    private void modifyCollectionsName() {
-        String title = toolbar.getTitle().toString();
-        if (!StringUtils.isEmpty(title)) {
-            ArrayMap<Object, Object> arrayMap = new ArrayMap<>();
-            arrayMap.put("title", getString(R.string.modify_collection));
-            arrayMap.put("hint", getString(R.string.input_collection_name));
-            arrayMap.put("content", title);
-            editDialog(Constants.MODIFY_COLLECTION_NAME, Constants.INPUT_MAX_LENGTH, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    DialogUtil.showCommonDialog(BookMarkActivity.this,
-                            getString(R.string.confirm_delete_current_collections),
-                            getString(R.string.delete_collections_content),
-                            getString(R.string.confirm), getString(R.string.cancle),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    deleteCollections(collectionId);
-                                }
-                            });
-                }
-            }, arrayMap);
-        }
     }
 
     /**
@@ -1234,7 +1032,7 @@ public class BookMarkActivity extends BaseActivity
             e.printStackTrace();
         }
         Call<Bookmark> call;
-        if (collectionId == Constants.ALL_COLLECTION || collectionId == Constants.INBOX) {
+        if (lp.getCollectionId() == Constants.ALL_COLLECTION || lp.getCollectionId() == Constants.INBOX) {
             call = KiipuApplication.mRetrofitService.addBookmark(userAccessToken, null, jsonObject.toString());
         } else {
             call = KiipuApplication.mRetrofitService.addBookmark(userAccessToken, addCollectionId, jsonObject.toString());
@@ -1261,34 +1059,6 @@ public class BookMarkActivity extends BaseActivity
             }
         });
     }
-
-
-    /**
-     * 删除书签夹
-     *
-     * @param collectionsId 书签夹 id
-     */
-    private void deleteCollections(String collectionsId) {
-        Call<Collections> call = KiipuApplication.mRetrofitService.deleteCollections(userAccessToken, collectionsId);
-        call.enqueue(new Callback<Collections>() {
-            @Override
-            public void onResponse(Call<Collections> call, Response<Collections> response) {
-                /*移除侧滑菜单书签夹*/
-                navigationView.getMenu().removeItem(collectionPosition);
-                mCollectionList.remove(mCollectionList.get(collectionPosition));
-                /*设置选中 收件箱 */
-                navigationView.getMenu().getItem(1).setChecked(true);
-
-                onNavigationItemSelected(navigationView.getMenu().getItem(1));
-            }
-
-            @Override
-            public void onFailure(Call<Collections> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG).show();
-            }
-        });
-    }
-
 
     @RxBusSubscribe(mode = ThreadMode.MAIN)
     public void onEventLoadMore(LoadMoreEvent event) {

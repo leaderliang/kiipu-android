@@ -125,4 +125,5 @@ dependencies {
     compile project(path: ':kiipu_db')
     //友盟统计
     compile 'com.umeng.analytics:analytics:latest.integration'
+    compile 'com.squareup.okio:okio:1.11.0'
 }

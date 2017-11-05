@@ -5,6 +5,8 @@ import android.os.Environment;
 import com.android.annotations.Nullable;
 import com.mycreat.kiipu.core.KiipuApplication;
 import okhttp3.ResponseBody;
+import okio.BufferedSink;
+import okio.Okio;
 import retrofit2.Response;
 
 import java.io.*;
@@ -95,6 +97,15 @@ public class FileUtil {
         }
 
     }
+
+    public static void appendStrToFile(String str, String path) throws IOException {
+        if(str == null) return;
+        BufferedSink sink = Okio.buffer(Okio.appendingSink(new File(path)));
+        sink.writeUtf8(str);
+        sink.flush();
+        sink.close();
+    }
+
 
     /**
      *
