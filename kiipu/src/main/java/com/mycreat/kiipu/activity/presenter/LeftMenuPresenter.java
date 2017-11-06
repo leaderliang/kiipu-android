@@ -1,8 +1,9 @@
 package com.mycreat.kiipu.activity.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.IdRes;
+import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -10,16 +11,21 @@ import android.support.v4.util.ArrayMap;
 import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.mycreat.kiipu.R;
+import com.mycreat.kiipu.activity.LoginActivity;
 import com.mycreat.kiipu.core.KiipuApplication;
 import com.mycreat.kiipu.model.Collections;
+import com.mycreat.kiipu.model.UserInfo;
 import com.mycreat.kiipu.utils.*;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,27 +40,38 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 用于展示首页左侧侧滑菜单
  * Created by zhanghaihai on 2017/11/4.
  */
-public class LeftMenuPresenter implements DialogInterface.OnClickListener {
+public class LeftMenuPresenter implements DialogInterface.OnClickListener, View.OnClickListener {
     /**
      * 用于为每个收藏夹自动生成一个临时的唯一ID
      */
     private AtomicInteger transientId = new AtomicInteger(1);
-    NavigationView navigationView;
-    private NavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener;
-    private MenuItem.OnMenuItemClickListener onMenuItemClickListener;
-    private String userAccessToken;
-    private List<Collections> mCollectionList;
+
     private View mFloatingActionButton;
     private ActionBar toolbar;
+    private Button finalButton;
+    private ImageView mIvUserHeader;
+    private TextView mTvUserName;
+    private NavigationView navigationView;
+    private View headerView;
+    private Button mBtLogOut;
+    private NavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener;
     private Context context;
+
+    private UserInfo mUserInfo;
+    private String inputContent;
+    private Collections collection;
+
     /**
      * 缓存临时ID和收藏夹ID的关系
      */
     private Map<Collections, Integer> collectionTIdMap = new ConcurrentHashMap<>();
-    private Collections collection;
     private String collectionId = Constants.ALL_COLLECTION;
-    private Button finalButton;
-    private String inputContent;
+    private String userAccessToken;
+    private List<Collections> mCollectionList;
+
+
+    private MenuItem.OnMenuItemClickListener onMenuItemClickListener;
+
 
     public LeftMenuPresenter(NavigationView navigationView, NavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener, MenuItem.OnMenuItemClickListener onMenuItemClickListener, String userAccessToken, List<Collections> mCollectionList, View mFloatingActionButton, ActionBar toolbar, Context context, Button finalButton) {
         this.navigationView = navigationView;
@@ -66,6 +83,11 @@ public class LeftMenuPresenter implements DialogInterface.OnClickListener {
         this.toolbar = toolbar;
         this.context = context;
         this.finalButton = finalButton;
+        headerView = getHeaderView(0);
+        mIvUserHeader = (ImageView) headerView.findViewById(R.id.iv_user_icon);
+
+        mTvUserName = (TextView) headerView.findViewById(R.id.tv_user_name);
+        mBtLogOut = (Button) headerView.findViewById(R.id.bt_log_out);
     }
 
     public View getHeaderView(int id) {
@@ -363,5 +385,70 @@ public class LeftMenuPresenter implements DialogInterface.OnClickListener {
         });
     }
 
+    /**
+     * 获取用户信息
+     */
+    private void getUserInfo() {
+        Call<UserInfo> call = KiipuApplication.mRetrofitService.getUserInfo(userAccessToken);
+        Log.e("getUserInfo", "userAccessToken " + userAccessToken);
+        call.enqueue(new Callback<UserInfo>() {
+            @Override
+            public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                mUserInfo = response.body();
+//                mIvUserHeader  mTvUserName
+                if (mUserInfo != null) {
+                    GlideUtil.getInstance().loadCircleImage(mIvUserHeader, mUserInfo.avatarUrl, R.drawable.default_header_icon);
+                    mTvUserName.setText(mUserInfo.nickName);
+                }
+                mBtLogOut.setText(StringUtils.getString(R.string.logout));
+                mBtLogOut.setEnabled(true);
+            }
 
+            @Override
+            public void onFailure(Call<UserInfo> call, Throwable t) {
+                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
+                        .setDuration(2500)
+                        .show();
+                mBtLogOut.setEnabled(true);
+                mBtLogOut.setText(StringUtils.getString(R.string.retry));
+            }
+        });
+
+    }
+    public void initLeftData() {
+        getCollectionList();
+        getUserInfo();
+        mBtLogOut.setOnClickListener(this);
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.bt_log_out:
+                if(((Button)view).getText().equals(StringUtils.getString(R.string.retry))){
+                    initLeftData();
+                    mBtLogOut.setText(StringUtils.getString(R.string.refreshing));
+                    mBtLogOut.setEnabled(false);
+                }else {
+                    DialogUtil.showCommonDialog(context, null, StringUtils.getString(R.string.exit_app), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            intentToLogin();
+                        }
+                    }, null);
+                }
+                break;
+        }
+    }
+
+
+    private void intentToLogin() {
+        SharedPreferencesUtil.removeKey(context, Constants.ACCESS_TOKEN);
+        SharedPreferencesUtil.removeKey(context, Constants.USER_ID);
+        if(context != null && context instanceof Activity) {
+            ((Activity) context).finish();
+            context.startActivity(new Intent(context, LoginActivity.class));
+        }
+    }
 }

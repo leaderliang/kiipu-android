@@ -95,11 +95,9 @@ public class BookMarkActivity extends BaseActivity
 
     private BookmarkTemplateWebVIew extDetail;
 
-    private ImageView mIvUserHeader;
 
-    private TextView mTvTitle, mTvUrl, mTvUserName, mTvIntroduce;
 
-    private UserInfo mUserInfo;
+    private TextView mTvTitle, mTvUrl, mTvIntroduce;
 
     private View headerView;
 
@@ -118,8 +116,6 @@ public class BookMarkActivity extends BaseActivity
     private List<Collections> mCollectionList = new ArrayList<>();
 
     private int mScrollThreshold;
-
-    private Button mBtLogOut;
 
     private MenuItem menuSetting;
 
@@ -230,17 +226,9 @@ public class BookMarkActivity extends BaseActivity
         lp = new LeftMenuPresenter((NavigationView) initViewById(R.id.nav_view), this, this, userAccessToken,
                 mCollectionList, mFloatingActionButton, getSupportActionBar(), this, finalButton);
 
-        headerView = lp.getHeaderView(0);
-
         menuAllItem = lp.findItem(R.id.nav_all_bookmark);
         // 左侧菜单显示隐藏事件监听，左侧菜单点击选中 selector
         lp.setNavigationItemSelectedListener(this);
-
-        mIvUserHeader = (ImageView) headerView.findViewById(R.id.iv_user_icon);
-
-        mTvUserName = (TextView) headerView.findViewById(R.id.tv_user_name);
-
-        mBtLogOut = (Button) headerView.findViewById(R.id.bt_log_out);
 
          /* set item all checked default */
         menuAllItem.setChecked(true);
@@ -248,14 +236,12 @@ public class BookMarkActivity extends BaseActivity
 
     public void initListener() {
         setOnClick(mFloatingActionButton);
-        setOnClick(mBtLogOut);
         mSwipeRefreshLayout.setOnRefreshListener(this);
     }
 
     public void initData() {
         onRefresh();
-        lp.getCollectionList();
-        getUserInfo();
+        lp.initLeftData();
     }
 
 
@@ -264,14 +250,6 @@ public class BookMarkActivity extends BaseActivity
         switch (v.getId()) {
             case R.id.floating_action_bt:
                 floatingActionClick();
-                break;
-            case R.id.bt_log_out:
-                DialogUtil.showCommonDialog(this, null, getString(R.string.exit_app), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        intentToLogin();
-                    }
-                }, null);
                 break;
         }
     }
@@ -492,33 +470,6 @@ public class BookMarkActivity extends BaseActivity
     }
 
     /**
-     * 获取用户信息
-     */
-    private void getUserInfo() {
-        Call<UserInfo> call = KiipuApplication.mRetrofitService.getUserInfo(userAccessToken);
-        Log.e("getUserInfo", "userAccessToken " + userAccessToken);
-        call.enqueue(new Callback<UserInfo>() {
-            @Override
-            public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
-                mUserInfo = response.body();
-//                mIvUserHeader  mTvUserName
-                if (mUserInfo != null) {
-                    GlideUtil.getInstance().loadCircleImage(mIvUserHeader, mUserInfo.avatarUrl, R.drawable.default_header_icon);
-                    mTvUserName.setText(mUserInfo.nickName);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UserInfo> call, Throwable t) {
-                Snackbar.make(mFloatingActionButton, t.getMessage(), Snackbar.LENGTH_LONG)
-                        .setDuration(2500)
-                        .show();
-            }
-        });
-
-    }
-
-    /**
      * 删除书签 delete item
      *
      * @param position 删除索引
@@ -695,13 +646,6 @@ public class BookMarkActivity extends BaseActivity
             return true;
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    private void intentToLogin() {
-        SharedPreferencesUtil.removeKey(mContext, Constants.ACCESS_TOKEN);
-        SharedPreferencesUtil.removeKey(mContext, Constants.USER_ID);
-        finish();
-        startActivity(new Intent(this, LoginActivity.class));
     }
 
     @Override
