@@ -69,7 +69,7 @@ public class BookMarkActivity extends BaseActivity
         SearchView.OnQueryTextListener, MenuItem.OnMenuItemClickListener  {
 
 
-    /* 0 pull; 1 load more */
+    /** 0 pull; 1 load more */
     private int REFRESH_TYPE = Constants.REFRESH_TYPE_PULL;
 
     private String itemId = "";
@@ -79,7 +79,6 @@ public class BookMarkActivity extends BaseActivity
     private Toolbar toolbar;
 
     private DrawerLayout drawer;
-
 
     private BookMarkAdapter mGridLayoutAdapter;
 
@@ -128,6 +127,7 @@ public class BookMarkActivity extends BaseActivity
     private String clipUrl;
 
     private JSONObject jsonObject;
+    /** left menu */
     private LeftMenuPresenter lp;
 
     @Override
@@ -151,6 +151,8 @@ public class BookMarkActivity extends BaseActivity
         }
     }
 
+
+    @Override
     public void initViews() {
         /*  main layout*/
         drawer = initViewById(R.id.drawer_layout);

@@ -47,12 +47,17 @@ public interface RetrofitService {
      * 当POST请求时，@FormUrlEncoded和@Field简单的表单键值对。两个需要结合使用，否则会报错
      */
     @FormUrlEncoded
-    @POST(RetrofitApi.BOOK_MARKS_LOGIN)
-    Call<LoginInfo> loginBookmark(@Field("token") String accessToken,
+    @POST(RetrofitApi.BOOK_MARKS_LOGIN_WEIBO)
+    Call<LoginInfo> loginBookmarkUseWeiBo(@Field("token") String accessToken,
                                   @Field("uid") String userId);
 
     @FormUrlEncoded
-    @POST(RetrofitApi.BOOK_MARKS_LOGIN)
+    @POST(RetrofitApi.BOOK_MARKS_LOGIN_QQ)
+    Call<LoginInfo> loginBookmarkUseQQ(@Field("token") String accessToken,
+                                  @Field("openid") String openid);
+
+    @FormUrlEncoded
+    @POST(RetrofitApi.BOOK_MARKS_LOGIN_WEIBO)
     Call<LoginInfo> loginBookmark(@FieldMap Map<String, String> params);
 
     @GET(RetrofitApi.COLLECTION_LIST)

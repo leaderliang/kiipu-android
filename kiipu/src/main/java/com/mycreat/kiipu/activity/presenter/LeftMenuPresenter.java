@@ -38,7 +38,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 用于展示首页左侧侧滑菜单
- * Created by zhanghaihai on 2017/11/4.
+ *
+ * @author zhanghaihai
+ * @date 2017/11/4
  */
 public class LeftMenuPresenter implements DialogInterface.OnClickListener, View.OnClickListener {
     /**

@@ -28,7 +28,8 @@ public class KiipuApplication extends MultiDexApplication implements Thread.Unca
     /*各个平台的配置，建议放在全局Application或者程序入口*/
     {
         PlatformConfig.setSinaWeibo("3763012369", "70ca7f8be6f87b1157ced83e67d27a48", "http://sns.whalecloud.com");
-
+        /* 配置 qq 时候使用*/
+        PlatformConfig.setQQZone("101429483", "f2268e31f622a15084948cec6db9818d");
     }
 
     public static KiipuApplication instance;

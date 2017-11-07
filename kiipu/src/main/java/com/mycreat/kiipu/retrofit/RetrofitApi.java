@@ -1,7 +1,9 @@
 package com.mycreat.kiipu.retrofit;
 
 /**
- * Created by leaderliang on 2017/3/31.
+ *
+ * @author leaderliang
+ * @date 2017/3/31
  * email: leaderliang.dev@gmail.com
  * TODO
  */
@@ -20,7 +22,9 @@ public class RetrofitApi {
      * Login
      * token: uid:
      */
-    public static final String BOOK_MARKS_LOGIN = BASE_URL + "auth/weibo";
+    public static final String BOOK_MARKS_LOGIN_WEIBO = BASE_URL + "auth/weibo";
+
+    public static final String BOOK_MARKS_LOGIN_QQ = BASE_URL + "auth/qq";
     /**
      * Get
      * GET BOOK MARKS list

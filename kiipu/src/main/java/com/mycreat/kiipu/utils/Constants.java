@@ -72,4 +72,8 @@ public class Constants {
     public static final String CLIPBOAR_DATA = "clipboar_data";
 
     public static final int INPUT_MAX_LENGTH = 24;//修改/添加书签夹 输入框字数限制
+
+    public static final int IS_WEIBO_REQUEST_CODE = 5650;
+
+    public static final int IS_QQ_REQUEST_CODE = 11101;
 }

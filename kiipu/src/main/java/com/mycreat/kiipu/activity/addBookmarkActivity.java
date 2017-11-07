@@ -81,13 +81,13 @@ public class addBookmarkActivity extends BaseActivity {
                     .show();
         } else {
             Intent intent = getIntent();
-            if (intent == null) return;
+            if (intent == null) {return;}
             String action = intent.getAction();
-            if (action == null) return;
+            if (action == null) {return;}
             String type = intent.getType();
-            if (type == null) return;
+            if (type == null) {return;}
             Bundle extras = intent.getExtras();
-            if (extras == null) return;
+            if (extras == null) {return;}
             if (Intent.ACTION_SEND.equals(action)) {
                 if ("text/plain".equals(type)) {
                     addBookmark(intent); // 处理发送来的文字

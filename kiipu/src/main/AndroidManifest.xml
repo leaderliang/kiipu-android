@@ -83,6 +83,27 @@
                 android:screenOrientation="portrait"
                 android:theme="@style/NoActionBar"/>
 
+
+        <!-- tencent -->
+        <activity
+                android:name="com.umeng.qq.tencent.AuthActivity"
+                android:launchMode="singleTask"
+                android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="tencent101429483"/>
+            </intent-filter>
+        </activity>
+        <activity
+                android:name="com.umeng.qq.tencent.AssistActivity"
+                android:configChanges="orientation|keyboardHidden|screenSize"
+                android:screenOrientation="portrait"
+                android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
         <!-- receiver -->
         <receiver android:name="com.mycreat.kiipu.utils.NetChangeReceiver">
             <intent-filter>
