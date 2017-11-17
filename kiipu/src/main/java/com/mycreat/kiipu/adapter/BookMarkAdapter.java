@@ -36,7 +36,6 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
     }
 
 
-
     @Override
     protected void convert(com.mycreat.kiipu.utils.BaseViewHolder holder, Bookmark bookmark) {
         final BookmarksInfo mBookmarksInfo = bookmark.info;
@@ -63,16 +62,23 @@ public class BookMarkAdapter extends BaseMultiItemQuickAdapter<Bookmark, BaseVie
                         holder.getView(R.id.tv_introduce).setVisibility(View.VISIBLE);
                         holder.setText(R.id.tv_introduce, StringUtils.dealWithEmptyStr(mBookmarksInfo.introduce));
                         break;
-                    case Constants.BOOKMARK_TYPE_WEB://两个 cardView 嵌套的布局
+                    /*两个 cardView 嵌套的布局*/
+                    case Constants.BOOKMARK_TYPE_WEB:
                         holder.getView(R.id.iv_item_header).setVisibility(View.VISIBLE);
                         holder.getView(R.id.tv_introduce).setVisibility(View.GONE);
-                        holder.getView(R.id.ll_item_header).setBackgroundColor(Color.parseColor((TextUtils.isEmpty(bookmark.viewTheme) ? "#ffffff" : "#") + bookmark.viewTheme));
+                        String viewTheme = bookmark.viewTheme;
+                        if (StringUtils.isEmpty(viewTheme)) {
+                            viewTheme = "";
+                        }
+                        holder.getView(R.id.ll_item_header).setBackgroundColor(Color.parseColor((StringUtils.isEmpty(viewTheme) ? "#ffffff" : "#" + bookmark.viewTheme)));
                         holder.setImage(R.id.iv_item_header, new ImageCallback() {
                             @Override
                             public void callback(ImageView imageView) {
                                 GlideUtil.getInstance().loadImage(imageView, mBookmarksInfo.img, R.drawable.default_header_icon, false);
                             }
                         });
+                        break;
+                    default:
                         break;
                 }
                 try {

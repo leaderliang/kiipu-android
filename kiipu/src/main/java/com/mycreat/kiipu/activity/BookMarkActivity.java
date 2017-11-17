@@ -557,6 +557,8 @@ public class BookMarkActivity extends BaseActivity
                     case Constants.POPUP_DELETE:
                         requestDeleteItem(dataPosition);
                         break;
+                    default:
+                        break;
                 }
             }
         });
