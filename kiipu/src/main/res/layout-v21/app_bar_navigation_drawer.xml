@@ -85,7 +85,7 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/fab_add"
         app:borderWidth="0dp"
-        app:fabSize="normal"
+        app:fabSize="normal"  
         app:fab_colorNormal="@color/colorAccent"
         app:fab_colorPressed="@color/colorPrimaryDark"
         app:fab_colorRipple="@color/colorPrimaryDark"

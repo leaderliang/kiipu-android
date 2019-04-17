@@ -53,7 +53,7 @@ public class GlideUtil {
             Glide.with(mContext)
                     .load(imgUrl)
                     .asBitmap()
-                    .placeholder(R.drawable.default_item_cover) // 占位图
+                    .placeholder(R.drawable.default_item_cover)
                     .error(R.drawable.default_item_cover)
 //                    .crossFade(1000)//默认渐入渐出动画执行时间
                     .priority(Priority.NORMAL) //下载的优先级
@@ -68,7 +68,7 @@ public class GlideUtil {
             Glide.with(mContext)
                     .load(imgUrl)
                     .asBitmap()
-                    .placeholder(R.drawable.default_item_cover) // 占位图
+                    .placeholder(R.drawable.default_item_cover)
                     .error(R.drawable.default_item_cover)
                     .priority(Priority.NORMAL) //下载的优先级
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)// 缓存策略 禁用掉Glide的缓存功能,默认是打开的

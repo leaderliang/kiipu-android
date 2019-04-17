@@ -3,6 +3,7 @@ package com.mycreat.kiipu.retrofit;
 import com.mycreat.kiipu.BuildConfig;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -20,6 +21,7 @@ public class RetrofitClient {
 
 
         private static OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
+                 //打印日志拦截器
                 .addInterceptor(getHttpLoggingInterceptor())
                 .connectTimeout(10000, TimeUnit.MILLISECONDS)//设置超时时间
                 .retryOnConnectionFailure(true);
@@ -35,6 +37,7 @@ public class RetrofitClient {
 //                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(new ToStringConverterFactory())
                 .build();
+
 
         private static Retrofit retrofitTemplate = new Retrofit.Builder()
                 .baseUrl(RetrofitApi.BASE_TEMPLATE_URL)
